@@ -126,6 +126,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
   // Session countdown (28 mins 45 secs = 1725s)
   const [sessionTimeRemaining, setSessionTimeRemaining] = useState<number>(1725);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   // Data Saver 2G mode
   const [isDataSaver, setIsDataSaver] = useState<boolean>(false);
 
