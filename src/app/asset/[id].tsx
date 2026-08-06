@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Svg, { Path, Rect, Line, Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
@@ -37,6 +37,7 @@ import { InvestmentThesis } from '@/types';
 export default function AssetDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const mainScrollViewRef = useRef<ScrollView>(null);
   const {
     assets,
     cash,
@@ -57,6 +58,7 @@ export default function AssetDetailScreen() {
   const [lockPromptVisible, setLockPromptVisible] = useState<boolean>(false);
   const [tradeConfirmVisible, setTradeConfirmVisible] = useState<boolean>(false);
   const [executedOrder, setExecutedOrder] = useState<any | null>(null);
+  const [selectedDiagnosticTab, setSelectedDiagnosticTab] = useState<'sensors' | 'thesis'>('sensors');
   const [showStory, setShowStory] = useState<boolean>(true);
   const [showSellNotice, setShowSellNotice] = useState<boolean>(false);
   const [chartType, setChartType] = useState<'area' | 'candles'>('area');
@@ -67,6 +69,18 @@ export default function AssetDetailScreen() {
 
   const handleUnlockSuccess = (thesis: InvestmentThesis) => {
     setIsUnlocked(true);
+    // Straight away open Trade Ticket Dialog upon AI validation success!
+    setTimeout(() => {
+      setTradeModalVisible(true);
+    }, 300);
+  };
+
+  const handleGoToThesis = () => {
+    setLockPromptVisible(false);
+    setSelectedDiagnosticTab('thesis');
+    setTimeout(() => {
+      mainScrollViewRef.current?.scrollTo({ y: 850, animated: true });
+    }, 100);
   };
 
   const handleBuyPress = () => {
@@ -189,7 +203,7 @@ export default function AssetDetailScreen() {
   return (
     <View style={[styles.container, isDataSaver && styles.containerDataSaver]}>
       <DataSaverBanner />
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+      <ScrollView ref={mainScrollViewRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Header Bar */}
         <View style={styles.headerRow}>
           <Pressable
@@ -550,7 +564,9 @@ export default function AssetDetailScreen() {
           asset={asset}
           onUnlockSuccess={handleUnlockSuccess}
           existingThesis={existingThesis}
-          onSubmitThesis={(text) => submitThesis(asset.id, text)}
+          onSubmitThesis={(text, community) => submitThesis(asset.id, text, community)}
+          selectedTab={selectedDiagnosticTab}
+          onTabChange={setSelectedDiagnosticTab}
         />
 
         {/* EXECUTE TRADE BUTTONS: BUY & SELL */}
@@ -622,9 +638,7 @@ export default function AssetDetailScreen() {
         visible={lockPromptVisible}
         asset={asset}
         onClose={() => setLockPromptVisible(false)}
-        onGoToThesis={() => {
-          setLockPromptVisible(false);
-        }}
+        onGoToThesis={handleGoToThesis}
       />
 
       {/* Trade Order Fill Confirmation Dialog Modal */}

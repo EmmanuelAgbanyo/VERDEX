@@ -111,6 +111,8 @@ interface DiagnosticPanelProps {
   onUnlockSuccess: (thesis: InvestmentThesis) => void;
   existingThesis?: InvestmentThesis;
   onSubmitThesis: (text: string, communityPurpose?: string) => { valid: boolean; feedback: string; thesis?: InvestmentThesis };
+  selectedTab?: 'sensors' | 'thesis';
+  onTabChange?: (tab: 'sensors' | 'thesis') => void;
 }
 
 export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
@@ -118,8 +120,17 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
   onUnlockSuccess,
   existingThesis,
   onSubmitThesis,
+  selectedTab,
+  onTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState<'sensors' | 'thesis'>('sensors');
+  const [activeTabState, setActiveTabState] = useState<'sensors' | 'thesis'>('sensors');
+  const activeTab = selectedTab !== undefined ? selectedTab : activeTabState;
+
+  const handleTabPress = (tab: 'sensors' | 'thesis') => {
+    setActiveTabState(tab);
+    if (onTabChange) onTabChange(tab);
+  };
+
   const [thesisText, setThesisText] = useState<string>(existingThesis ? existingThesis.text : '');
   const [communityPurpose, setCommunityPurpose] = useState<string>(
     existingThesis?.communityPurpose || `This trade supports ${asset.communityImpact.toLowerCase()}`
@@ -273,7 +284,7 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
       {/* SEGMENTED TAB CONTROLLER */}
       <View style={styles.tabBar}>
         <Pressable
-          onPress={() => setActiveTab('sensors')}
+          onPress={() => handleTabPress('sensors')}
           style={[styles.tabBtn, activeTab === 'sensors' && styles.tabBtnActive]}
           accessibilityRole="tab"
           accessibilityState={{ selected: activeTab === 'sensors' }}
@@ -285,7 +296,7 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
         </Pressable>
 
         <Pressable
-          onPress={() => setActiveTab('thesis')}
+          onPress={() => handleTabPress('thesis')}
           style={[styles.tabBtn, activeTab === 'thesis' && styles.tabBtnActive]}
           accessibilityRole="tab"
           accessibilityState={{ selected: activeTab === 'thesis' }}
