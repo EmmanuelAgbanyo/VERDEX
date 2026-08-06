@@ -15,7 +15,8 @@
         "backgroundColor": "#062017",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png"
-      }
+      },
+      "package": "com.ephphata.verdex"
     },
     "web": {
       "output": "static",
@@ -34,6 +35,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "cc357667-37ed-4000-91f6-4f4721df1521"
+      }
     }
   }
 }

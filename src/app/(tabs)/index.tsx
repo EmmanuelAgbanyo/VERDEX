@@ -67,10 +67,10 @@ export default function DashboardScreen() {
           />
         }
       >
-        {/* Executive Header with Welcome Team VERDEX Greeting */}
+        {/* Welcome Header */}
         <Header portfolioValue={portfolioValue} sessionTimeRemaining={sessionTimeRemaining} />
 
-        {/* QUICK ACTION NAVIGATION DOCK */}
+        {/* QUICK ACTION DOCK */}
         <View style={styles.quickDockRow}>
           <Pressable
             onPress={() => router.push('/(tabs)/markets')}
@@ -130,12 +130,9 @@ export default function DashboardScreen() {
           style={styles.sectionHeaderRow}
           accessible={true}
           accessibilityRole="header"
-          accessibilityLabel="Environmental Signals, Live Sensors"
+          accessibilityLabel="Climate Signals"
         >
-          <View>
-            <Text style={styles.sectionCategory}>ENVIRONMENTAL TELEMETRY</Text>
-            <Text style={styles.sectionTitle}>Ghanaian Sensor Board</Text>
-          </View>
+          <Text style={styles.sectionTitle}>Climate Signals</Text>
           <View style={styles.livePulseBadge}>
             <View style={styles.pulseDot} />
             <Text style={styles.updatedText}>LIVE</Text>
@@ -148,13 +145,13 @@ export default function DashboardScreen() {
           ))}
         </ScrollView>
 
-        {/* HIGHEST SIGNAL SPOTLIGHT */}
+        {/* FEATURED ASSET SPOTLIGHT */}
         {spotlightAsset && (
           <GlassCard variant="dark" showGrid style={styles.spotlightCard}>
             <View style={styles.spotlightHeader}>
               <View style={styles.spotlightTagGroup}>
                 <Sparkles size={14} color="#F59E0B" />
-                <Text style={styles.spotlightTagText}>FEATURED ASSET SPOTLIGHT</Text>
+                <Text style={styles.spotlightTagText}>TOP SIGNAL ASSET</Text>
               </View>
               <View style={styles.signalGaugeBadge}>
                 <Text style={styles.signalGaugeText}>Signal Score {spotlightAsset.signalScore}/100</Text>
@@ -204,17 +201,14 @@ export default function DashboardScreen() {
           </GlassCard>
         )}
 
-        {/* RESEARCH LOCK ACTION CARD */}
+        {/* THESIS RESEARCH CARD */}
         <View
           style={styles.sectionHeaderRow}
           accessible={true}
           accessibilityRole="header"
-          accessibilityLabel="Trading Status, Research Lock"
+          accessibilityLabel="Thesis Research"
         >
-          <View>
-            <Text style={styles.sectionCategory}>TRADING ENGINE STATUS</Text>
-            <Text style={styles.sectionTitle}>Research Lock Status</Text>
-          </View>
+          <Text style={styles.sectionTitle}>Thesis Research</Text>
           <ShieldCheck size={18} color={COLORS.emeraldBright} />
         </View>
 
@@ -240,24 +234,21 @@ export default function DashboardScreen() {
             onPress={() => router.push('/(tabs)/markets')}
             style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.85 }]}
             accessibilityRole="button"
-            accessibilityLabel="Open Climate Terminal"
+            accessibilityLabel="Explore Markets"
           >
-            <Text style={styles.actionButtonText}>Open Climate Terminal</Text>
+            <Text style={styles.actionButtonText}>Explore Markets</Text>
             <ArrowRight size={16} color="#FFFFFF" />
           </Pressable>
         </View>
 
-        {/* RECENT ORDERS LOG */}
+        {/* RECENT ORDERS */}
         <View
           style={styles.sectionHeaderRow}
           accessible={true}
           accessibilityRole="header"
-          accessibilityLabel="Execution Log"
+          accessibilityLabel="Recent Orders"
         >
-          <View>
-            <Text style={styles.sectionCategory}>EXECUTION LOG</Text>
-            <Text style={styles.sectionTitle}>Recent Orders</Text>
-          </View>
+          <Text style={styles.sectionTitle}>Recent Orders</Text>
           <Activity size={18} color={COLORS.amberDataBright} />
         </View>
 
@@ -298,10 +289,10 @@ export default function DashboardScreen() {
           </GlassCard>
         )}
 
-        {/* DEPLOYMENT FOOTER */}
+        {/* CLEAN FOOTER */}
         <View style={styles.disclaimerBox}>
           <Text style={styles.disclaimerText}>
-            VERDEX Green Economy Trading Platform • Production Build v1.0 • Ghana Regional Node
+            VERDEX Green Economy Trading Platform • Accra Node
           </Text>
         </View>
       </ScrollView>
@@ -388,17 +379,10 @@ const styles = StyleSheet.create({
   sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    marginTop: 16,
+    marginTop: 18,
     marginBottom: 8,
-  },
-  sectionCategory: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: COLORS.textMuted,
-    letterSpacing: 1.5,
-    marginBottom: 2,
   },
   sectionTitle: {
     fontSize: 18,

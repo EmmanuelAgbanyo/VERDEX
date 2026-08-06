@@ -20,7 +20,6 @@ export const Header: React.FC<HeaderProps> = ({ portfolioValue, sessionTimeRemai
       {/* Top Bar: Executive Welcome Greeting & Location Tag */}
       <View style={styles.topRow}>
         <View style={styles.welcomeGroup}>
-          <Text style={styles.welcomeSubtitle}>EXECUTIVE PLATFORM</Text>
           <Text style={styles.welcomeTitle}>Welcome, Team VERDEX 🌿</Text>
         </View>
 
@@ -99,13 +98,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   welcomeGroup: {
-    gap: 2,
-  },
-  welcomeSubtitle: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#8BA196',
-    letterSpacing: 1.5,
+    justifyContent: 'center',
   },
   welcomeTitle: {
     fontSize: 22,

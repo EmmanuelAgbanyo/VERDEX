@@ -43,14 +43,13 @@ export default function PortfolioScreen() {
       >
         {/* Screen Header */}
         <View style={styles.headerArea}>
-          <Text style={styles.screenTag}>PORTFOLIO DESK</Text>
-          <Text style={styles.screenTitle}>Virtual Capital & Credentials</Text>
+          <Text style={styles.screenTitle}>Portfolio</Text>
           <Text style={styles.screenDesc}>
             Track position performance, sponsor readiness, and verified green finance badges.
           </Text>
         </View>
 
-        {/* PORTFOLIO PERFORMANCE SUMMARY (Unified Emerald Glass Card) */}
+        {/* PORTFOLIO PERFORMANCE SUMMARY */}
         <GlassCard variant="emerald" showGrid style={styles.perfCard}>
           <View style={styles.perfHeader}>
             <View>
@@ -82,7 +81,7 @@ export default function PortfolioScreen() {
             </View>
           </View>
 
-          {/* Report Trigger Button (Cohesive white overlay) */}
+          {/* Report Trigger Button */}
           <Pressable
             onPress={() => setReportModalVisible(true)}
             style={({ pressed }) => [styles.reportBtn, pressed && { opacity: 0.9 }]}
@@ -118,14 +117,13 @@ export default function PortfolioScreen() {
 
         {/* POSITIONS LIST */}
         <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionCategory}>HOLDINGS</Text>
           <Text style={styles.sectionTitle}>Asset Allocation</Text>
         </View>
 
         {positions.length === 0 ? (
           <GlassCard showGrid style={styles.emptyCard}>
             <Text style={styles.emptyTitle}>No open asset positions</Text>
-            <Text style={styles.emptySub}>Visit the Climate Terminal to research and allocate capital.</Text>
+            <Text style={styles.emptySub}>Visit Markets to research and allocate capital.</Text>
           </GlassCard>
         ) : (
           <View style={styles.positionsList}>
@@ -160,9 +158,8 @@ export default function PortfolioScreen() {
           </View>
         )}
 
-        {/* BADGES & CAREER PATHWAY SECTION */}
+        {/* BADGES SECTION */}
         <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionCategory}>BADGES & CREDENTIALS</Text>
           <Text style={styles.sectionTitle}>Verified Green Badges</Text>
         </View>
 
@@ -245,12 +242,6 @@ const styles = StyleSheet.create({
   headerArea: {
     marginBottom: 12,
   },
-  screenTag: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: COLORS.textMuted,
-    letterSpacing: 1,
-  },
   screenTitle: {
     fontSize: 24,
     fontWeight: '900',
@@ -260,7 +251,7 @@ const styles = StyleSheet.create({
   screenDesc: {
     fontSize: 12,
     color: COLORS.textSecondary,
-    marginTop: 4,
+    marginTop: 2,
     lineHeight: 17,
   },
   perfCard: {
@@ -370,14 +361,8 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   sectionHeaderRow: {
-    marginTop: 10,
-    marginBottom: 6,
-  },
-  sectionCategory: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: COLORS.textMuted,
-    letterSpacing: 1,
+    marginTop: 14,
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 16,

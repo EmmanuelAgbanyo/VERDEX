@@ -69,10 +69,9 @@ export default function MarketsScreen() {
       >
         {/* Screen Header */}
         <View style={styles.headerArea}>
-          <Text style={styles.screenTag}>MARKET DESK</Text>
-          <Text style={styles.screenTitle}>Climate Trading Terminal</Text>
+          <Text style={styles.screenTitle}>Markets</Text>
           <Text style={styles.screenDesc}>
-            Real-time Ghanaian environmental data drives asset valuations. Gated by Research Lock.
+            Real-time Ghanaian climate signals driving verified green asset valuations.
           </Text>
         </View>
 
@@ -113,7 +112,7 @@ export default function MarketsScreen() {
           <Search size={18} color={COLORS.textMuted} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search assets, symbols, regions, signals..."
+            placeholder="Search assets, symbols, regions..."
             placeholderTextColor={COLORS.textMuted}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -208,7 +207,7 @@ export default function MarketsScreen() {
           >
             <SlidersHorizontal size={12} color={sortByScore ? COLORS.bgDark : COLORS.emeraldBright} />
             <Text style={[styles.sortBtnText, sortByScore && styles.sortBtnTextActive]}>
-              {sortByScore ? 'Sorted by Signal Score' : 'Sort by Signal Score'}
+              {sortByScore ? 'Sorted by Signal' : 'Sort by Signal'}
             </Text>
           </Pressable>
         </View>
@@ -257,12 +256,6 @@ const styles = StyleSheet.create({
   headerArea: {
     marginBottom: 12,
   },
-  screenTag: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: COLORS.textMuted,
-    letterSpacing: 1,
-  },
   screenTitle: {
     fontSize: 24,
     fontWeight: '900',
@@ -272,7 +265,7 @@ const styles = StyleSheet.create({
   screenDesc: {
     fontSize: 12,
     color: COLORS.textSecondary,
-    marginTop: 4,
+    marginTop: 2,
     lineHeight: 17,
   },
   radarCard: {

@@ -307,14 +307,13 @@ export default function LearnScreen() {
         <View style={{ maxWidth: 840, width: '100%', alignSelf: 'center' }}>
           {/* Screen Header */}
           <View style={styles.headerArea}>
-            <Text style={styles.screenTag}>DUOLINGO-STYLE E-LEARNING</Text>
             <Text style={styles.screenTitle}>Green Academy</Text>
             <Text style={styles.screenDesc}>
               Master climate data analysis, complete daily quests, and earn verified credentials.
             </Text>
           </View>
 
-          {/* DUOLINGO GAMIFIED STREAK & XP HEADER HUB */}
+          {/* STREAK & XP HEADER HUB */}
           <GlassCard variant="light" showGrid style={styles.duoHeaderCard}>
             <View style={styles.duoTopStatsRow}>
               {/* Flame Streak Pill */}
@@ -322,7 +321,7 @@ export default function LearnScreen() {
                 <Flame size={20} color="#FF5A5F" fill="#FF5A5F" />
                 <View>
                   <Text style={styles.duoStreakNum}>{streak} Day Streak</Text>
-                  <Text style={styles.duoStreakSub}>Keep practicing!</Text>
+                  <Text style={styles.duoStreakSub}>Active research</Text>
                 </View>
               </View>
 
@@ -341,7 +340,7 @@ export default function LearnScreen() {
               <View style={styles.duoGoalHeader}>
                 <View style={styles.duoGoalTitleRow}>
                   <Target size={14} color="#10B981" />
-                  <Text style={styles.duoGoalTitle}>DAILY XP GOAL</Text>
+                  <Text style={styles.duoGoalTitle}>DAILY GOAL</Text>
                 </View>
                 <Text style={styles.duoGoalVal}>{(xp % 200)} / 200 XP</Text>
               </View>
@@ -372,10 +371,9 @@ export default function LearnScreen() {
             </View>
           </GlassCard>
 
-          {/* DUOLINGO DAILY QUESTS HUB */}
+          {/* DAILY QUESTS HUB */}
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionCategory}>DAILY QUESTS</Text>
-            <Text style={styles.sectionTitle}>Earn Bonus XP</Text>
+            <Text style={styles.sectionTitle}>Daily Quests</Text>
           </View>
 
           <View style={styles.questsContainer}>
@@ -426,7 +424,6 @@ export default function LearnScreen() {
 
           {/* VERIFIED CERTIFICATIONS */}
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionCategory}>VERIFIED CREDENTIALS</Text>
             <Text style={styles.sectionTitle}>Certifications & Badges</Text>
           </View>
 
@@ -451,7 +448,6 @@ export default function LearnScreen() {
 
           {/* COURSE SYLLABUS CAROUSEL */}
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionCategory}>LMS PATHWAYS</Text>
             <Text style={styles.sectionTitle}>Course Syllabus Tracks</Text>
           </View>
 
@@ -525,9 +521,8 @@ export default function LearnScreen() {
             })}
           </ScrollView>
 
-          {/* DUOLINGO-STYLE LESSON TREE & PATH NODES */}
+          {/* LESSON TREE & PATH NODES */}
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionCategory}>CURRICULUM ROADMAP</Text>
             <Text style={styles.sectionTitle}>{selectedPathway.title}</Text>
           </View>
 
@@ -623,9 +618,8 @@ export default function LearnScreen() {
             </View>
           </GlassCard>
 
-          {/* APPLIED LAB SANDBOX */}
+          {/* CLIMATE SIGNAL SANDBOX */}
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionCategory}>APPLIED LAB SANDBOX</Text>
             <Text style={styles.sectionTitle}>Climate Signal Sandbox</Text>
           </View>
 
@@ -673,9 +667,8 @@ export default function LearnScreen() {
             </View>
           </GlassCard>
 
-          {/* SKILL DASHBOARD METERS */}
+          {/* SKILL METERS */}
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionCategory}>SKILL METERS</Text>
             <Text style={styles.sectionTitle}>Validated Competencies</Text>
           </View>
 
@@ -814,12 +807,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
     marginBottom: 12,
-  },
-  screenTag: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: COLORS.textMuted,
-    letterSpacing: 1.5,
   },
   screenTitle: {
     fontSize: 24,
@@ -1041,12 +1028,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
     paddingHorizontal: 16,
-  },
-  sectionCategory: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: COLORS.textMuted,
-    letterSpacing: 1,
   },
   sectionTitle: {
     fontSize: 16,
