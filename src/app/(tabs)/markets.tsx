@@ -4,7 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { AssetCard } from '@/components/AssetCard';
 import { GlassCard } from '@/components/GlassCard';
 import { COLORS, LAYOUT } from '@/constants/theme';
-import { Search, Filter, Star, Zap, TrendingUp, SlidersHorizontal } from 'lucide-react-native';
+import { Search, Filter, Star, Zap, TrendingUp, SlidersHorizontal, SearchX } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { AssetCategory } from '@/types';
 
@@ -78,7 +78,7 @@ export default function MarketsScreen() {
         {/* MARKET RADAR WIDGET */}
         <GlassCard variant="dark" showGrid style={styles.radarCard}>
           <View style={styles.radarHeader}>
-            <Zap size={16} color={COLORS.amberDataBright} />
+            <Zap size={18} color={COLORS.amberDataBright} />
             <Text style={styles.radarTitle}>Market Radar</Text>
           </View>
 
@@ -109,7 +109,7 @@ export default function MarketsScreen() {
 
         {/* SEARCH BAR */}
         <View style={styles.searchContainer}>
-          <Search size={18} color={COLORS.textMuted} />
+          <Search size={20} color={COLORS.textMuted} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search assets, symbols, regions..."
@@ -131,7 +131,7 @@ export default function MarketsScreen() {
             accessibilityLabel="Filter all assets"
           >
             <Text style={[styles.filterChipText, selectedCategory === 'all' && styles.filterChipTextActive]}>
-              All Assets ({assets.length})
+              All ({assets.length})
             </Text>
           </Pressable>
 
@@ -142,7 +142,7 @@ export default function MarketsScreen() {
             accessibilityState={{ selected: selectedCategory === 'watchlist' }}
             accessibilityLabel="Filter watchlist"
           >
-            <Star size={12} color={selectedCategory === 'watchlist' ? COLORS.bgDark : COLORS.amberData} />
+            <Star size={14} color={selectedCategory === 'watchlist' ? COLORS.bgDark : COLORS.amberData} />
             <Text style={[styles.filterChipText, selectedCategory === 'watchlist' && styles.filterChipTextActive]}>
               Watchlist ({watchlist.length})
             </Text>
@@ -205,7 +205,7 @@ export default function MarketsScreen() {
             onPress={() => setSortByScore(!sortByScore)}
             style={[styles.sortBtn, sortByScore && styles.sortBtnActive]}
           >
-            <SlidersHorizontal size={12} color={sortByScore ? COLORS.bgDark : COLORS.emeraldBright} />
+            <SlidersHorizontal size={14} color={sortByScore ? COLORS.bgDark : COLORS.emeraldBright} />
             <Text style={[styles.sortBtnText, sortByScore && styles.sortBtnTextActive]}>
               {sortByScore ? 'Sorted by Signal' : 'Sort by Signal'}
             </Text>
@@ -215,6 +215,7 @@ export default function MarketsScreen() {
         {/* ASSET LIST */}
         {filteredAssets.length === 0 ? (
           <GlassCard showGrid style={styles.emptyCard}>
+            <SearchX size={32} color={COLORS.textMuted} />
             <Text style={styles.emptyTitle}>No matching green assets</Text>
             <Text style={styles.emptySub}>Try adjusting your search term or category filters.</Text>
           </GlassCard>
@@ -254,104 +255,112 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   headerArea: {
-    marginBottom: 12,
+    marginBottom: 24,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E4EAE2',
   },
   screenTitle: {
     fontSize: 24,
-    fontWeight: '900',
+    fontWeight: '800',
     color: COLORS.textBright,
     letterSpacing: -0.5,
   },
   screenDesc: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: '500',
     color: COLORS.textSecondary,
-    marginTop: 2,
-    lineHeight: 17,
+    marginTop: 4,
+    lineHeight: 18,
   },
   radarCard: {
-    padding: 14,
-    marginBottom: 14,
-    gap: 10,
+    padding: 20,
+    marginBottom: 24,
+    gap: 16,
+    borderRadius: 16,
   },
   radarHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   radarTitle: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '800',
     color: '#FFFFFF',
     letterSpacing: 0.5,
   },
   radarGrid: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 12,
   },
   radarBox: {
     flex: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    padding: 10,
-    borderRadius: 10,
+    padding: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.10)',
+    gap: 4,
   },
   radarLabel: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '700',
     color: 'rgba(167, 243, 208, 0.7)',
     letterSpacing: 0.5,
   },
   radarValue: {
-    fontSize: 16,
-    fontWeight: '900',
+    fontSize: 18,
+    fontWeight: '800',
     color: '#FFFFFF',
-    marginVertical: 2,
+    marginTop: 2,
+    marginBottom: 2,
   },
   radarSub: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '600',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
     backgroundColor: COLORS.cardBg,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
-    paddingHorizontal: 14,
-    marginBottom: 12,
+    paddingHorizontal: 16,
+    marginBottom: 20,
     shadowColor: '#102A1F',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
   searchInput: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 14,
     color: COLORS.textBright,
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: '500',
   },
   filterScroll: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   filterChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
-    marginRight: 8,
+    marginRight: 10,
     shadowColor: '#102A1F',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.02,
-    shadowRadius: 3,
+    shadowRadius: 4,
     elevation: 1,
   },
   filterChipActive: {
@@ -361,31 +370,32 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
   },
   filterChipText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     color: COLORS.textSecondary,
   },
   filterChipTextActive: {
     color: '#FFFFFF',
-    fontWeight: '800',
+    fontWeight: '700',
   },
   sortRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginVertical: 14,
   },
   resultsCount: {
-    fontSize: 11,
+    fontSize: 13,
+    fontWeight: '500',
     color: COLORS.textMuted,
   },
   sortBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
   },
@@ -394,7 +404,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.emeraldBright,
   },
   sortBtnText: {
-    fontSize: 10,
+    fontSize: 12,
     color: COLORS.emeraldBright,
     fontWeight: '700',
   },
@@ -402,20 +412,26 @@ const styles = StyleSheet.create({
     color: COLORS.bgDark,
   },
   assetsList: {
-    gap: 8,
+    gap: 12,
   },
   emptyCard: {
-    padding: 24,
+    padding: 32,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    marginTop: 10,
+    borderRadius: 16,
   },
   emptyTitle: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
     color: COLORS.textBright,
   },
   emptySub: {
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: '500',
     color: COLORS.textMuted,
-    marginTop: 4,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });

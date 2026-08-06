@@ -89,15 +89,15 @@ export default function PortfolioScreen() {
             accessibilityLabel="View Green Portfolio Report"
             accessibilityHint="Opens a modal with your green portfolio report"
           >
-            <FileText size={16} color="#0D5C46" />
+            <FileText size={18} color="#059669" />
             <Text style={styles.reportBtnText}>VIEW GREEN PORTFOLIO REPORT</Text>
           </Pressable>
         </GlassCard>
 
-        {/* POINT 4: YOUR COLLECTIVE COMMUNITY IMPACT CARD */}
+        {/* YOUR COLLECTIVE COMMUNITY IMPACT CARD */}
         <GlassCard style={styles.collectiveImpactCard}>
           <View style={styles.impactCardHeader}>
-            <Heart size={16} color="#EC4899" />
+            <Heart size={18} color="#10B981" />
             <Text style={styles.impactCardTitle}>Your Collective Impact</Text>
           </View>
           <Text style={styles.impactCardSub}>
@@ -106,17 +106,17 @@ export default function PortfolioScreen() {
 
           <View style={styles.impactMetricsGrid}>
             <View style={styles.impactStatBox}>
-              <Users size={16} color="#3B82F6" />
+              <Users size={18} color="#10B981" />
               <Text style={styles.impactStatNum}>1,540</Text>
               <Text style={styles.impactStatLabel}>People Impacted</Text>
             </View>
             <View style={styles.impactStatBox}>
-              <TreePine size={16} color="#10B981" />
+              <TreePine size={18} color="#10B981" />
               <Text style={styles.impactStatNum}>320 tCO₂</Text>
               <Text style={styles.impactStatLabel}>Carbon Avoided/yr</Text>
             </View>
             <View style={styles.impactStatBox}>
-              <Shield size={16} color="#F59E0B" />
+              <Shield size={18} color="#F59E0B" />
               <Text style={styles.impactStatNum}>1,200 ha</Text>
               <Text style={styles.impactStatLabel}>Resilient Land</Text>
             </View>
@@ -127,7 +127,7 @@ export default function PortfolioScreen() {
         <View style={styles.gridRow}>
           <GlassCard style={styles.gridCard}>
             <View style={styles.cardHeaderRow}>
-              <Trophy size={16} color="#F59E0B" />
+              <Trophy size={18} color="#F59E0B" />
               <Text style={styles.cardHeaderTitle}>Leaderboard</Text>
             </View>
             <Text style={styles.rankBig}>#4</Text>
@@ -136,7 +136,7 @@ export default function PortfolioScreen() {
 
           <GlassCard style={styles.gridCard}>
             <View style={styles.cardHeaderRow}>
-              <CheckCircle2 size={16} color="#10B981" />
+              <CheckCircle2 size={18} color="#10B981" />
               <Text style={styles.cardHeaderTitle}>Sponsor Pool</Text>
             </View>
             <Text style={[styles.rankBig, { color: '#10B981' }]}>92%</Text>
@@ -197,7 +197,7 @@ export default function PortfolioScreen() {
           <GlassCard style={styles.badgeCard}>
             <View style={styles.badgeHeader}>
               <View style={styles.badgeIconCircle}>
-                <Star size={18} color="#F59E0B" fill="#F59E0B" />
+                <Star size={20} color="#F59E0B" fill="#F59E0B" />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.badgeTitle}>Climate Signal Reader</Text>
@@ -220,7 +220,7 @@ export default function PortfolioScreen() {
           <GlassCard style={styles.badgeCardLocked}>
             <View style={styles.badgeHeader}>
               <View style={styles.badgeIconLocked}>
-                <Lock size={18} color={COLORS.textMuted} />
+                <Lock size={20} color={COLORS.textMuted} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.badgeTitleLocked}>Diversification Pro</Text>
@@ -269,24 +269,25 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   headerArea: {
-    marginBottom: 12,
+    marginBottom: 24,
   },
   screenTitle: {
-    fontSize: 24,
-    fontWeight: '900',
+    fontSize: 26,
+    fontWeight: '800',
     color: COLORS.textBright,
     letterSpacing: -0.5,
   },
   screenDesc: {
-    fontSize: 12,
+    fontSize: 13,
     color: COLORS.textSecondary,
-    marginTop: 2,
-    lineHeight: 17,
+    marginTop: 4,
+    lineHeight: 20,
+    fontWeight: '500',
   },
   perfCard: {
     padding: 20,
-    gap: 14,
-    marginBottom: 14,
+    gap: 16,
+    marginBottom: 24,
     borderRadius: 20,
   },
   perfHeader: {
@@ -295,47 +296,48 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   perfLabel: {
-    fontSize: 10,
-    fontWeight: '800',
+    fontSize: 11,
+    fontWeight: '700',
     color: '#A7F3D0',
     letterSpacing: 1,
   },
   perfVal: {
-    fontSize: 32,
-    fontWeight: '900',
+    fontSize: 34,
+    fontWeight: '800',
     color: '#FFFFFF',
     marginVertical: 4,
     letterSpacing: -0.5,
   },
   pnlPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 8,
   },
   pnlPillText: {
-    fontSize: 11,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '700',
   },
   subGrid: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 12,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.15)',
-    paddingTop: 10,
+    paddingTop: 16,
   },
   subBox: {
     flex: 1,
   },
   subLabel: {
-    fontSize: 9,
+    fontSize: 10,
     color: '#A7F3D0',
-    fontWeight: '700',
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   subVal: {
-    fontSize: 13,
-    fontWeight: '800',
+    fontSize: 15,
+    fontWeight: '700',
     color: '#FFFFFF',
-    marginTop: 1,
+    marginTop: 4,
   },
   reportBtn: {
     flexDirection: 'row',
@@ -343,226 +345,267 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     backgroundColor: '#FFFFFF',
-    paddingVertical: 14,
-    borderRadius: 14,
-    shadowColor: '#0D5C46',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
+    paddingVertical: 16,
+    borderRadius: 16,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
     elevation: 2,
+    marginTop: 8,
   },
   reportBtnText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#0D5C46',
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#059669',
     letterSpacing: 0.5,
   },
   collectiveImpactCard: {
-    padding: 16,
-    gap: 10,
-    marginBottom: 12,
-    borderRadius: 18,
-    backgroundColor: 'rgba(253, 242, 248, 0.7)',
-    borderColor: 'rgba(236, 72, 153, 0.2)',
+    padding: 20,
+    gap: 12,
+    marginBottom: 24,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E8EDE6',
   },
   impactCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   impactCardTitle: {
-    fontSize: 14,
-    fontWeight: '900',
-    color: '#BE185D',
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#059669',
   },
   impactCardSub: {
-    fontSize: 11,
+    fontSize: 13,
     color: COLORS.textSecondary,
-    lineHeight: 16,
+    lineHeight: 20,
+    fontWeight: '500',
   },
   impactMetricsGrid: {
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
+    gap: 12,
+    marginTop: 8,
   },
   impactStatBox: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    padding: 10,
+    backgroundColor: '#FAFCFA',
+    padding: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#FBCFE8',
+    borderColor: '#E8EDE6',
     alignItems: 'center',
-    gap: 2,
+    gap: 4,
   },
   impactStatNum: {
-    fontSize: 13,
-    fontWeight: '900',
+    fontSize: 15,
+    fontWeight: '800',
     color: COLORS.textBright,
-    marginTop: 2,
+    marginTop: 4,
   },
   impactStatLabel: {
-    fontSize: 9,
+    fontSize: 11,
     color: COLORS.textMuted,
     textAlign: 'center',
+    fontWeight: '500',
   },
   gridRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 12,
+    gap: 20,
+    marginBottom: 24,
   },
   gridCard: {
     flex: 1,
-    padding: 14,
-    gap: 6,
-    borderRadius: 18,
+    padding: 20,
+    gap: 8,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E8EDE6',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 10,
+    elevation: 1,
   },
   cardHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   cardHeaderTitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '700',
     color: COLORS.textBright,
   },
   rankBig: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 32,
+    fontWeight: '800',
     color: '#F59E0B',
     letterSpacing: -0.5,
   },
   rankSub: {
-    fontSize: 10,
+    fontSize: 12,
     color: COLORS.textMuted,
-    lineHeight: 14,
+    lineHeight: 18,
+    fontWeight: '500',
   },
   sectionHeaderRow: {
-    marginTop: 14,
-    marginBottom: 8,
+    marginTop: 24,
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '800',
     color: COLORS.textBright,
   },
   emptyCard: {
-    padding: 20,
+    padding: 24,
     alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E8EDE6',
   },
   emptyTitle: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '700',
     color: COLORS.textBright,
   },
   emptySub: {
-    fontSize: 11,
+    fontSize: 13,
     color: COLORS.textMuted,
-    marginTop: 2,
+    marginTop: 4,
+    fontWeight: '500',
+    lineHeight: 20,
   },
   positionsList: {
-    gap: 6,
-    marginBottom: 12,
+    gap: 16,
+    marginBottom: 24,
   },
   posRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 14,
+    padding: 20,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E4EAE2',
-    shadowColor: '#102A1F',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
+    borderColor: '#E8EDE6',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 10,
     elevation: 1,
   },
   posLeft: {
     flex: 1,
   },
   posSymbol: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '800',
     color: COLORS.textBright,
   },
   posName: {
-    fontSize: 11,
+    fontSize: 13,
     color: COLORS.textSecondary,
+    fontWeight: '500',
+    marginTop: 2,
   },
   posMeta: {
-    fontSize: 10,
+    fontSize: 12,
     color: COLORS.textMuted,
+    marginTop: 4,
+    fontWeight: '500',
   },
   posRight: {
     alignItems: 'flex-end',
   },
   posTotal: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '800',
     color: COLORS.textBright,
   },
   posPnl: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
+    marginTop: 4,
   },
   badgeList: {
-    gap: 8,
+    gap: 16,
   },
   badgeCard: {
-    padding: 14,
-    gap: 8,
+    padding: 20,
+    gap: 12,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E8EDE6',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 10,
+    elevation: 1,
   },
   badgeHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
   },
   badgeIconCircle: {
-    padding: 8,
-    borderRadius: 20,
+    padding: 10,
+    borderRadius: 12,
     backgroundColor: 'rgba(245, 158, 11, 0.12)',
   },
   badgeTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '800',
     color: COLORS.textBright,
   },
   badgeDesc: {
-    fontSize: 11,
+    fontSize: 13,
     color: COLORS.textSecondary,
+    lineHeight: 20,
+    fontWeight: '500',
   },
   careerLinkBtn: {
     alignSelf: 'flex-start',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
-    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderRadius: 8,
     marginTop: 4,
   },
   careerLinkText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: COLORS.emeraldBright,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#059669',
   },
   badgeCardLocked: {
-    padding: 14,
-    opacity: 0.5,
+    padding: 20,
+    opacity: 0.6,
+    borderRadius: 20,
+    backgroundColor: '#FAFCFA',
+    borderWidth: 1,
+    borderColor: '#E8EDE6',
   },
   badgeIconLocked: {
-    padding: 8,
-    borderRadius: 20,
+    padding: 10,
+    borderRadius: 12,
     backgroundColor: '#F1F5F0',
   },
   badgeTitleLocked: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '700',
     color: COLORS.textMuted,
   },
   badgeDescLocked: {
-    fontSize: 11,
+    fontSize: 13,
     color: COLORS.textMuted,
+    lineHeight: 20,
+    fontWeight: '500',
   },
 });

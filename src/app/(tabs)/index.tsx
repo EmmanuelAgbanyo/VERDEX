@@ -80,7 +80,7 @@ export default function DashboardScreen() {
             accessibilityLabel="Markets, Trade Green Assets"
           >
             <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(16, 185, 129, 0.12)' }]}>
-              <BarChart2 size={18} color="#10B981" />
+              <BarChart2 size={20} color="#10B981" />
             </View>
             <Text style={styles.quickDockTitle}>Markets</Text>
             <Text style={styles.quickDockSub}>Trade Assets</Text>
@@ -93,7 +93,7 @@ export default function DashboardScreen() {
             accessibilityLabel="Green Academy, Learn and Earn XP"
           >
             <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(59, 130, 246, 0.12)' }]}>
-              <BookOpen size={18} color="#3B82F6" />
+              <BookOpen size={20} color="#3B82F6" />
             </View>
             <Text style={styles.quickDockTitle}>Academy</Text>
             <Text style={styles.quickDockSub}>+{xp} XP</Text>
@@ -106,7 +106,7 @@ export default function DashboardScreen() {
             accessibilityLabel="Portfolio, Holdings"
           >
             <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(245, 158, 11, 0.12)' }]}>
-              <Briefcase size={18} color="#F59E0B" />
+              <Briefcase size={20} color="#F59E0B" />
             </View>
             <Text style={styles.quickDockTitle}>Portfolio</Text>
             <Text style={styles.quickDockSub}>Holdings</Text>
@@ -119,12 +119,14 @@ export default function DashboardScreen() {
             accessibilityLabel="1,540 Reached, Community Impact"
           >
             <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(236, 72, 153, 0.12)' }]}>
-              <Heart size={18} color="#EC4899" />
+              <Heart size={20} color="#EC4899" />
             </View>
             <Text style={styles.quickDockTitle}>Impact</Text>
             <Text style={styles.quickDockSub}>1,540 Reached</Text>
           </Pressable>
         </View>
+
+        <View style={styles.sectionDivider} />
 
         {/* LIVE CLIMATE SENSORS */}
         <View
@@ -140,9 +142,16 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.signalsScroll}>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.signalsScroll}
+          contentContainerStyle={styles.signalsScrollContent}
+        >
           {signals.map((sig) => (
-            <SignalBadge key={sig.id} signal={sig} />
+            <View key={sig.id} style={styles.signalCardWrapper}>
+              <SignalBadge signal={sig} />
+            </View>
           ))}
         </ScrollView>
 
@@ -262,40 +271,41 @@ export default function DashboardScreen() {
         ) : (
           <GlassCard style={styles.ordersCardWrapper}>
             <View style={styles.ordersList}>
-              {orders.slice(0, 3).map((ord) => (
-                <View key={ord.id} style={styles.orderRow}>
-                  <View style={styles.orderLeft}>
-                    <Text
-                      style={[
-                        styles.orderSide,
-                        { color: ord.side === 'buy' ? COLORS.emeraldBright : COLORS.redAlert },
-                      ]}
-                    >
-                      {ord.side.toUpperCase()}
-                    </Text>
-                    <View>
-                      <Text style={styles.orderSymbol}>{ord.symbol}</Text>
-                      <Text style={styles.orderMeta}>
-                        {ord.quantity} units @ GH₵{ord.price.toFixed(2)}
+              {orders.slice(0, 3).map((ord, idx) => (
+                <React.Fragment key={ord.id}>
+                  <View style={styles.orderRow}>
+                    <View style={styles.orderLeft}>
+                      <Text
+                        style={[
+                          styles.orderSide,
+                          { color: ord.side === 'buy' ? COLORS.emeraldBright : COLORS.redAlert },
+                        ]}
+                      >
+                        {ord.side.toUpperCase()}
                       </Text>
+                      <View>
+                        <Text style={styles.orderSymbol}>{ord.symbol}</Text>
+                        <Text style={styles.orderMeta}>
+                          {ord.quantity} units @ GH₵{ord.price.toFixed(2)}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.orderRight}>
+                      <Text style={styles.orderVal}>GH₵{ord.totalValue.toFixed(2)}</Text>
+                      <Text style={styles.orderStatus}>{ord.status.toUpperCase()}</Text>
                     </View>
                   </View>
-                  <View style={styles.orderRight}>
-                    <Text style={styles.orderVal}>GH₵{ord.totalValue.toFixed(2)}</Text>
-                    <Text style={styles.orderStatus}>{ord.status.toUpperCase()}</Text>
-                  </View>
-                </View>
+                  {idx < Math.min(orders.length - 1, 2) && <View style={styles.orderDivider} />}
+                </React.Fragment>
               ))}
             </View>
           </GlassCard>
         )}
 
         {/* CLEAN FOOTER */}
-        <View style={styles.disclaimerBox}>
-          <Text style={styles.disclaimerText}>
-            VERDEX Green Economy Trading Platform • Accra Node
-          </Text>
-        </View>
+        <Text style={styles.disclaimerText}>
+          VERDEX Green Economy Trading Platform • Accra Node
+        </Text>
       </ScrollView>
     </View>
   );
@@ -320,14 +330,14 @@ const styles = StyleSheet.create({
   blobGreen: {
     width: 300,
     height: 300,
-    backgroundColor: 'rgba(16, 185, 129, 0.06)',
+    backgroundColor: 'rgba(16, 185, 129, 0.04)',
     top: -80,
     left: -80,
   },
   blobAmber: {
     width: 240,
     height: 240,
-    backgroundColor: 'rgba(245, 158, 11, 0.04)',
+    backgroundColor: 'rgba(245, 158, 11, 0.03)',
     top: 380,
     right: -60,
   },
@@ -343,9 +353,10 @@ const styles = StyleSheet.create({
   },
   quickDockRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 12,
     marginHorizontal: 16,
-    marginVertical: 10,
+    marginTop: 24,
+    marginBottom: 32,
   },
   quickDockBtn: {
     flex: 1,
@@ -353,7 +364,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#E4EAE2',
-    padding: 10,
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingHorizontal: 8,
     alignItems: 'center',
     shadowColor: '#102A1F',
     shadowOffset: { width: 0, height: 2 },
@@ -362,28 +375,36 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   quickDockIcon: {
-    padding: 8,
-    borderRadius: 12,
-    marginBottom: 6,
+    padding: 10,
+    borderRadius: 16,
+    marginBottom: 10,
   },
   quickDockTitle: {
     fontSize: 12,
     fontWeight: '800',
     color: '#1A2E26',
+    textAlign: 'center',
   },
   quickDockSub: {
     fontSize: 9,
     fontWeight: '600',
     color: '#7C8E84',
-    marginTop: 1,
+    marginTop: 2,
+    textAlign: 'center',
+  },
+  sectionDivider: {
+    height: 1,
+    backgroundColor: 'rgba(228, 234, 226, 0.4)',
+    marginHorizontal: 16,
+    marginTop: 8,
   },
   sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginTop: 18,
-    marginBottom: 8,
+    marginTop: 24,
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 18,
@@ -413,14 +434,20 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   signalsScroll: {
-    paddingLeft: 16,
-    marginBottom: 12,
+    marginBottom: 32,
+  },
+  signalsScrollContent: {
+    paddingHorizontal: 16,
+    paddingRight: 32,
+  },
+  signalCardWrapper: {
+    marginRight: 16,
   },
   spotlightCard: {
     marginHorizontal: 16,
-    padding: 16,
-    gap: 12,
-    marginBottom: 12,
+    padding: 20,
+    gap: 16,
+    marginBottom: 32,
     borderRadius: 20,
   },
   spotlightHeader: {
@@ -442,7 +469,7 @@ const styles = StyleSheet.create({
   signalGaugeBadge: {
     backgroundColor: 'rgba(245, 158, 11, 0.15)',
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: 'rgba(245, 158, 11, 0.3)',
@@ -458,29 +485,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   spotlightSymbol: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: -0.3,
   },
   spotlightName: {
-    fontSize: 12,
+    fontSize: 13,
     color: 'rgba(255, 255, 255, 0.75)',
-    marginTop: 1,
+    marginTop: 2,
   },
   spotlightRegionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 4,
+    marginTop: 6,
   },
   spotlightRegionText: {
-    fontSize: 10,
+    fontSize: 11,
     color: '#34D399',
     fontWeight: '600',
   },
   spotlightPrice: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: -0.3,
@@ -490,12 +517,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: 6,
-    marginTop: 4,
+    marginTop: 6,
   },
   spotlightChangeText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '800',
   },
   spotlightCta: {
@@ -503,41 +530,46 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.12)',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
     marginTop: 4,
   },
   spotlightCtaText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   researchWidget: {
     marginHorizontal: 16,
-    padding: 18,
-    gap: 14,
-    backgroundColor: 'rgba(230, 244, 234, 0.75)',
-    borderColor: 'rgba(13, 92, 70, 0.12)',
-    borderWidth: 1,
-    borderRadius: 20,
-    shadowColor: '#0D5C46',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
+    padding: 20,
+    gap: 16,
+    backgroundColor: '#FFFFFF',
+    borderLeftWidth: 3,
+    borderLeftColor: '#10B981',
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(228, 234, 226, 0.6)',
+    borderRadius: 16,
+    shadowColor: '#102A1F',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
     elevation: 2,
+    marginBottom: 32,
   },
   researchWidgetHeader: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 14,
     alignItems: 'flex-start',
   },
   iconCircle: {
-    padding: 10,
-    borderRadius: 14,
-    backgroundColor: 'rgba(13, 92, 70, 0.08)',
+    padding: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
   },
   widgetTitleRow: {
     flexDirection: 'row',
@@ -552,7 +584,7 @@ const styles = StyleSheet.create({
   badgePill: {
     backgroundColor: '#0D5C46',
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: 8,
   },
   badgePillText: {
@@ -561,10 +593,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   widgetSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#286F58',
-    marginTop: 2,
-    lineHeight: 16,
+    marginTop: 4,
+    lineHeight: 18,
   },
   actionButton: {
     flexDirection: 'row',
@@ -590,80 +622,83 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     alignItems: 'center',
     padding: 24,
-    gap: 8,
+    gap: 12,
+    marginBottom: 32,
   },
   emptyOrdersText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
     color: COLORS.textBright,
   },
   emptyOrdersSub: {
-    fontSize: 11,
+    fontSize: 12,
     color: COLORS.textMuted,
     textAlign: 'center',
+    lineHeight: 18,
   },
   ordersCardWrapper: {
     marginHorizontal: 16,
-    padding: 4,
+    padding: 8,
+    marginBottom: 32,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(228, 234, 226, 0.6)',
   },
   ordersList: {
-    gap: 6,
+    gap: 0,
   },
   orderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(228, 234, 226, 0.5)',
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+  },
+  orderDivider: {
+    height: 1,
+    backgroundColor: 'rgba(228, 234, 226, 0.5)',
+    marginHorizontal: 12,
   },
   orderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
   },
   orderSide: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '900',
   },
   orderSymbol: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '800',
     color: COLORS.textBright,
   },
   orderMeta: {
-    fontSize: 11,
+    fontSize: 12,
     color: COLORS.textMuted,
+    marginTop: 2,
   },
   orderRight: {
     alignItems: 'flex-end',
   },
   orderVal: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '800',
     color: COLORS.textBright,
   },
   orderStatus: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '700',
     color: COLORS.emeraldBright,
-  },
-  disclaimerBox: {
-    marginTop: 24,
-    marginHorizontal: 16,
-    padding: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.45)',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(228, 234, 226, 0.45)',
+    marginTop: 2,
   },
   disclaimerText: {
-    fontSize: 10,
+    fontSize: 11,
     color: COLORS.textMuted,
     textAlign: 'center',
     letterSpacing: 0.2,
-    lineHeight: 14,
+    marginTop: 8,
+    marginBottom: 32,
   },
 });

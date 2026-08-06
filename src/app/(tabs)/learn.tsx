@@ -881,14 +881,14 @@ const styles = StyleSheet.create({
   blobBlue: {
     width: 260,
     height: 260,
-    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+    backgroundColor: 'rgba(59, 130, 246, 0.04)',
     top: -60,
     right: -60,
   },
   blobGreen: {
     width: 220,
     height: 220,
-    backgroundColor: 'rgba(16, 185, 129, 0.06)',
+    backgroundColor: 'rgba(16, 185, 129, 0.04)',
     top: 400,
     left: -50,
   },
@@ -913,12 +913,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.textSecondary,
     marginTop: 2,
-    lineHeight: 17,
+    lineHeight: 18,
   },
   duoHeaderCard: {
-    padding: 16,
+    padding: 20,
     borderRadius: 20,
-    gap: 12,
+    gap: 16,
     marginBottom: 12,
   },
   duoTopStatsRow: {
@@ -931,10 +931,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     backgroundColor: '#FFFFFF',
-    padding: 10,
+    padding: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E4EAE2',
+    borderColor: '#E8EDE6',
   },
   duoStreakNum: {
     fontSize: 13,
@@ -951,10 +951,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     backgroundColor: '#FFFFFF',
-    padding: 10,
+    padding: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E4EAE2',
+    borderColor: '#E8EDE6',
   },
   duoXpNum: {
     fontSize: 13,
@@ -1022,7 +1022,7 @@ const styles = StyleSheet.create({
   duoCalDotInactive: {
     backgroundColor: '#F1F5F0',
     borderWidth: 1,
-    borderColor: '#E4EAE2',
+    borderColor: '#E8EDE6',
   },
   duoCalText: {
     fontSize: 10,
@@ -1037,9 +1037,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   storyCard: {
-    width: 260,
-    padding: 14,
-    marginRight: 10,
+    width: 280,
+    padding: 16,
+    marginRight: 12,
     gap: 8,
     borderRadius: 16,
     backgroundColor: 'rgba(230, 244, 234, 0.7)',
@@ -1078,20 +1078,20 @@ const styles = StyleSheet.create({
   storyQuoteText: {
     fontSize: 11,
     color: '#1A2E26',
-    lineHeight: 15,
+    lineHeight: 18,
     fontStyle: 'italic',
   },
   sectionHeaderRow: {
-    marginTop: 14,
-    marginBottom: 8,
+    marginTop: 28,
+    marginBottom: 14,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 17,
+    fontWeight: '900',
     color: COLORS.textBright,
   },
   questsContainer: {
-    gap: 8,
+    gap: 12,
     marginBottom: 12,
   },
   questCard: {
@@ -1099,10 +1099,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     backgroundColor: '#FFFFFF',
-    padding: 12,
+    padding: 16,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E4EAE2',
+    borderColor: '#E8EDE6',
     shadowColor: '#102A1F',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.02,
@@ -1157,7 +1157,7 @@ const styles = StyleSheet.create({
   accraBody: {
     fontSize: 11,
     color: COLORS.textSecondary,
-    lineHeight: 15,
+    lineHeight: 18,
   },
   certCard: {
     padding: 14,
@@ -1197,12 +1197,12 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   courseCard: {
-    width: 200,
+    width: 220,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 14,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#E4EAE2',
+    borderColor: '#E8EDE6',
     gap: 6,
   },
   courseCardActive: {
@@ -1239,7 +1239,7 @@ const styles = StyleSheet.create({
   courseDesc: {
     fontSize: 10,
     color: COLORS.textMuted,
-    lineHeight: 14,
+    lineHeight: 18,
   },
   courseFooter: {
     flexDirection: 'row',
@@ -1258,7 +1258,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   roadmapCard: {
-    padding: 16,
+    padding: 20,
     marginBottom: 12,
   },
   lessonsContainer: {
@@ -1279,17 +1279,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#10B981',
   },
   connectorLocked: {
-    backgroundColor: '#E4EAE2',
+    backgroundColor: '#E8EDE6',
   },
   duoLessonButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    padding: 12,
+    padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E4EAE2',
+    borderColor: '#E8EDE6',
   },
   duoLessonButtonActive: {
     borderColor: '#10B981',
@@ -1359,14 +1359,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   sandboxCard: {
-    padding: 16,
+    padding: 20,
     gap: 12,
     marginBottom: 12,
   },
   sandboxDescText: {
     fontSize: 11,
     color: COLORS.textSecondary,
-    lineHeight: 16,
+    lineHeight: 18,
   },
   sliderGroup: {
     gap: 6,
@@ -1393,11 +1393,11 @@ const styles = StyleSheet.create({
   segmentBtn: {
     flex: 1,
     backgroundColor: '#F1F5F0',
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius: 8,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E4EAE2',
+    borderColor: '#E8EDE6',
   },
   segmentBtnActive: {
     backgroundColor: '#E11D48',
@@ -1422,7 +1422,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E4EAE2',
+    borderColor: '#E8EDE6',
     alignItems: 'center',
   },
   sandboxStatVal: {
@@ -1437,8 +1437,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   skillMeterCard: {
-    padding: 16,
-    gap: 12,
+    padding: 20,
+    gap: 16,
     marginBottom: 12,
   },
   meterRow: {
@@ -1459,7 +1459,7 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
   },
   meterTrack: {
-    height: 8,
+    height: 10,
     backgroundColor: '#F1F5F0',
     borderRadius: 4,
     overflow: 'hidden',
@@ -1478,7 +1478,7 @@ const styles = StyleSheet.create({
   certModalCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
-    padding: 20,
+    padding: 24,
     width: '100%',
     maxWidth: 500,
     gap: 16,
@@ -1487,7 +1487,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#10B981',
     borderRadius: 16,
-    padding: 16,
+    padding: 20,
   },
   certInnerDecoration: {
     alignItems: 'center',
@@ -1515,13 +1515,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.textSecondary,
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 18,
     marginTop: 6,
   },
   certLineSeparator: {
     width: '80%',
     height: 1,
-    backgroundColor: '#E4EAE2',
+    backgroundColor: '#E8EDE6',
     marginVertical: 12,
   },
   certSignaturesRow: {
