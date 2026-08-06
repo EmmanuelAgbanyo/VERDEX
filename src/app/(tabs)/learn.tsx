@@ -297,6 +297,8 @@ export const IMPACT_STORIES = [
   },
 ];
 
+import { DataSaverToggle, DataSaverBanner } from '@/components/DataSaverToggle';
+
 export default function LearnScreen() {
   const {
     xp,
@@ -306,6 +308,7 @@ export default function LearnScreen() {
     dailyChallenge,
     answerDailyChallenge,
     signals,
+    isDataSaver,
   } = useApp();
 
   const router = useRouter();
@@ -369,16 +372,24 @@ export default function LearnScreen() {
   const { cocoaRiskPct, solarOutputPct } = calcSandboxImpact(sandboxTemp);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.blurBlob, styles.blobBlue]} />
-      <View style={[styles.blurBlob, styles.blobGreen]} />
+    <View style={[styles.container, isDataSaver && styles.containerDataSaver]}>
+      <DataSaverBanner />
+      {!isDataSaver && (
+        <>
+          <View style={[styles.blurBlob, styles.blobBlue]} />
+          <View style={[styles.blurBlob, styles.blobGreen]} />
+        </>
+      )}
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         <View style={{ maxWidth: 840, width: '100%', alignSelf: 'center' }}>
           {/* Screen Header */}
           <View style={styles.headerArea}>
-            <Text style={styles.screenTitle}>Green Academy</Text>
-            <Text style={styles.screenDesc}>
+            <View style={styles.titleRowWithToggle}>
+              <Text style={[styles.screenTitle, isDataSaver && { color: '#FFFFFF' }]}>Green Academy</Text>
+              <DataSaverToggle compact />
+            </View>
+            <Text style={[styles.screenDesc, isDataSaver && { color: '#CCCCCC' }]}>
               Master climate data analysis, complete daily quests, and earn verified credentials.
             </Text>
           </View>
@@ -1557,5 +1568,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '800',
     color: '#FFFFFF',
+  },
+  titleRowWithToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  containerDataSaver: {
+    backgroundColor: '#000000',
   },
 });

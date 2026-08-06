@@ -5,6 +5,7 @@ import { AssetCard } from '@/components/AssetCard';
 import { GlassCard } from '@/components/GlassCard';
 import { COLORS, LAYOUT } from '@/constants/theme';
 import { Search, Filter, Star, Zap, TrendingUp, SlidersHorizontal, SearchX } from 'lucide-react-native';
+import { DataSaverToggle, DataSaverBanner } from '@/components/DataSaverToggle';
 import { useRouter } from 'expo-router';
 import { AssetCategory } from '@/types';
 
@@ -15,6 +16,7 @@ export default function MarketsScreen() {
     toggleWatchlist,
     hasUnlockedThesis,
     isRefreshing,
+    isDataSaver,
     refreshData,
   } = useApp();
 
@@ -54,7 +56,8 @@ export default function MarketsScreen() {
   const highestSignal = [...assets].sort((a, b) => b.signalScore - a.signalScore)[0];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDataSaver && styles.containerDataSaver]}>
+      <DataSaverBanner />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
@@ -69,8 +72,11 @@ export default function MarketsScreen() {
       >
         {/* Screen Header */}
         <View style={styles.headerArea}>
-          <Text style={styles.screenTitle}>Markets</Text>
-          <Text style={styles.screenDesc}>
+          <View style={styles.titleRowWithToggle}>
+            <Text style={[styles.screenTitle, isDataSaver && { color: '#FFFFFF' }]}>Markets</Text>
+            <DataSaverToggle compact />
+          </View>
+          <Text style={[styles.screenDesc, isDataSaver && { color: '#CCCCCC' }]}>
             Real-time Ghanaian climate signals driving verified green asset valuations.
           </Text>
         </View>
@@ -433,5 +439,14 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  titleRowWithToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  containerDataSaver: {
+    backgroundColor: '#000000',
   },
 });

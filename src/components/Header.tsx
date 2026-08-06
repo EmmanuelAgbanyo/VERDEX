@@ -4,6 +4,7 @@ import { COLORS, LAYOUT } from '@/constants/theme';
 import { TrendingUp, Radio } from 'lucide-react-native';
 import { BellSvg, MapPinSvg } from './SvgIcons';
 import { GlassCard } from './GlassCard';
+import { DataSaverToggle } from './DataSaverToggle';
 
 interface HeaderProps {
   portfolioValue: number;
@@ -24,6 +25,8 @@ export const Header: React.FC<HeaderProps> = ({ portfolioValue, sessionTimeRemai
         </View>
 
         <View style={styles.topRightGroup}>
+          <DataSaverToggle compact />
+
           <View style={styles.locationTag}>
             <MapPinSvg size={12} color="#10B981" />
             <Text style={styles.locationText}>Accra, GH</Text>

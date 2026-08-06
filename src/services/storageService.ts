@@ -12,7 +12,26 @@ const KEYS = {
   COMPLETED_LESSONS: '@verdex_completed_lessons',
   SKILL_METERS: '@verdex_skill_meters',
   DAILY_CHALLENGE: '@verdex_daily_challenge',
+  DATA_SAVER: '@verdex_data_saver',
 };
+
+export async function saveDataSaver(isDataSaver: boolean): Promise<void> {
+  try {
+    await AsyncStorage.setItem(KEYS.DATA_SAVER, JSON.stringify(isDataSaver));
+  } catch (e) {
+    console.error('Error saving data saver setting', e);
+  }
+}
+
+export async function loadDataSaver(): Promise<boolean | null> {
+  try {
+    const val = await AsyncStorage.getItem(KEYS.DATA_SAVER);
+    return val !== null ? JSON.parse(val) : null;
+  } catch (e) {
+    console.error('Error loading data saver setting', e);
+    return null;
+  }
+}
 
 export async function saveCashBalance(cash: number): Promise<void> {
   try {

@@ -29,6 +29,7 @@ import {
   ChevronUp,
   Info,
 } from 'lucide-react-native';
+import { DataSaverToggle, DataSaverBanner } from '@/components/DataSaverToggle';
 import { InvestmentThesis } from '@/types';
 
 export default function AssetDetailScreen() {
@@ -43,6 +44,7 @@ export default function AssetDetailScreen() {
     executeTrade,
     getThesisForAsset,
     hasUnlockedThesis,
+    isDataSaver,
   } = useApp();
 
   const asset = assets.find((a) => a.id === id) || assets[0];
@@ -163,7 +165,8 @@ export default function AssetDetailScreen() {
   const timeframes: ('1D' | '1W' | '1M' | '1Y' | 'ALL')[] = ['1D', '1W', '1M', '1Y', 'ALL'];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDataSaver && styles.containerDataSaver]}>
+      <DataSaverBanner />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Header Bar */}
         <View style={styles.headerRow}>
@@ -173,13 +176,15 @@ export default function AssetDetailScreen() {
             accessibilityLabel="Go back to markets list"
             accessibilityRole="button"
           >
-            <ArrowLeft size={20} color={COLORS.textBright} />
+            <ArrowLeft size={20} color={isDataSaver ? '#FFFFFF' : COLORS.textBright} />
           </Pressable>
 
           <View style={styles.headerTitleGroup}>
-            <Text style={styles.symbolText}>{asset.symbol}</Text>
-            <Text style={styles.nameSub}>{asset.name}</Text>
+            <Text style={[styles.symbolText, isDataSaver && { color: '#FFFFFF' }]}>{asset.symbol}</Text>
+            <Text style={[styles.nameSub, isDataSaver && { color: '#CCCCCC' }]}>{asset.name}</Text>
           </View>
+
+          <DataSaverToggle compact />
 
           <Pressable
             onPress={() => toggleWatchlist(asset.id)}
@@ -199,7 +204,7 @@ export default function AssetDetailScreen() {
         <View style={styles.titleInfoBlock}>
           <View style={styles.titleLeft}>
             <Text style={styles.screenTag}>{asset.regionLabel}</Text>
-            <Text style={styles.priceHeading}>GH₵{asset.price.toFixed(2)}</Text>
+            <Text style={[styles.priceHeading, isDataSaver && { color: '#FFFFFF' }]}>GH₵{asset.price.toFixed(2)}</Text>
           </View>
           <View
             style={[
@@ -219,15 +224,15 @@ export default function AssetDetailScreen() {
         </View>
 
         {/* SESSION METRICS BAR */}
-        <View style={styles.sessionStatsBar}>
+        <View style={[styles.sessionStatsBar, isDataSaver && { backgroundColor: '#111111', borderColor: '#333333' }]}>
           <View style={styles.sessionStatItem}>
-            <Text style={styles.sessionStatLabel}>SESSION HIGH</Text>
-            <Text style={styles.sessionStatVal}>GH₵{(maxVal * 0.995).toFixed(2)}</Text>
+            <Text style={[styles.sessionStatLabel, isDataSaver && { color: '#9CA3AF' }]}>SESSION HIGH</Text>
+            <Text style={[styles.sessionStatVal, isDataSaver && { color: '#FFFFFF' }]}>GH₵{(maxVal * 0.995).toFixed(2)}</Text>
           </View>
           <View style={styles.sessionStatDivider} />
           <View style={styles.sessionStatItem}>
-            <Text style={styles.sessionStatLabel}>SESSION LOW</Text>
-            <Text style={styles.sessionStatVal}>GH₵{(minVal * 1.005).toFixed(2)}</Text>
+            <Text style={[styles.sessionStatLabel, isDataSaver && { color: '#9CA3AF' }]}>SESSION LOW</Text>
+            <Text style={[styles.sessionStatVal, isDataSaver && { color: '#FFFFFF' }]}>GH₵{(minVal * 1.005).toFixed(2)}</Text>
           </View>
           <View style={styles.sessionStatDivider} />
           <View style={styles.sessionStatItem}>
@@ -393,6 +398,7 @@ export default function AssetDetailScreen() {
             </View>
           </View>
         </GlassCard>
+        )}
 
         {/* POINT 2: IMPACT BREAKDOWN CARD WITH 3 KEY METRICS */}
         <View style={styles.sectionHeaderRow}>
@@ -988,5 +994,59 @@ const styles = StyleSheet.create({
   },
   tradeBtnTextDisabled: {
     color: COLORS.textMuted,
+  },
+  containerDataSaver: {
+    backgroundColor: '#000000',
+  },
+  dataSaverChartCard: {
+    backgroundColor: '#0A0A0A',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#333333',
+    gap: 12,
+    marginVertical: 12,
+  },
+  dataSaverTableHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  dataSaverTableTitle: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#10B981',
+    letterSpacing: 0.5,
+  },
+  dataSaverGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  dataSaverCell: {
+    flex: 1,
+    minWidth: '45%',
+    backgroundColor: '#121212',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#262626',
+  },
+  dataSaverLabel: {
+    fontSize: 10,
+    color: '#9CA3AF',
+    fontWeight: '600',
+  },
+  dataSaverValText: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    marginTop: 2,
+  },
+  dataSaverFootnote: {
+    fontSize: 10,
+    color: '#9CA3AF',
+    lineHeight: 14,
+    fontStyle: 'italic',
   },
 });

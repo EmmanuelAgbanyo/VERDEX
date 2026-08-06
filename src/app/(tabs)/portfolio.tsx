@@ -6,6 +6,7 @@ import { GreenPortfolioReportModal } from '@/components/GreenPortfolioReportModa
 import { CareerOverlayModal } from '@/components/CareerOverlayModal';
 import { COLORS, LAYOUT } from '@/constants/theme';
 import { Briefcase, Award, ArrowUpRight, ShieldCheck, Star, PieChart, Trophy, FileText, CheckCircle2, Lock, Heart, Users, TreePine, Shield } from 'lucide-react-native';
+import { DataSaverToggle, DataSaverBanner } from '@/components/DataSaverToggle';
 import { useRouter } from 'expo-router';
 
 export default function PortfolioScreen() {
@@ -15,6 +16,7 @@ export default function PortfolioScreen() {
     theses,
     skillMeters,
     isRefreshing,
+    isDataSaver,
     refreshData,
     getPortfolioValue,
   } = useApp();
@@ -28,7 +30,8 @@ export default function PortfolioScreen() {
   const netPnlPercent = (netPnl / 10000) * 100;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDataSaver && styles.containerDataSaver]}>
+      <DataSaverBanner />
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
@@ -41,10 +44,12 @@ export default function PortfolioScreen() {
           />
         }
       >
-        {/* Screen Header */}
         <View style={styles.headerArea}>
-          <Text style={styles.screenTitle}>Portfolio</Text>
-          <Text style={styles.screenDesc}>
+          <View style={styles.titleRowWithToggle}>
+            <Text style={[styles.screenTitle, isDataSaver && { color: '#FFFFFF' }]}>Portfolio</Text>
+            <DataSaverToggle compact />
+          </View>
+          <Text style={[styles.screenDesc, isDataSaver && { color: '#CCCCCC' }]}>
             Track position performance, sponsor readiness, and verified green finance badges.
           </Text>
         </View>
@@ -607,5 +612,14 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     lineHeight: 20,
     fontWeight: '500',
+  },
+  titleRowWithToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  containerDataSaver: {
+    backgroundColor: '#000000',
   },
 });

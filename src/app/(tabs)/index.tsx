@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Heart,
 } from 'lucide-react-native';
+import { DataSaverBanner } from '@/components/DataSaverToggle';
 import { useRouter } from 'expo-router';
 
 export default function DashboardScreen() {
@@ -38,6 +39,7 @@ export default function DashboardScreen() {
     dailyChallenge,
     sessionTimeRemaining,
     isRefreshing,
+    isDataSaver,
     refreshData,
     getPortfolioValue,
   } = useApp();
@@ -51,10 +53,15 @@ export default function DashboardScreen() {
   const isSpotlightPositive = spotlightAsset ? spotlightAsset.change24h >= 0 : true;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDataSaver && styles.containerDataSaver]}>
+      <DataSaverBanner />
       {/* Dynamic Ambient Background Blobs */}
-      <View style={[styles.blurBlob, styles.blobGreen]} />
-      <View style={[styles.blurBlob, styles.blobAmber]} />
+      {!isDataSaver && (
+        <>
+          <View style={[styles.blurBlob, styles.blobGreen]} />
+          <View style={[styles.blurBlob, styles.blobAmber]} />
+        </>
+      )}
 
       <ScrollView
         style={styles.scroll}
@@ -700,5 +707,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     marginTop: 8,
     marginBottom: 32,
+  },
+  containerDataSaver: {
+    backgroundColor: '#000000',
   },
 });

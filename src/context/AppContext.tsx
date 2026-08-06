@@ -25,6 +25,8 @@ import {
   loadWatchlist,
   saveLearnState,
   loadLearnState,
+  saveDataSaver,
+  loadDataSaver,
 } from '@/services/storageService';
 
 interface AppContextType {
@@ -42,7 +44,9 @@ interface AppContextType {
   dailyChallenge: DailyChallenge;
   sessionTimeRemaining: number; // in seconds
   isRefreshing: boolean;
+  isDataSaver: boolean;
   
+  toggleDataSaver: () => void;
   refreshData: () => Promise<void>;
   toggleWatchlist: (assetId: string) => void;
   submitThesis: (assetId: string, text: string, communityPurpose?: string) => { valid: boolean; feedback: string; thesis?: InvestmentThesis };
@@ -122,11 +126,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
   // Session countdown (28 mins 45 secs = 1725s)
   const [sessionTimeRemaining, setSessionTimeRemaining] = useState<number>(1725);
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  // Data Saver 2G mode
+  const [isDataSaver, setIsDataSaver] = useState<boolean>(false);
 
   // Load stored state on mount
   useEffect(() => {
     (async () => {
+      const savedDataSaver = await loadDataSaver();
+      if (savedDataSaver !== null) setIsDataSaver(savedDataSaver);
+
       const savedCash = await loadCashBalance();
       if (savedCash !== null) setCash(savedCash);
 
@@ -150,6 +158,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSkillMeters(savedLearn.skillMeters);
       }
     })();
+  }, []);
+
+  const toggleDataSaver = useCallback(() => {
+    setIsDataSaver((prev) => {
+      const next = !prev;
+      saveDataSaver(next);
+      return next;
+    });
   }, []);
 
   // 30-minute session countdown timer
@@ -376,6 +392,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         dailyChallenge,
         sessionTimeRemaining,
         isRefreshing,
+        isDataSaver,
+        toggleDataSaver,
         refreshData,
         toggleWatchlist,
         submitThesis,
