@@ -35,6 +35,19 @@ export interface PricePoint {
   price: number;
 }
 
+export interface ImpactBreakdown {
+  peopleReached: string;
+  environmentalBenefit: string;
+  jobsSupported: string;
+}
+
+export interface CommunityStory {
+  personName: string;
+  role: string;
+  location: string;
+  storyText: string;
+}
+
 export interface GreenAsset {
   id: string;
   symbol: string;
@@ -42,7 +55,7 @@ export interface GreenAsset {
   region: EcologicalRegion;
   regionLabel: string;
   category: AssetCategory;
-  price: number; // Virtual capital price in USD
+  price: number; // Virtual capital price in GH₵
   change24h: number; // Percentage change
   signalScore: number; // 0 to 100
   signalType: SignalType;
@@ -50,6 +63,9 @@ export interface GreenAsset {
   researchReady: boolean;
   description: string;
   communityImpact: string;
+  whyThisMattersSnippet: string;
+  impactBreakdown: ImpactBreakdown;
+  communityStory: CommunityStory;
   environmentalMetrics: {
     label: string;
     value: string;
@@ -83,6 +99,7 @@ export interface InvestmentThesis {
   assetId: string;
   assetSymbol: string;
   text: string;
+  communityPurpose?: string;
   sentenceCount: number;
   timestamp: number;
   qualityRating: 'Strong' | 'Solid' | 'Basic';

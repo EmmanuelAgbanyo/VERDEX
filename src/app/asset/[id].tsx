@@ -21,6 +21,12 @@ import {
   Cpu,
   Compass,
   Zap,
+  Users,
+  TreePine,
+  Briefcase,
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react-native';
 import { InvestmentThesis } from '@/types';
 
@@ -43,6 +49,7 @@ export default function AssetDetailScreen() {
   const existingThesis = getThesisForAsset(asset.id);
   const [isUnlocked, setIsUnlocked] = useState<boolean>(hasUnlockedThesis(asset.id));
   const [tradeModalVisible, setTradeModalVisible] = useState<boolean>(false);
+  const [showStory, setShowStory] = useState<boolean>(true);
   const [chartType, setChartType] = useState<'area' | 'candles'>('area');
   const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '1Y' | 'ALL'>('1D');
   const [selectedPointIndex, setSelectedPointIndex] = useState<number>(asset.historicalPrices.length - 1);
@@ -283,12 +290,10 @@ export default function AssetDetailScreen() {
                 </LinearGradient>
               </Defs>
 
-              {/* Grid Background Horizontal lines */}
               <Line x1="0" y1={chartHeight * 0.25} x2={chartWidth} y2={chartHeight * 0.25} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
               <Line x1="0" y1={chartHeight * 0.5} x2={chartWidth} y2={chartHeight * 0.5} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
               <Line x1="0" y1={chartHeight * 0.75} x2={chartWidth} y2={chartHeight * 0.75} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
 
-              {/* Chart Plot Rendering */}
               {chartType === 'area' ? (
                 <>
                   <Path d={areaPath} fill="url(#chartGradient)" />
@@ -323,7 +328,6 @@ export default function AssetDetailScreen() {
                 })
               )}
 
-              {/* Vertical Crosshair Guide on Selection */}
               {selectedPointIndex !== null && points[selectedPointIndex] && (
                 <Line
                   x1={points[selectedPointIndex].x}
@@ -388,6 +392,71 @@ export default function AssetDetailScreen() {
           </View>
         </GlassCard>
 
+        {/* POINT 2: IMPACT BREAKDOWN CARD WITH 3 KEY METRICS */}
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>Community Impact Breakdown</Text>
+        </View>
+
+        <GlassCard style={styles.impactBreakdownCard}>
+          <Text style={styles.impactIntroText}>
+            Every credit allocated directly builds tangible climate resilience in Ghanaian partner communities:
+          </Text>
+
+          <View style={styles.impactMetrics3Grid}>
+            <View style={styles.impactMetricCell}>
+              <Users size={18} color="#3B82F6" />
+              <Text style={styles.impactMetricVal}>
+                {asset.impactBreakdown?.peopleReached || '2,400 farmers'}
+              </Text>
+              <Text style={styles.impactMetricLabel}>People Reached</Text>
+            </View>
+
+            <View style={styles.impactMetricCell}>
+              <TreePine size={18} color="#10B981" />
+              <Text style={styles.impactMetricVal}>
+                {asset.impactBreakdown?.environmentalBenefit || '1,200 ha smart farming'}
+              </Text>
+              <Text style={styles.impactMetricLabel}>Environmental Benefit</Text>
+            </View>
+
+            <View style={styles.impactMetricCell}>
+              <Briefcase size={18} color="#F59E0B" />
+              <Text style={styles.impactMetricVal}>
+                {asset.impactBreakdown?.jobsSupported || '180 local jobs'}
+              </Text>
+              <Text style={styles.impactMetricLabel}>Local Jobs Supported</Text>
+            </View>
+          </View>
+
+          {/* READ THE COMMUNITY STORY TOGGLE */}
+          {asset.communityStory && (
+            <View style={styles.storyContainer}>
+              <Pressable
+                onPress={() => setShowStory(!showStory)}
+                style={styles.storyToggleHeader}
+              >
+                <View style={styles.storyTitleRow}>
+                  <BookOpen size={14} color="#0D5C46" />
+                  <Text style={styles.storyTitleText}>Read the Community Story</Text>
+                </View>
+                {showStory ? <ChevronUp size={16} color="#0D5C46" /> : <ChevronDown size={16} color="#0D5C46" />}
+              </Pressable>
+
+              {showStory && (
+                <View style={styles.storyCardBody}>
+                  <View style={styles.storyPersonHeader}>
+                    <Text style={styles.storyPersonName}>{asset.communityStory.personName}</Text>
+                    <Text style={styles.storyPersonRole}>
+                      {asset.communityStory.role} • {asset.communityStory.location}
+                    </Text>
+                  </View>
+                  <Text style={styles.storyNarrativeText}>"{asset.communityStory.storyText}"</Text>
+                </View>
+              )}
+            </View>
+          )}
+        </GlassCard>
+
         {/* TELEMETRY & LIVE SENSOR STATUS */}
         <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>Ecosystem Telemetry Feed</Text>
@@ -414,46 +483,6 @@ export default function AssetDetailScreen() {
             <Text style={styles.telemetrySubText}>Latency: {telemetry.ping} • Active 🟢</Text>
           </GlassCard>
         </View>
-
-        {/* ENVIRONMENTAL SIGNAL CORRELATIONS */}
-        <GlassCard style={styles.correlationContainerCard}>
-          <View style={styles.correlationHeader}>
-            <Activity size={16} color="#10B981" />
-            <Text style={styles.correlationTitleText}>Climate Signal Valuation Weighting</Text>
-          </View>
-
-          <View style={styles.correlationIndexBox}>
-            {telemetry.correlations.map((corr, idx) => (
-              <View key={idx} style={styles.corrWeightRow}>
-                <View style={styles.corrLabelRow}>
-                  <Text style={styles.corrLabelText}>{corr.label}</Text>
-                  <Text style={[styles.corrScoreText, { color: corr.color }]}>{corr.score}</Text>
-                </View>
-                <View style={styles.corrProgressTrack}>
-                  <View
-                    style={[
-                      styles.corrProgressFill,
-                      { width: corr.score.replace('-', '') as any, backgroundColor: corr.color },
-                    ]}
-                  />
-                </View>
-              </View>
-            ))}
-          </View>
-        </GlassCard>
-
-        {/* Community & Environmental Impact Overview */}
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>Community Impact & Purpose</Text>
-        </View>
-
-        <GlassCard style={styles.sectionBox}>
-          <Text style={styles.descText}>{asset.description}</Text>
-          <View style={styles.impactPill}>
-            <Heart size={14} color={COLORS.emeraldBright} />
-            <Text style={styles.impactText}>{asset.communityImpact}</Text>
-          </View>
-        </GlassCard>
 
         {/* DIAGNOSTIC PANEL & RESEARCH LOCK */}
         <DiagnosticPanel
@@ -721,6 +750,89 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: COLORS.textBright,
   },
+  impactBreakdownCard: {
+    padding: 16,
+    gap: 12,
+    borderRadius: 18,
+  },
+  impactIntroText: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    lineHeight: 17,
+  },
+  impactMetrics3Grid: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  impactMetricCell: {
+    flex: 1,
+    backgroundColor: '#F1F5F0',
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#D8E2D5',
+    alignItems: 'center',
+    gap: 4,
+  },
+  impactMetricVal: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: COLORS.textBright,
+    textAlign: 'center',
+  },
+  impactMetricLabel: {
+    fontSize: 9,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+  },
+  storyContainer: {
+    marginTop: 4,
+    borderTopWidth: 1,
+    borderTopColor: '#E4EAE2',
+    paddingTop: 10,
+  },
+  storyToggleHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  storyTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  storyTitleText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#0D5C46',
+  },
+  storyCardBody: {
+    backgroundColor: 'rgba(230, 244, 234, 0.6)',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(13, 92, 70, 0.12)',
+    marginTop: 8,
+    gap: 4,
+  },
+  storyPersonHeader: {
+    marginBottom: 2,
+  },
+  storyPersonName: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#0D5C46',
+  },
+  storyPersonRole: {
+    fontSize: 10,
+    color: '#7C8E84',
+  },
+  storyNarrativeText: {
+    fontSize: 11,
+    color: '#1A2E26',
+    lineHeight: 16,
+    fontStyle: 'italic',
+  },
   telemetryGrid: {
     flexDirection: 'row',
     gap: 10,
@@ -750,78 +862,6 @@ const styles = StyleSheet.create({
   telemetrySubText: {
     fontSize: 10,
     color: COLORS.textMuted,
-  },
-  correlationContainerCard: {
-    padding: 16,
-    gap: 12,
-    borderRadius: 16,
-  },
-  correlationHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  correlationTitleText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: COLORS.textBright,
-  },
-  correlationIndexBox: {
-    gap: 8,
-  },
-  corrWeightRow: {
-    gap: 4,
-  },
-  corrLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  corrLabelText: {
-    fontSize: 11,
-    color: COLORS.textSecondary,
-    fontWeight: '600',
-  },
-  corrScoreText: {
-    fontSize: 11,
-    fontWeight: '800',
-  },
-  corrProgressTrack: {
-    height: 6,
-    backgroundColor: '#F1F5F0',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  corrProgressFill: {
-    height: '100%',
-    borderRadius: 4,
-  },
-  sectionBox: {
-    padding: 16,
-    gap: 10,
-    borderRadius: 16,
-  },
-  descText: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    lineHeight: 18,
-  },
-  impactPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: 'rgba(16, 185, 129, 0.10)',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.25)',
-  },
-  impactText: {
-    fontSize: 11,
-    color: '#059669',
-    fontWeight: '700',
-    flex: 1,
-    lineHeight: 15,
   },
   tradeActionContainer: {
     marginTop: 10,

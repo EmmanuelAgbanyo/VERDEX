@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { GreenAsset } from '@/types';
 import { COLORS } from '@/constants/theme';
-import { Star, ShieldCheck, TrendingUp, TrendingDown, MapPin, ChevronDown, ChevronUp, Heart, Leaf, Shield } from 'lucide-react-native';
+import { Star, ShieldCheck, TrendingUp, TrendingDown, MapPin, ChevronDown, ChevronUp, Heart, Sparkles, Users, TreePine, Briefcase } from 'lucide-react-native';
 import { GlassCard } from './GlassCard';
 
 interface AssetCardProps {
@@ -22,22 +22,6 @@ export const AssetCard: React.FC<AssetCardProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const isPositive = asset.change24h >= 0;
-
-  // Educational community impact copy for each asset category
-  const getCommunityImpactText = () => {
-    switch (asset.category) {
-      case 'cocoa':
-        return 'Empowers 1,200+ Eastern Region smallholder cocoa farmers with solar-powered shade irrigation and direct organic fair-trade pricing.';
-      case 'solar':
-        return 'Provides clean, off-grid solar electricity to 15,000+ homes and schools across the Northern Tamale agricultural buffer zone.';
-      case 'mangrove':
-        return 'Restores 450 hectares of Volta Delta mangroves, preventing coastal erosion and protecting local fishing livelihoods.';
-      case 'savannah':
-        return 'Protects Northern Mole ecological corridors from wildfire degradation while funding women-led shea agroforestry collectives.';
-      default:
-        return 'Directly funds community climate adaptation infrastructure and sustainable West African farming jobs.';
-    }
-  };
 
   return (
     <View style={styles.outerWrapper}>
@@ -104,16 +88,14 @@ export const AssetCard: React.FC<AssetCardProps> = ({
             </View>
           </View>
 
-          {/* Metrics Summary Row */}
+          {/* Metrics & Why This Matters Toggle */}
           <View style={styles.metricsRow}>
-            {asset.environmentalMetrics.slice(0, 2).map((m, idx) => (
-              <View key={idx} style={styles.metricPill}>
-                <Text style={styles.metricLabel}>{m.label}:</Text>
-                <Text style={styles.metricVal}>{m.value}</Text>
-              </View>
-            ))}
+            <View style={styles.metricPill}>
+              <Sparkles size={12} color="#10B981" />
+              <Text style={styles.metricVal}>{asset.environmentalMetrics[0]?.value || 'Signal Active'}</Text>
+            </View>
 
-            {/* Expand / Collapse Details Button */}
+            {/* Why This Matters Toggle Button */}
             <Pressable
               onPress={(e) => {
                 e.stopPropagation();
@@ -122,35 +104,46 @@ export const AssetCard: React.FC<AssetCardProps> = ({
               style={styles.expandToggleBtn}
               hitSlop={12}
             >
-              <Text style={styles.expandToggleText}>{isExpanded ? 'Hide Info' : 'Impact Info'}</Text>
-              {isExpanded ? <ChevronUp size={14} color="#059669" /> : <ChevronDown size={14} color="#059669" />}
+              <Heart size={12} color="#059669" />
+              <Text style={styles.expandToggleText}>{isExpanded ? 'Hide Impact' : 'Why This Matters'}</Text>
+              {isExpanded ? <ChevronUp size={12} color="#059669" /> : <ChevronDown size={12} color="#059669" />}
             </Pressable>
           </View>
 
-          {/* COLLAPSIBLE EDUCATIONAL COMMUNITY IMPACT DRAWER */}
+          {/* WHY THIS MATTERS EXPANDABLE COMMUNITY IMPACT FOOTER */}
           {isExpanded && (
             <View style={styles.expandedDrawer}>
               <View style={styles.impactTitleRow}>
-                <Heart size={14} color="#10B981" />
-                <Text style={styles.impactTitle}>Community Impact & Purpose</Text>
+                <Heart size={13} color="#10B981" />
+                <Text style={styles.impactTitle}>Why This Matters</Text>
               </View>
-              <Text style={styles.impactDesc}>{getCommunityImpactText()}</Text>
+              <Text style={styles.impactSnippetText}>
+                {asset.whyThisMattersSnippet || asset.communityImpact}
+              </Text>
 
-              {/* All Environmental Metrics Detail Grid */}
-              <View style={styles.metricsDetailGrid}>
-                {asset.environmentalMetrics.map((m, idx) => (
-                  <View key={idx} style={styles.detailMetricBox}>
-                    <Text style={styles.detailMetricLabel}>{m.label}</Text>
-                    <Text style={styles.detailMetricVal}>{m.value}</Text>
+              {/* Quick 3-Metric Impact Snapshot */}
+              {asset.impactBreakdown && (
+                <View style={styles.quickImpactGrid}>
+                  <View style={styles.quickImpactCell}>
+                    <Users size={11} color="#3B82F6" />
+                    <Text style={styles.quickImpactText}>{asset.impactBreakdown.peopleReached}</Text>
                   </View>
-                ))}
-              </View>
+                  <View style={styles.quickImpactCell}>
+                    <TreePine size={11} color="#10B981" />
+                    <Text style={styles.quickImpactText}>{asset.impactBreakdown.environmentalBenefit.split(',')[0]}</Text>
+                  </View>
+                  <View style={styles.quickImpactCell}>
+                    <Briefcase size={11} color="#F59E0B" />
+                    <Text style={styles.quickImpactText}>{asset.impactBreakdown.jobsSupported}</Text>
+                  </View>
+                </View>
+              )}
             </View>
           )}
         </GlassCard>
       </Pressable>
 
-      {/* Sibling Star Button Layer */}
+      {/* Star Watchlist Toggle */}
       <Pressable
         onPress={onStarToggle}
         hitSlop={12}
@@ -298,12 +291,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
   },
-  metricLabel: {
-    fontSize: 10,
-    color: COLORS.textMuted,
-  },
   metricVal: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '700',
     color: COLORS.textBright,
   },
@@ -340,34 +329,32 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#0D5C46',
   },
-  impactDesc: {
+  impactSnippetText: {
     fontSize: 11,
     color: '#364B41',
     lineHeight: 16,
+    fontStyle: 'italic',
   },
-  metricsDetailGrid: {
+  quickImpactGrid: {
     flexDirection: 'row',
     gap: 6,
     marginTop: 4,
   },
-  detailMetricBox: {
+  quickImpactCell: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: '#FFFFFF',
-    padding: 8,
-    borderRadius: 8,
+    padding: 6,
+    borderRadius: 6,
     borderWidth: 1,
     borderColor: '#E4EAE2',
   },
-  detailMetricLabel: {
+  quickImpactText: {
     fontSize: 9,
-    color: COLORS.textMuted,
-    fontWeight: '600',
-  },
-  detailMetricVal: {
-    fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '700',
     color: COLORS.textBright,
-    marginTop: 2,
   },
   starButton: {
     position: 'absolute',

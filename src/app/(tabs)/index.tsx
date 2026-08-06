@@ -20,6 +20,7 @@ import {
   MapPin,
   Award,
   ChevronRight,
+  Heart,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
@@ -70,7 +71,7 @@ export default function DashboardScreen() {
         {/* Welcome Header */}
         <Header portfolioValue={portfolioValue} sessionTimeRemaining={sessionTimeRemaining} />
 
-        {/* QUICK ACTION DOCK */}
+        {/* QUICK ACTION DOCK WITH COMMUNITY IMPACT METRIC */}
         <View style={styles.quickDockRow}>
           <Pressable
             onPress={() => router.push('/(tabs)/markets')}
@@ -115,13 +116,13 @@ export default function DashboardScreen() {
             onPress={() => router.push('/(tabs)/portfolio')}
             style={({ pressed }) => [styles.quickDockBtn, pressed && styles.pressedState]}
             accessibilityRole="button"
-            accessibilityLabel="Rank 4, Leaderboard"
+            accessibilityLabel="1,540 Reached, Community Impact"
           >
-            <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(239, 68, 68, 0.12)' }]}>
-              <Award size={18} color="#FF5A5F" />
+            <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(236, 72, 153, 0.12)' }]}>
+              <Heart size={18} color="#EC4899" />
             </View>
-            <Text style={styles.quickDockTitle}>Rank #4</Text>
-            <Text style={styles.quickDockSub}>Top 2%</Text>
+            <Text style={styles.quickDockTitle}>Impact</Text>
+            <Text style={styles.quickDockSub}>1,540 Reached</Text>
           </Pressable>
         </View>
 

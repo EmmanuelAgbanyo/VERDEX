@@ -21,6 +21,9 @@ import {
   Zap,
   Flame,
   Crown,
+  Heart,
+  Quote,
+  Users,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LearnPathway } from '@/types';
@@ -33,7 +36,7 @@ export const LEARN_PATHWAYS: LearnPathway[] = [
     title: 'Climate Change Fundamentals',
     description: 'Understand physical atmospheric feedback loops, rainfall anomalies, and West African ecological vulnerabilities.',
     iconName: 'Wind',
-    color: '#3B82F6', // Blue
+    color: '#3B82F6',
     totalLessons: 3,
     completedLessons: 1,
     lessons: [
@@ -105,11 +108,52 @@ export const LEARN_PATHWAYS: LearnPathway[] = [
     ],
   },
   {
+    id: 'path-community-resilience',
+    title: 'Why Community Matters & Climate Justice',
+    description: 'Understand climate justice, community-owned cooperatives, and keeping financial wealth local.',
+    iconName: 'Heart',
+    color: '#EC4899',
+    totalLessons: 2,
+    completedLessons: 0,
+    lessons: [
+      {
+        id: 'les-community-1',
+        pathwayId: 'path-community-resilience',
+        title: 'Climate Justice & Wealth Localization',
+        summary: 'Learn why climate change disproportionately affects rural communities and how local ownership secures resilience.',
+        durationMinutes: 4,
+        xpReward: 120,
+        locked: false,
+        completed: false,
+        sections: [
+          {
+            title: '1. The Climate Justice Imperative',
+            body: 'Rural agricultural communities contribute the least to global greenhouse emissions yet face the severe frontline impacts of monsoons and droughts. Community-owned green bonds keep capital working locally.',
+            keyTakeaway: 'Investing in local cooperatives ensures long-term self-determination and financial stability.',
+          },
+        ],
+        quiz: {
+          id: 'q-community-1',
+          question: 'Why are community-owned solar microgrids preferred over centralized fossil fuels?',
+          options: [
+            'They generate higher carbon emissions.',
+            'They keep wealth within the local community while providing clean power to clinics and schools.',
+            'They require zero maintenance.',
+            'They eliminate seasonal rainfall shifts.',
+          ],
+          correctOptionIndex: 1,
+          explanation: 'Local ownership retains economic value within the community while lowering health risks.',
+        },
+        practicePrompt: 'Inspect the Tamale Micro-Grid Solar Shares community impact story.',
+      },
+    ],
+  },
+  {
     id: 'path-climate-finance',
     title: 'Climate Finance & Green Bonds',
     description: 'Master green bond structuring, carbon credit verification, and virtual capital allocation mechanisms.',
     iconName: 'Award',
-    color: '#10B981', // Emerald
+    color: '#10B981',
     totalLessons: 2,
     completedLessons: 0,
     lessons: [
@@ -150,7 +194,7 @@ export const LEARN_PATHWAYS: LearnPathway[] = [
     title: 'Climate Data Analytics & IoT',
     description: 'Learn how satellite remote sensing, soil moisture sensors, and IoT weather stations generate price signals.',
     iconName: 'BarChart3',
-    color: '#F59E0B', // Amber
+    color: '#F59E0B',
     totalLessons: 2,
     completedLessons: 0,
     lessons: [
@@ -191,7 +235,7 @@ export const LEARN_PATHWAYS: LearnPathway[] = [
     title: 'Adaptation & Resilience',
     description: 'Learn to design resilient community infrastructure, flood defenses, and drought resistant farming frameworks.',
     iconName: 'Shield',
-    color: '#E11D48', // Rose
+    color: '#E11D48',
     totalLessons: 2,
     completedLessons: 0,
     lessons: [
@@ -226,6 +270,30 @@ export const LEARN_PATHWAYS: LearnPathway[] = [
         practicePrompt: 'Inspect the Brong-Ahafo Crop Bond description in Markets.',
       },
     ],
+  },
+];
+
+export const IMPACT_STORIES = [
+  {
+    id: 'story-1',
+    person: 'Akua Mensah',
+    location: 'Asante Akim, Eastern Region',
+    assetSymbol: 'GH-COCOA',
+    story: 'Thanks to the cocoa bond, our cooperative installed 12 solar dryers, reducing post-harvest mold losses by 25% and securing fair organic prices.',
+  },
+  {
+    id: 'story-2',
+    person: 'Ibrahim Kassim',
+    location: 'Tamale Buffer Zone',
+    assetSymbol: 'WA-SOLAR',
+    story: 'Our solar micro-grid now powers 3 local health clinics and a cold storage hub, protecting vaccine storage and preventing tomato rot.',
+  },
+  {
+    id: 'story-3',
+    person: 'Grace Kpodo',
+    location: 'Ada Foah Estuary',
+    assetSymbol: 'V-CARBON',
+    story: 'Mangrove restoration has stabilized our coastal shoreline while increasing crab populations — our women’s collective now harvests seafood sustainably.',
   },
 ];
 
@@ -265,6 +333,8 @@ export default function LearnScreen() {
     switch (pathwayId) {
       case 'path-climate-change':
         return <AirQualitySvg size={22} color="#1A73E8" secondaryColor="#60A5FA" />;
+      case 'path-community-resilience':
+        return <Heart size={22} color="#EC4899" />;
       case 'path-climate-finance':
         return <CoopFinanceSvg size={22} color="#0D5C46" secondaryColor="#34D399" />;
       case 'path-climate-data':
@@ -370,6 +440,31 @@ export default function LearnScreen() {
               ))}
             </View>
           </GlassCard>
+
+          {/* POINT 5: COMMUNITY IMPACT STORIES CAROUSEL */}
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Community Impact Stories</Text>
+          </View>
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storiesScroll}>
+            {IMPACT_STORIES.map((st) => (
+              <GlassCard key={st.id} style={styles.storyCard}>
+                <View style={styles.storyHeader}>
+                  <View style={styles.storyAvatarCircle}>
+                    <Users size={16} color="#0D5C46" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.storyPersonName}>{st.person}</Text>
+                    <Text style={styles.storyLocation}>{st.location}</Text>
+                  </View>
+                  <View style={styles.assetBadgePill}>
+                    <Text style={styles.assetBadgeText}>{st.assetSymbol}</Text>
+                  </View>
+                </View>
+                <Text style={styles.storyQuoteText}>"{st.story}"</Text>
+              </GlassCard>
+            ))}
+          </ScrollView>
 
           {/* DAILY QUESTS HUB */}
           <View style={styles.sectionHeaderRow}>
@@ -801,31 +896,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
     paddingBottom: 100,
   },
   headerArea: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
     marginBottom: 12,
   },
   screenTitle: {
     fontSize: 24,
     fontWeight: '900',
     color: COLORS.textBright,
-    letterSpacing: -0.4,
+    letterSpacing: -0.5,
   },
   screenDesc: {
     fontSize: 12,
     color: COLORS.textSecondary,
     marginTop: 2,
-    lineHeight: 16,
+    lineHeight: 17,
   },
   duoHeaderCard: {
-    marginHorizontal: 16,
-    padding: 18,
-    gap: 14,
+    padding: 16,
+    borderRadius: 20,
+    gap: 12,
     marginBottom: 12,
-    borderRadius: 22,
   },
   duoTopStatsRow: {
     flexDirection: 'row',
@@ -836,47 +930,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: 'rgba(255, 90, 95, 0.12)',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 90, 95, 0.25)',
+    borderColor: '#E4EAE2',
   },
   duoStreakNum: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '900',
     color: '#FF5A5F',
   },
   duoStreakSub: {
     fontSize: 10,
-    fontWeight: '600',
-    color: '#E11D48',
+    color: COLORS.textMuted,
   },
   duoXpPill: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: 'rgba(245, 158, 11, 0.12)',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.25)',
+    borderColor: '#E4EAE2',
   },
   duoXpNum: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '900',
-    color: '#D97706',
+    color: '#F59E0B',
   },
   duoXpSub: {
     fontSize: 10,
-    fontWeight: '600',
-    color: '#B45309',
+    color: COLORS.textMuted,
   },
   duoGoalBox: {
-    gap: 6,
+    gap: 4,
   },
   duoGoalHeader: {
     flexDirection: 'row',
@@ -892,66 +982,117 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '800',
     color: '#059669',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
   duoGoalVal: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#1A2E26',
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLORS.textMuted,
   },
   duoTrack: {
-    height: 10,
+    height: 8,
     backgroundColor: '#F1F5F0',
-    borderRadius: 6,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   duoFill: {
     height: '100%',
     backgroundColor: '#10B981',
-    borderRadius: 6,
+    borderRadius: 4,
   },
   duoCalendarRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: '#E4EAE2',
-    paddingTop: 12,
-    marginTop: 2,
+    justifyContent: 'space-around',
+    paddingTop: 4,
   },
   duoCalCol: {
     alignItems: 'center',
     gap: 4,
   },
   duoCalDot: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
   },
   duoCalDotActive: {
     backgroundColor: '#10B981',
-    borderColor: '#10B981',
   },
   duoCalDotInactive: {
     backgroundColor: '#F1F5F0',
+    borderWidth: 1,
     borderColor: '#E4EAE2',
   },
   duoCalText: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '700',
-    color: '#7C8E84',
+    color: COLORS.textMuted,
   },
   duoCalLabel: {
     fontSize: 9,
-    fontWeight: '600',
-    color: '#8BA196',
+    color: COLORS.textMuted,
+  },
+  storiesScroll: {
+    marginBottom: 12,
+  },
+  storyCard: {
+    width: 260,
+    padding: 14,
+    marginRight: 10,
+    gap: 8,
+    borderRadius: 16,
+    backgroundColor: 'rgba(230, 244, 234, 0.7)',
+    borderColor: 'rgba(13, 92, 70, 0.15)',
+  },
+  storyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  storyAvatarCircle: {
+    padding: 6,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+  },
+  storyPersonName: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#0D5C46',
+  },
+  storyLocation: {
+    fontSize: 9,
+    color: '#5C7468',
+  },
+  assetBadgePill: {
+    backgroundColor: '#0D5C46',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  assetBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  storyQuoteText: {
+    fontSize: 11,
+    color: '#1A2E26',
+    lineHeight: 15,
+    fontStyle: 'italic',
+  },
+  sectionHeaderRow: {
+    marginTop: 14,
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: COLORS.textBright,
   },
   questsContainer: {
-    marginHorizontal: 16,
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   questCard: {
     flexDirection: 'row',
@@ -974,39 +1115,33 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(59, 130, 246, 0.12)',
   },
   questTitle: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '800',
-    color: '#1A2E26',
+    color: COLORS.textBright,
   },
   questSub: {
     fontSize: 10,
-    color: '#7C8E84',
+    color: COLORS.textMuted,
   },
   questRewardBadge: {
-    backgroundColor: 'rgba(59, 130, 246, 0.12)',
+    backgroundColor: 'rgba(59, 130, 246, 0.15)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
   },
   questRewardText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '800',
     color: '#2563EB',
   },
   accraSignalCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
     borderRadius: 14,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#E4EAE2',
-    marginHorizontal: 16,
-    marginBottom: 8,
+    borderColor: 'rgba(16, 185, 129, 0.2)',
+    marginBottom: 12,
     gap: 4,
-    shadowColor: '#102A1F',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
   },
   accraHeader: {
     flexDirection: 'row',
@@ -1016,7 +1151,7 @@ const styles = StyleSheet.create({
   accraTitle: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#0D5C46',
+    color: '#059669',
     letterSpacing: 0.5,
   },
   accraBody: {
@@ -1024,21 +1159,9 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     lineHeight: 15,
   },
-  sectionHeaderRow: {
-    marginTop: 16,
-    marginBottom: 8,
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: COLORS.textBright,
-  },
   certCard: {
-    marginHorizontal: 16,
-    padding: 12,
-    borderColor: '#10B981',
-    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+    padding: 14,
+    marginBottom: 12,
   },
   certMain: {
     flexDirection: 'row',
@@ -1048,16 +1171,17 @@ const styles = StyleSheet.create({
   certTitleText: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#1A2E26',
+    color: COLORS.textBright,
   },
   certCriteria: {
     fontSize: 10,
-    color: '#7C8E84',
+    color: COLORS.textMuted,
+    marginTop: 1,
   },
   certClaimBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#0D5C46',
+    paddingHorizontal: 10,
     paddingVertical: 6,
-    paddingHorizontal: 12,
     borderRadius: 8,
   },
   certClaimBtnText: {
@@ -1066,41 +1190,34 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   carouselContainer: {
-    paddingLeft: 16,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   carouselContent: {
-    paddingRight: 32,
-    gap: 12,
+    gap: 10,
+    paddingRight: 16,
   },
   courseCard: {
-    width: 230,
+    width: 200,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#E4EAE2',
-    padding: 16,
-    gap: 8,
-    shadowColor: '#102A1F',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 2,
+    gap: 6,
   },
   courseCardActive: {
     borderColor: '#10B981',
-    shadowColor: '#10B981',
-    shadowOpacity: 0.06,
-  },
-  courseIconWrapper: {
-    padding: 8,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
+    borderWidth: 1.5,
+    backgroundColor: '#F8FAF7',
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  courseIconWrapper: {
+    padding: 8,
+    borderRadius: 12,
   },
   ringWrapper: {
     position: 'relative',
@@ -1111,33 +1228,29 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 9,
     fontWeight: '800',
-    color: '#1A2E26',
+    color: COLORS.textBright,
   },
   courseTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
-    color: '#1A2E26',
+    color: COLORS.textBright,
     marginTop: 4,
   },
   courseDesc: {
-    fontSize: 11,
-    color: '#7C8E84',
-    lineHeight: 15,
-    minHeight: 30,
+    fontSize: 10,
+    color: COLORS.textMuted,
+    lineHeight: 14,
   },
   courseFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F0',
-    paddingTop: 8,
     marginTop: 4,
   },
   courseLessonsCount: {
     fontSize: 10,
-    fontWeight: '600',
-    color: '#059669',
+    fontWeight: '700',
+    color: COLORS.textMuted,
   },
   activeDot: {
     width: 6,
@@ -1145,23 +1258,21 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   roadmapCard: {
-    marginHorizontal: 16,
     padding: 16,
-    borderRadius: 20,
+    marginBottom: 12,
   },
   lessonsContainer: {
-    position: 'relative',
+    gap: 14,
   },
   lessonTimelineWrapper: {
     position: 'relative',
-    paddingBottom: 12,
   },
   timelineConnector: {
     position: 'absolute',
-    left: 21,
     top: 36,
-    bottom: -12,
-    width: 3,
+    left: 20,
+    width: 2,
+    height: 24,
     zIndex: 1,
   },
   connectorCompleted: {
@@ -1175,31 +1286,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 2,
+    padding: 12,
+    borderRadius: 16,
+    borderWidth: 1,
     borderColor: '#E4EAE2',
-    borderBottomWidth: 4,
-    borderBottomColor: '#D8E2D5',
-    zIndex: 2,
-    shadowColor: '#102A1F',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  duoLessonButtonCompleted: {
-    borderColor: '#10B981',
-    borderBottomColor: '#059669',
-    backgroundColor: 'rgba(16, 185, 129, 0.05)',
   },
   duoLessonButtonActive: {
     borderColor: '#10B981',
-    borderBottomColor: '#059669',
+    borderWidth: 1.5,
+  },
+  duoLessonButtonCompleted: {
+    backgroundColor: '#F8FAF7',
   },
   duoLessonButtonLocked: {
-    opacity: 0.65,
-    backgroundColor: '#F7F9F6',
+    opacity: 0.6,
   },
   duoLessonNodeLeft: {
     flexDirection: 'row',
@@ -1208,30 +1308,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   duoNodeCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  duoNodeCompleted: {
-    backgroundColor: '#10B981',
   },
   duoNodeActive: {
     backgroundColor: '#10B981',
   },
+  duoNodeCompleted: {
+    backgroundColor: '#059669',
+  },
   duoNodeLocked: {
     backgroundColor: '#F1F5F0',
-    borderWidth: 1,
-    borderColor: '#E4EAE2',
   },
   duoLessonTextGroup: {
     flex: 1,
   },
   duoLessonTitle: {
     fontSize: 13,
-    fontWeight: '900',
-    color: '#1A2E26',
+    fontWeight: '800',
+    color: COLORS.textBright,
   },
   duoLessonTitleCompleted: {
     color: '#059669',
@@ -1241,82 +1339,104 @@ const styles = StyleSheet.create({
   },
   duoLessonMeta: {
     fontSize: 10,
-    fontWeight: '600',
     color: COLORS.textMuted,
-    marginTop: 2,
+    marginTop: 1,
   },
   startBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
   },
   startBadgeStart: {
     backgroundColor: '#10B981',
   },
   startBadgeDone: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    backgroundColor: '#F1F5F0',
   },
   startBadgeText: {
-    fontSize: 10,
-    fontWeight: '900',
+    fontSize: 9,
+    fontWeight: '800',
     color: '#FFFFFF',
-    letterSpacing: 0.5,
   },
   sandboxCard: {
-    marginHorizontal: 16,
     padding: 16,
-    gap: 10,
+    gap: 12,
+    marginBottom: 12,
   },
   sandboxDescText: {
-    fontSize: 12,
+    fontSize: 11,
     color: COLORS.textSecondary,
     lineHeight: 16,
   },
   sliderGroup: {
-    marginVertical: 4,
+    gap: 6,
   },
   sliderLabelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    alignItems: 'center',
   },
   sliderLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
-    color: '#1A2E26',
+    color: COLORS.textBright,
   },
   sliderVal: {
     fontSize: 12,
-    fontWeight: '800',
-    color: '#10B981',
+    fontWeight: '900',
+    color: '#E11D48',
+  },
+  segmentedControlRow: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  segmentBtn: {
+    flex: 1,
+    backgroundColor: '#F1F5F0',
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E4EAE2',
+  },
+  segmentBtnActive: {
+    backgroundColor: '#E11D48',
+    borderColor: '#E11D48',
+  },
+  segmentBtnText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLORS.textMuted,
+  },
+  segmentBtnTextActive: {
+    color: '#FFFFFF',
   },
   sandboxStatsGrid: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 10,
     marginTop: 4,
   },
   sandboxStatCell: {
     flex: 1,
-    backgroundColor: '#F1F5F0',
-    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
     padding: 10,
-    alignItems: 'center',
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#D8E2D5',
+    borderColor: '#E4EAE2',
+    alignItems: 'center',
   },
   sandboxStatVal: {
     fontSize: 16,
     fontWeight: '900',
-    color: '#1A2E26',
+    color: COLORS.textBright,
   },
   sandboxStatLabel: {
     fontSize: 9,
-    color: '#7C8E84',
+    color: COLORS.textMuted,
     marginTop: 2,
     textAlign: 'center',
   },
   skillMeterCard: {
-    marginHorizontal: 16,
     padding: 16,
     gap: 12,
     marginBottom: 12,
@@ -1330,149 +1450,112 @@ const styles = StyleSheet.create({
   },
   meterLabel: {
     fontSize: 11,
-    color: COLORS.textSecondary,
+    fontWeight: '700',
+    color: COLORS.textBright,
   },
   meterValue: {
     fontSize: 11,
     fontWeight: '800',
-    color: COLORS.textBright,
+    color: COLORS.textMuted,
   },
   meterTrack: {
-    height: 6,
-    backgroundColor: COLORS.inputBg,
-    borderRadius: 3,
+    height: 8,
+    backgroundColor: '#F1F5F0',
+    borderRadius: 4,
     overflow: 'hidden',
   },
   meterFill: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 4,
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(5, 22, 17, 0.85)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   certModalCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#10B981',
+    borderRadius: 24,
     padding: 20,
     width: '100%',
-    maxWidth: 360,
-    gap: 14,
+    maxWidth: 500,
+    gap: 16,
   },
   certBorderDecoration: {
-    borderWidth: 1,
-    borderColor: '#E4EAE2',
-    padding: 14,
-    borderRadius: 12,
+    borderWidth: 3,
+    borderColor: '#10B981',
+    borderRadius: 16,
+    padding: 16,
   },
   certInnerDecoration: {
-    borderWidth: 2,
-    borderColor: '#10B981',
-    borderStyle: 'dashed',
-    padding: 16,
-    borderRadius: 8,
     alignItems: 'center',
+    gap: 6,
   },
   certLmsHeader: {
-    fontSize: 9,
-    fontWeight: '900',
-    color: '#10B981',
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#059669',
     letterSpacing: 1.5,
   },
   certMainTitle: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#1A2E26',
+    color: COLORS.textBright,
     textAlign: 'center',
-    marginVertical: 6,
   },
   certNameText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
-    color: '#0D5C46',
-    marginVertical: 4,
-    textDecorationLine: 'underline',
+    color: '#10B981',
+    marginTop: 4,
   },
   certBodyText: {
-    fontSize: 10,
-    color: '#7C8E84',
+    fontSize: 11,
+    color: COLORS.textSecondary,
     textAlign: 'center',
-    lineHeight: 14,
-    marginVertical: 8,
+    lineHeight: 16,
+    marginTop: 6,
   },
   certLineSeparator: {
     width: '80%',
     height: 1,
     backgroundColor: '#E4EAE2',
-    marginVertical: 8,
+    marginVertical: 12,
   },
   certSignaturesRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     width: '100%',
-    marginTop: 6,
   },
   signatureCol: {
     alignItems: 'center',
-    width: '45%',
   },
   sigHandwritten: {
-    fontFamily: 'monospace',
-    fontStyle: 'italic',
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#1A2E26',
+    fontSize: 14,
+    fontFamily: 'serif',
+    fontWeight: 'bold',
+    color: '#0D5C46',
   },
   sigTitle: {
-    fontSize: 8,
-    color: '#8BA196',
-    marginTop: 2,
+    fontSize: 9,
+    color: COLORS.textMuted,
   },
   certHashText: {
-    fontSize: 8,
-    color: '#8BA196',
-    marginTop: 12,
+    fontSize: 9,
+    color: COLORS.textMuted,
+    marginTop: 10,
   },
   closeCertBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#0D5C46',
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: 'center',
   },
   closeCertBtnText: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#FFFFFF',
-  },
-  segmentedControlRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#F1F5F0',
-    borderRadius: 10,
-    padding: 4,
-    marginTop: 6,
-  },
-  segmentBtn: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  segmentBtnActive: {
-    backgroundColor: '#10B981',
-  },
-  segmentBtnText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#7C8E84',
-  },
-  segmentBtnTextActive: {
     color: '#FFFFFF',
   },
 });

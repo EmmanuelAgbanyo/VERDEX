@@ -77,8 +77,20 @@ export const INITIAL_GREEN_ASSETS: GreenAsset[] = [
     signalType: 'rainfall',
     primarySignalId: 'sig-suhum-rain',
     researchReady: true,
-    description: 'Direct financing bond for 1,200 shade-grown organic cocoa farmers in Eastern Ghana implementing water harvesting and soil nitrogen management.',
-    communityImpact: 'Funds 12 solar-powered drip irrigation hubs & pays premium prices to 1,200 smallholders.',
+    description: 'Direct financing bond for 2,400 shade-grown organic cocoa farmers in Eastern Ghana implementing water harvesting and soil nitrogen management.',
+    communityImpact: 'Funds 12 solar-powered drip irrigation hubs & pays premium organic prices to smallholders.',
+    whyThisMattersSnippet: 'This bond helps 2,400 smallholder cocoa farmers in Ashanti & Eastern region access disease-resistant seedlings and solar shade irrigation.',
+    impactBreakdown: {
+      peopleReached: '2,400 farmers',
+      environmentalBenefit: '1,200 ha climate-smart farming',
+      jobsSupported: '180 local jobs',
+    },
+    communityStory: {
+      personName: 'Akua Mensah',
+      role: 'Smallholder Cocoa Farmer',
+      location: 'Asante Akim, Eastern Region',
+      storyText: 'Akua lost 40% of her crop to black pod disease last year. The cooperative bond funded fungicide training and solar irrigation hubs. She now expects a full harvest this season.',
+    },
     environmentalMetrics: [
       { label: 'Soil Moisture', value: '64% (Optimal)' },
       { label: 'Shade Canopy Density', value: '42%' },
@@ -113,6 +125,18 @@ export const INITIAL_GREEN_ASSETS: GreenAsset[] = [
     researchReady: true,
     description: 'Community-owned 2.4MW decentralised solar micro-grid powering agricultural cold storage and 8 rural commercial centers near Tamale.',
     communityImpact: 'Replaces 48 diesel generators, reducing local farm crop spoilage by 35%.',
+    whyThisMattersSnippet: 'This solar micro-grid powers 3 health clinics and 500 households in the Northern Savannah, replacing diesel generators and reducing air pollution.',
+    impactBreakdown: {
+      peopleReached: '1,500 residents',
+      environmentalBenefit: '320 tonnes CO₂ avoided/year',
+      jobsSupported: '40 local jobs',
+    },
+    communityStory: {
+      personName: 'Ibrahim Kassim',
+      role: 'Cold Storage Coordinator',
+      location: 'Tamale Agricultural Buffer',
+      storyText: 'Before the solar grid was installed, post-harvest tomato rot caused massive income losses. Today, community solar refrigeration keeps produce fresh for market delivery.',
+    },
     environmentalMetrics: [
       { label: 'Solar Irradiance', value: '6.8 kWh/m²/day' },
       { label: 'Grid Uptime', value: '99.4%' },
@@ -147,6 +171,18 @@ export const INITIAL_GREEN_ASSETS: GreenAsset[] = [
     researchReady: true,
     description: 'High-integrity blue carbon token backing 4,500 hectares of mangrove restoration protecting Ada coastal fisheries.',
     communityImpact: 'Employs 340 women eco-guards in seedling propagation & sustainable oyster harvesting.',
+    whyThisMattersSnippet: 'Restoring mangroves in Keta & Ada protects coastal villages from storm surges, provides fish breeding grounds, and sequesters carbon.',
+    impactBreakdown: {
+      peopleReached: '12,000 coastal dwellers',
+      environmentalBenefit: '50 ha restored, 200 tCO₂ sequestered',
+      jobsSupported: '60 eco-guard jobs',
+    },
+    communityStory: {
+      personName: 'Grace Kpodo',
+      role: 'Women Oyster Collective Lead',
+      location: 'Ada Foah Estuary',
+      storyText: 'Coastal storm surges used to flood our village homes. Mangrove reforestation has stabilized the shoreline while increasing local crab and fish stocks for sustainable harvest.',
+    },
     environmentalMetrics: [
       { label: 'Blue Carbon Capture', value: '84.2 tCO2e/ha' },
       { label: 'Coastline Stabilized', value: '18.4 km' },
@@ -181,6 +217,18 @@ export const INITIAL_GREEN_ASSETS: GreenAsset[] = [
     researchReady: true,
     description: 'Agroforestry and native shea tree corridor re-establishing wildlife migratory pathways between Mole National Park and reserve zones.',
     communityImpact: 'Provides sustainable shea butter processing equipment for 8 women cooperatives.',
+    whyThisMattersSnippet: 'Protects Northern Mole ecological corridors from wildfire degradation while funding women-led shea agroforestry collectives.',
+    impactBreakdown: {
+      peopleReached: '3,100 community members',
+      environmentalBenefit: '14,000 ha protected corridor',
+      jobsSupported: '95 agroforestry jobs',
+    },
+    communityStory: {
+      personName: 'Fatima Abukari',
+      role: 'Shea Cooperative Leader',
+      location: 'Mole Buffer Zone',
+      storyText: 'Shea tree wild harvesting is our primary income. The firebreak corridor keeps bushfires away from our native trees, securing our community income year-round.',
+    },
     environmentalMetrics: [
       { label: 'Hectares Protected', value: '14,000 ha' },
       { label: 'Shea Canopy Growth', value: '+14% YoY' },
@@ -215,6 +263,18 @@ export const INITIAL_GREEN_ASSETS: GreenAsset[] = [
     researchReady: true,
     description: 'Micro-loan pool funding heat-resistant maize and cassava hybrid seeds with bio-char soil enhancement for transition zone farmers.',
     communityImpact: 'Guarantees crop insurance payout if seasonal rainfall drops below 80mm threshold.',
+    whyThisMattersSnippet: 'Provides drought-tolerant hybrid seeds and micro-insurance payouts to 850 smallholder farmers during rainfall deficits.',
+    impactBreakdown: {
+      peopleReached: '850 smallholder families',
+      environmentalBenefit: '+35% drought yield protection',
+      jobsSupported: '50 farm jobs',
+    },
+    communityStory: {
+      personName: 'Kwaku Osei',
+      role: 'Cassava Farmer',
+      location: 'Sunyani Transition Belt',
+      storyText: 'Unpredictable rain shifts used to wipe out our cassava crops. Hybrid drought-tolerant seeds ensure a steady harvest even when monsoons are delayed.',
+    },
     environmentalMetrics: [
       { label: 'Drought Resilience', value: '+35% Yield' },
       { label: 'Organic Soil Matter', value: '4.8%' },
@@ -243,9 +303,8 @@ export function tickClimateData(
   signals: ClimateSignal[],
   assets: GreenAsset[]
 ): { updatedSignals: ClimateSignal[]; updatedAssets: GreenAsset[] } {
-  // 1. Slightly update climate signals
   const updatedSignals = signals.map((sig) => {
-    const deltaPercent = (Math.random() * 2 - 0.9) * 0.5; // subtle shift
+    const deltaPercent = (Math.random() * 2 - 0.9) * 0.5;
     const newValue = Math.max(1, Number((sig.currentValue + deltaPercent).toFixed(1)));
     const newChangePercent = Number((sig.changePercent + deltaPercent * 0.2).toFixed(1));
     return {
@@ -256,7 +315,6 @@ export function tickClimateData(
     };
   });
 
-  // 2. Shift asset prices algorithmically based on environmental volatility
   const updatedAssets = assets.map((asset) => {
     const linkedSignal = updatedSignals.find((s) => s.id === asset.primarySignalId);
     const signalFactor = linkedSignal ? linkedSignal.changePercent * 0.05 : 0.1;

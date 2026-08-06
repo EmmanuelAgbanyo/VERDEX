@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
 import { GreenAsset, InvestmentThesis } from '@/types';
-import { COLORS, LAYOUT } from '@/constants/theme';
-import { Lock, Unlock, ShieldAlert, FileText, CheckCircle2, Sparkles, AlertCircle, Plus, Check } from 'lucide-react-native';
+import { COLORS } from '@/constants/theme';
+import { Lock, Unlock, ShieldAlert, FileText, CheckCircle2, Sparkles, AlertCircle, Plus, Check, Heart } from 'lucide-react-native';
 import { evaluateThesisText } from '@/services/tradingEngine';
 
 interface DiagnosticPanelProps {
   asset: GreenAsset;
   onUnlockSuccess: (thesis: InvestmentThesis) => void;
   existingThesis?: InvestmentThesis;
-  onSubmitThesis: (text: string) => { valid: boolean; feedback: string; thesis?: InvestmentThesis };
+  onSubmitThesis: (text: string, communityPurpose?: string) => { valid: boolean; feedback: string; thesis?: InvestmentThesis };
 }
 
 export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
@@ -19,6 +19,9 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
   onSubmitThesis,
 }) => {
   const [thesisText, setThesisText] = useState<string>(existingThesis ? existingThesis.text : '');
+  const [communityPurpose, setCommunityPurpose] = useState<string>(
+    existingThesis?.communityPurpose || `This trade supports ${asset.communityImpact.toLowerCase()}`
+  );
   const [errorFeedback, setErrorFeedback] = useState<string>('');
 
   const evaluation = evaluateThesisText(thesisText);
@@ -26,7 +29,7 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
 
   const handleSubmit = () => {
     setErrorFeedback('');
-    const res = onSubmitThesis(thesisText);
+    const res = onSubmitThesis(thesisText, communityPurpose);
     if (!res.valid) {
       setErrorFeedback(res.feedback);
     } else if (res.thesis) {
@@ -71,8 +74,8 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
             </Text>
             <Text style={styles.headerSubtitle}>
               {isAlreadyUnlocked
-                ? 'Your 3-sentence investment thesis is validated. Trade execution ticket is enabled.'
-                : 'Review the environmental telemetry below and enter a 3-sentence thesis to unlock trading.'}
+                ? 'Your 3-sentence thesis and community purpose are validated. Trade execution ticket is enabled.'
+                : 'Review the environmental data below and enter a 3-sentence thesis to unlock trading.'}
             </Text>
           </View>
         </View>
@@ -154,6 +157,24 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
           onChangeText={setThesisText}
           editable={!existingThesis}
         />
+
+        {/* POINT 3: COMMUNITY PURPOSE FIELD */}
+        <View style={styles.communityPurposeContainer}>
+          <View style={styles.communityPurposeHeader}>
+            <Heart size={14} color="#059669" />
+            <Text style={styles.communityPurposeTitle}>How does this trade support community resilience?</Text>
+          </View>
+          <TextInput
+            style={styles.textInputShort}
+            multiline
+            numberOfLines={2}
+            placeholder="e.g. This investment helps cocoa farmers access disease management resources, protecting their livelihoods against climate-driven crop failure."
+            placeholderTextColor={COLORS.textMuted}
+            value={communityPurpose}
+            onChangeText={setCommunityPurpose}
+            editable={!existingThesis}
+          />
+        </View>
 
         {/* Sentence Counter & Evaluator Progress Steps */}
         <View style={styles.evalRow}>
@@ -388,7 +409,32 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 12,
     textAlignVertical: 'top',
-    minHeight: 95,
+    minHeight: 85,
+  },
+  communityPurposeContainer: {
+    marginTop: 10,
+    gap: 6,
+  },
+  communityPurposeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  communityPurposeTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#059669',
+  },
+  textInputShort: {
+    backgroundColor: '#F1F5F0',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#D8E2D5',
+    color: COLORS.textBright,
+    padding: 10,
+    fontSize: 11,
+    textAlignVertical: 'top',
+    minHeight: 50,
   },
   evalRow: {
     flexDirection: 'row',

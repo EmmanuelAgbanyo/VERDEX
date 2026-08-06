@@ -5,7 +5,7 @@ import { GlassCard } from '@/components/GlassCard';
 import { GreenPortfolioReportModal } from '@/components/GreenPortfolioReportModal';
 import { CareerOverlayModal } from '@/components/CareerOverlayModal';
 import { COLORS, LAYOUT } from '@/constants/theme';
-import { Briefcase, Award, ArrowUpRight, ShieldCheck, Star, PieChart, Trophy, FileText, CheckCircle2, Lock } from 'lucide-react-native';
+import { Briefcase, Award, ArrowUpRight, ShieldCheck, Star, PieChart, Trophy, FileText, CheckCircle2, Lock, Heart, Users, TreePine, Shield } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
 export default function PortfolioScreen() {
@@ -92,6 +92,35 @@ export default function PortfolioScreen() {
             <FileText size={16} color="#0D5C46" />
             <Text style={styles.reportBtnText}>VIEW GREEN PORTFOLIO REPORT</Text>
           </Pressable>
+        </GlassCard>
+
+        {/* POINT 4: YOUR COLLECTIVE COMMUNITY IMPACT CARD */}
+        <GlassCard style={styles.collectiveImpactCard}>
+          <View style={styles.impactCardHeader}>
+            <Heart size={16} color="#EC4899" />
+            <Text style={styles.impactCardTitle}>Your Collective Impact</Text>
+          </View>
+          <Text style={styles.impactCardSub}>
+            Your virtual capital allocations have generated real-world resilience benefits across Ghanaian cooperatives:
+          </Text>
+
+          <View style={styles.impactMetricsGrid}>
+            <View style={styles.impactStatBox}>
+              <Users size={16} color="#3B82F6" />
+              <Text style={styles.impactStatNum}>1,540</Text>
+              <Text style={styles.impactStatLabel}>People Impacted</Text>
+            </View>
+            <View style={styles.impactStatBox}>
+              <TreePine size={16} color="#10B981" />
+              <Text style={styles.impactStatNum}>320 tCO₂</Text>
+              <Text style={styles.impactStatLabel}>Carbon Avoided/yr</Text>
+            </View>
+            <View style={styles.impactStatBox}>
+              <Shield size={16} color="#F59E0B" />
+              <Text style={styles.impactStatNum}>1,200 ha</Text>
+              <Text style={styles.impactStatLabel}>Resilient Land</Text>
+            </View>
+          </View>
         </GlassCard>
 
         {/* SPONSOR READINESS & LEADERBOARD RANK */}
@@ -327,6 +356,55 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#0D5C46',
     letterSpacing: 0.5,
+  },
+  collectiveImpactCard: {
+    padding: 16,
+    gap: 10,
+    marginBottom: 12,
+    borderRadius: 18,
+    backgroundColor: 'rgba(253, 242, 248, 0.7)',
+    borderColor: 'rgba(236, 72, 153, 0.2)',
+  },
+  impactCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  impactCardTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#BE185D',
+  },
+  impactCardSub: {
+    fontSize: 11,
+    color: COLORS.textSecondary,
+    lineHeight: 16,
+  },
+  impactMetricsGrid: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  impactStatBox: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FBCFE8',
+    alignItems: 'center',
+    gap: 2,
+  },
+  impactStatNum: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: COLORS.textBright,
+    marginTop: 2,
+  },
+  impactStatLabel: {
+    fontSize: 9,
+    color: COLORS.textMuted,
+    textAlign: 'center',
   },
   gridRow: {
     flexDirection: 'row',

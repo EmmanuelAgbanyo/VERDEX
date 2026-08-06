@@ -45,7 +45,7 @@ interface AppContextType {
   
   refreshData: () => Promise<void>;
   toggleWatchlist: (assetId: string) => void;
-  submitThesis: (assetId: string, text: string) => { valid: boolean; feedback: string; thesis?: InvestmentThesis };
+  submitThesis: (assetId: string, text: string, communityPurpose?: string) => { valid: boolean; feedback: string; thesis?: InvestmentThesis };
   executeTrade: (assetId: string, side: OrderSide, type: OrderType, quantity: number, limitPrice?: number) => { success: boolean; message: string };
   completeLesson: (lessonId: string, xpReward: number) => void;
   answerDailyChallenge: (optionIndex: number) => { correct: boolean; explanation: string };
@@ -78,7 +78,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [signals, setSignals] = useState<ClimateSignal[]>(INITIAL_CLIMATE_SIGNALS);
   const [assets, setAssets] = useState<GreenAsset[]>(INITIAL_GREEN_ASSETS);
-  const [cash, setCash] = useState<number>(12840.20); // Initial Virtual Capital matching UI prompt mock
+  const [cash, setCash] = useState<number>(12840.20);
   const [positions, setPositions] = useState<PortfolioPosition[]>([
     {
       assetId: 'asset-ghana-cocoa',
@@ -197,7 +197,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const refreshData = useCallback(async () => {
     setIsRefreshing(true);
-    await new Promise((res) => setTimeout(res, 800)); // smooth pull-to-refresh
+    await new Promise((res) => setTimeout(res, 800));
     const { updatedSignals, updatedAssets } = tickClimateData(signals, assets);
     setSignals(updatedSignals);
     setAssets(updatedAssets);
@@ -213,7 +213,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const submitThesis = useCallback(
-    (assetId: string, text: string) => {
+    (assetId: string, text: string, communityPurpose?: string) => {
       const asset = assets.find((a) => a.id === assetId);
       if (!asset) return { valid: false, feedback: 'Asset not found.' };
 
@@ -227,6 +227,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         assetId,
         assetSymbol: asset.symbol,
         text: text.trim(),
+        communityPurpose: communityPurpose?.trim() || `Supported ${asset.communityImpact.toLowerCase()}`,
         sentenceCount: evalResult.sentenceCount,
         timestamp: Date.now(),
         qualityRating: evalResult.qualityRating,
@@ -241,7 +242,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return next;
       });
 
-      // Increase Thesis Craft skill meter
       setSkillMeters((prev) => {
         const nextMeters = { ...prev, thesisCraft: Math.min(100, prev.thesisCraft + 5) };
         saveLearnState(xp, streak, completedLessons, nextMeters);
@@ -304,7 +304,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           return next;
         });
 
-        // Boost Signal Reading and Risk Awareness meters
         setSkillMeters((prev) => {
           const next = {
             ...prev,
@@ -317,7 +316,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         return {
           success: true,
-          message: `Trade executed! ${side.toUpperCase()} ${quantity} ${asset.symbol} @ GH₵{result.order.price.toFixed(2)} (Fee: GH₵{result.order.fee.toFixed(2)})`,
+          message: `Trade executed! ${side.toUpperCase()} ${quantity} ${asset.symbol} @ GH₵${result.order.price.toFixed(2)} (Fee: GH₵${result.order.fee.toFixed(2)})`,
         };
       } catch (err: any) {
         return { success: false, message: err.message || 'Trade execution failed.' };
