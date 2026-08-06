@@ -27,6 +27,7 @@ import {
   BookOpen,
   ChevronDown,
   ChevronUp,
+  Info,
 } from 'lucide-react-native';
 import { InvestmentThesis } from '@/types';
 
@@ -50,6 +51,7 @@ export default function AssetDetailScreen() {
   const [isUnlocked, setIsUnlocked] = useState<boolean>(hasUnlockedThesis(asset.id));
   const [tradeModalVisible, setTradeModalVisible] = useState<boolean>(false);
   const [showStory, setShowStory] = useState<boolean>(true);
+  const [showSellNotice, setShowSellNotice] = useState<boolean>(false);
   const [chartType, setChartType] = useState<'area' | 'candles'>('area');
   const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '1Y' | 'ALL'>('1D');
   const [selectedPointIndex, setSelectedPointIndex] = useState<number>(asset.historicalPrices.length - 1);
@@ -492,29 +494,63 @@ export default function AssetDetailScreen() {
           onSubmitThesis={(text) => submitThesis(asset.id, text)}
         />
 
-        {/* EXECUTE TRADE BUTTON */}
+        {/* EXECUTE TRADE BUTTONS: BUY & SELL */}
         <View style={styles.tradeActionContainer}>
-          <Pressable
-            onPress={() => setTradeModalVisible(true)}
-            style={({ pressed }) => [
-              styles.tradeBtn,
-              !isUnlocked && styles.tradeBtnDisabled,
-              pressed && isUnlocked && { opacity: 0.85 },
-            ]}
-            disabled={!isUnlocked}
-            accessibilityLabel="Open trade execution ticket"
-            accessibilityRole="button"
-            accessibilityHint="Opens a modal to buy or sell this asset"
-          >
-            {isUnlocked ? (
-              <Unlock size={18} color="#FFFFFF" />
-            ) : (
-              <Lock size={18} color={COLORS.textMuted} />
-            )}
-            <Text style={[styles.tradeBtnText, !isUnlocked && styles.tradeBtnTextDisabled]}>
-              {isUnlocked ? 'OPEN TRADE TICKET' : 'LOCKED — SUBMIT THESIS FIRST'}
-            </Text>
-          </Pressable>
+          {showSellNotice && (
+            <View style={styles.sellNoticeBanner}>
+              <Info size={16} color="#D97706" />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.sellNoticeTitle}>Purpose-Driven Exit Notice</Text>
+                <Text style={styles.sellNoticeText}>
+                  To prevent speculative dumping and maintain community funding stability, divestment (Sell) requires a Community Transition Impact Review. Full sell functionality unlocks in the production release.
+                </Text>
+              </View>
+              <Pressable onPress={() => setShowSellNotice(false)} hitSlop={10}>
+                <Text style={styles.sellNoticeClose}>✕</Text>
+              </Pressable>
+            </View>
+          )}
+
+          <View style={styles.tradeBtnRow}>
+            {/* BUY BUTTON */}
+            <Pressable
+              onPress={() => setTradeModalVisible(true)}
+              style={({ pressed }) => [
+                styles.tradeBtnBuy,
+                !isUnlocked && styles.tradeBtnDisabled,
+                pressed && isUnlocked && { opacity: 0.85 },
+              ]}
+              disabled={!isUnlocked}
+              accessibilityLabel="Open Buy Trade Ticket"
+              accessibilityRole="button"
+            >
+              {isUnlocked ? (
+                <Unlock size={16} color="#FFFFFF" />
+              ) : (
+                <Lock size={16} color={COLORS.textMuted} />
+              )}
+              <Text style={[styles.tradeBtnText, !isUnlocked && styles.tradeBtnTextDisabled]}>
+                {isUnlocked ? `BUY ${asset.symbol}` : 'BUY (LOCKED)'}
+              </Text>
+            </Pressable>
+
+            {/* SELL BUTTON */}
+            <Pressable
+              onPress={() => setShowSellNotice((prev) => !prev)}
+              style={({ pressed }) => [
+                styles.tradeBtnSell,
+                pressed && { opacity: 0.85 },
+              ]}
+              accessibilityLabel="Sell Asset Notice"
+              accessibilityRole="button"
+            >
+              <Lock size={14} color="#D97706" />
+              <Text style={styles.tradeBtnSellText}>SELL {asset.symbol}</Text>
+              <View style={styles.comingSoonBadge}>
+                <Text style={styles.comingSoonText}>Full Release</Text>
+              </View>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
 
@@ -865,13 +901,18 @@ const styles = StyleSheet.create({
   },
   tradeActionContainer: {
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 24,
   },
-  tradeBtn: {
+  tradeBtnRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  tradeBtnBuy: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
     backgroundColor: '#0D5C46',
     paddingVertical: 16,
     borderRadius: 16,
@@ -881,6 +922,63 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  tradeBtnSell: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#F8FAF7',
+    paddingVertical: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E8EDE6',
+  },
+  tradeBtnSellText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: COLORS.textBright,
+  },
+  comingSoonBadge: {
+    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.2)',
+  },
+  comingSoonText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#D97706',
+  },
+  sellNoticeBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: 'rgba(245, 158, 11, 0.08)',
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.25)',
+    marginBottom: 12,
+  },
+  sellNoticeTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#B45309',
+  },
+  sellNoticeText: {
+    fontSize: 11,
+    color: COLORS.textSecondary,
+    lineHeight: 16,
+    marginTop: 2,
+  },
+  sellNoticeClose: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.textMuted,
+  },
   tradeBtnDisabled: {
     backgroundColor: '#F1F5F0',
     borderWidth: 1,
@@ -889,10 +987,10 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   tradeBtnText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '900',
     color: '#FFFFFF',
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   tradeBtnTextDisabled: {
     color: COLORS.textMuted,

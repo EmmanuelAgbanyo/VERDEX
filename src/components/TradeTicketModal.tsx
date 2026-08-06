@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, Pressable, TextInput, Alert } from 'react-native';
 import { GreenAsset, OrderSide, OrderType } from '@/types';
 import { COLORS, LAYOUT } from '@/constants/theme';
-import { X, ArrowRight, Wallet, ShieldAlert, CheckCircle } from 'lucide-react-native';
+import { X, ArrowRight, Wallet, ShieldAlert, CheckCircle, Info } from 'lucide-react-native';
 import { SIMULATED_TRANSACTION_FEE_RATE } from '@/services/tradingEngine';
 
 interface TradeTicketModalProps {
@@ -190,6 +190,19 @@ export const TradeTicketModal: React.FC<TradeTicketModalProps> = ({
             </View>
           </View>
 
+          {/* Purpose-Driven Sell Notice */}
+          {side === 'sell' && (
+            <View style={styles.sellNoticeBox}>
+              <Info size={16} color="#D97706" />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.sellNoticeTitle}>Purpose-Driven Exit (Coming in Production)</Text>
+                <Text style={styles.sellNoticeDesc}>
+                  To maintain community funding stability, divestments require a Community Transition Plan to avoid speculative dumping. Full sell workflows unlock in the production release.
+                </Text>
+              </View>
+            </View>
+          )}
+
           {/* Message notification */}
           {tradeMessage && (
             <View
@@ -222,16 +235,16 @@ export const TradeTicketModal: React.FC<TradeTicketModalProps> = ({
             hitSlop={10}
             style={({ pressed }) => [
               styles.actionBtn,
-              side === 'buy' ? styles.actionBtnBuy : styles.actionBtnSell,
-              (!isBuyValid || quantity <= 0) && styles.actionBtnDisabled,
-              pressed && { opacity: 0.85 },
+              side === 'buy' ? styles.actionBtnBuy : styles.actionBtnSellDisabled,
+              (side === 'sell' || !isBuyValid || quantity <= 0) && styles.actionBtnDisabled,
+              pressed && side === 'buy' && { opacity: 0.85 },
             ]}
-            disabled={!isBuyValid || quantity <= 0}
+            disabled={side === 'sell' || !isBuyValid || quantity <= 0}
           >
-            <Text style={styles.actionBtnText}>
-              {side === 'buy' ? 'EXECUTE BUY ORDER' : 'EXECUTE SELL ORDER'}
+            <Text style={[styles.actionBtnText, side === 'sell' && styles.actionBtnTextDisabled]}>
+              {side === 'buy' ? 'EXECUTE BUY ORDER' : 'SELL COMING IN FULL VERSION'}
             </Text>
-            <ArrowRight size={16} color={COLORS.bgDark} />
+            {side === 'buy' && <ArrowRight size={16} color={COLORS.bgDark} />}
           </Pressable>
 
           <Text style={styles.disclaimerText}>
@@ -429,6 +442,35 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
     color: COLORS.bgDark,
+  },
+  sellNoticeBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    borderRadius: 10,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.25)',
+  },
+  sellNoticeTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#D97706',
+  },
+  sellNoticeDesc: {
+    fontSize: 11,
+    color: COLORS.textSecondary,
+    lineHeight: 16,
+    marginTop: 2,
+  },
+  actionBtnSellDisabled: {
+    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.3)',
+  },
+  actionBtnTextDisabled: {
+    color: '#D97706',
   },
   disclaimerText: {
     fontSize: 10,
