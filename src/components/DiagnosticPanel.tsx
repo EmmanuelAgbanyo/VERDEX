@@ -215,7 +215,7 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
   const handleAppendChip = (snippet: string) => {
     if (existingThesis) return;
     setThesisText((prev) => (prev ? `${prev} ${snippet}` : snippet));
-    setActiveTab('thesis');
+    handleTabPress('thesis');
     // Reset AI result when thesis changes
     setAiResult(null);
     setShowAiResult(false);
@@ -333,7 +333,7 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
 
           {!existingThesis && (
             <Pressable
-              onPress={() => setActiveTab('thesis')}
+              onPress={() => handleTabPress('thesis')}
               style={styles.switchTabCta}
             >
               <Text style={styles.switchTabCtaText}>Proceed to Write Research Thesis →</Text>
