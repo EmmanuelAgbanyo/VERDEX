@@ -190,16 +190,13 @@ export const TradeTicketModal: React.FC<TradeTicketModalProps> = ({
             </View>
           </View>
 
-          {/* Purpose-Driven Sell Notice */}
+          {/* Sell Coming Soon Notice */}
           {side === 'sell' && (
             <View style={styles.sellNoticeBox}>
-              <Info size={16} color="#D97706" />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.sellNoticeTitle}>Purpose-Driven Exit (Coming in Production)</Text>
-                <Text style={styles.sellNoticeDesc}>
-                  To maintain community funding stability, divestments require a Community Transition Plan to avoid speculative dumping. Full sell workflows unlock in the production release.
-                </Text>
-              </View>
+              <Info size={14} color="#D97706" />
+              <Text style={styles.sellNoticeDesc}>
+                Sell functionality coming soon — full version will support asset divestments.
+              </Text>
             </View>
           )}
 
@@ -445,24 +442,20 @@ const styles = StyleSheet.create({
   },
   sellNoticeBox: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
+    alignItems: 'center',
+    gap: 8,
     backgroundColor: 'rgba(245, 158, 11, 0.1)',
     borderRadius: 10,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: 'rgba(245, 158, 11, 0.25)',
   },
-  sellNoticeTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#D97706',
-  },
   sellNoticeDesc: {
     fontSize: 11,
-    color: COLORS.textSecondary,
-    lineHeight: 16,
-    marginTop: 2,
+    color: '#D97706',
+    fontWeight: '600',
+    flex: 1,
   },
   actionBtnSellDisabled: {
     backgroundColor: 'rgba(245, 158, 11, 0.15)',

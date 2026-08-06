@@ -498,13 +498,10 @@ export default function AssetDetailScreen() {
         <View style={styles.tradeActionContainer}>
           {showSellNotice && (
             <View style={styles.sellNoticeBanner}>
-              <Info size={16} color="#D97706" />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.sellNoticeTitle}>Purpose-Driven Exit Notice</Text>
-                <Text style={styles.sellNoticeText}>
-                  To prevent speculative dumping and maintain community funding stability, divestment (Sell) requires a Community Transition Impact Review. Full sell functionality unlocks in the production release.
-                </Text>
-              </View>
+              <Info size={14} color="#D97706" />
+              <Text style={styles.sellNoticeText}>
+                Sell functionality coming soon — full version will support asset divestments.
+              </Text>
               <Pressable onPress={() => setShowSellNotice(false)} hitSlop={10}>
                 <Text style={styles.sellNoticeClose}>✕</Text>
               </Pressable>
@@ -954,30 +951,27 @@ const styles = StyleSheet.create({
   },
   sellNoticeBanner: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    backgroundColor: 'rgba(245, 158, 11, 0.08)',
-    borderRadius: 14,
-    padding: 14,
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: 'rgba(245, 158, 11, 0.25)',
-    marginBottom: 12,
-  },
-  sellNoticeTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#B45309',
+    marginBottom: 10,
   },
   sellNoticeText: {
     fontSize: 11,
-    color: COLORS.textSecondary,
-    lineHeight: 16,
-    marginTop: 2,
+    color: '#B45309',
+    fontWeight: '600',
+    flex: 1,
   },
   sellNoticeClose: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.textMuted,
+    color: '#B45309',
+    paddingHorizontal: 4,
   },
   tradeBtnDisabled: {
     backgroundColor: '#F1F5F0',
