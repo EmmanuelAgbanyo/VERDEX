@@ -390,7 +390,6 @@ export default function AssetDetailScreen() {
 
         {/* TELEMETRY & LIVE SENSOR STATUS */}
         <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionCategory}>LIVE DIAGNOSTIC CORRELATION</Text>
           <Text style={styles.sectionTitle}>Ecosystem Telemetry Feed</Text>
         </View>
 
@@ -445,7 +444,6 @@ export default function AssetDetailScreen() {
 
         {/* Community & Environmental Impact Overview */}
         <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionCategory}>ECOSYSTEM STATEMENT</Text>
           <Text style={styles.sectionTitle}>Community Impact & Purpose</Text>
         </View>
 
@@ -718,12 +716,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 4,
   },
-  sectionCategory: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: COLORS.textMuted,
-    letterSpacing: 1.2,
-  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '800',
@@ -806,58 +798,59 @@ const styles = StyleSheet.create({
   },
   sectionBox: {
     padding: 16,
-    gap: 8,
+    gap: 10,
     borderRadius: 16,
   },
   descText: {
-    fontSize: 12,
+    fontSize: 13,
     color: COLORS.textSecondary,
-    lineHeight: 17,
+    lineHeight: 18,
   },
   impactPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#F1F5F0',
-    borderWidth: 1,
-    borderColor: '#E4EAE2',
+    gap: 8,
+    backgroundColor: 'rgba(16, 185, 129, 0.10)',
     padding: 10,
     borderRadius: 10,
-    marginTop: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.25)',
   },
   impactText: {
     fontSize: 11,
-    color: COLORS.emeraldBright,
-    fontWeight: '600',
+    color: '#059669',
+    fontWeight: '700',
     flex: 1,
+    lineHeight: 15,
   },
   tradeActionContainer: {
-    marginTop: 8,
+    marginTop: 10,
+    marginBottom: 20,
   },
   tradeBtn: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
     backgroundColor: '#0D5C46',
-    paddingVertical: 15,
-    borderRadius: 14,
+    paddingVertical: 16,
+    borderRadius: 16,
     shadowColor: '#0D5C46',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.22,
     shadowRadius: 8,
     elevation: 4,
   },
   tradeBtnDisabled: {
-    backgroundColor: COLORS.inputBg,
+    backgroundColor: '#F1F5F0',
     borderWidth: 1,
-    borderColor: COLORS.inputBorder,
+    borderColor: '#D8E2D5',
     shadowOpacity: 0,
     elevation: 0,
   },
   tradeBtnText: {
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: 0.5,
   },

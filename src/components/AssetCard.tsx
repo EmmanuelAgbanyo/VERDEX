@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { GreenAsset } from '@/types';
 import { COLORS } from '@/constants/theme';
-import { Star, ShieldCheck, TrendingUp, TrendingDown, MapPin } from 'lucide-react-native';
+import { Star, ShieldCheck, TrendingUp, TrendingDown, MapPin, ChevronDown, ChevronUp, Heart, Leaf, Shield } from 'lucide-react-native';
 import { GlassCard } from './GlassCard';
 
 interface AssetCardProps {
@@ -20,18 +20,34 @@ export const AssetCard: React.FC<AssetCardProps> = ({
   isStarred,
   hasUnlockedThesis,
 }) => {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const isPositive = asset.change24h >= 0;
+
+  // Educational community impact copy for each asset category
+  const getCommunityImpactText = () => {
+    switch (asset.category) {
+      case 'cocoa':
+        return 'Empowers 1,200+ Eastern Region smallholder cocoa farmers with solar-powered shade irrigation and direct organic fair-trade pricing.';
+      case 'solar':
+        return 'Provides clean, off-grid solar electricity to 15,000+ homes and schools across the Northern Tamale agricultural buffer zone.';
+      case 'mangrove':
+        return 'Restores 450 hectares of Volta Delta mangroves, preventing coastal erosion and protecting local fishing livelihoods.';
+      case 'savannah':
+        return 'Protects Northern Mole ecological corridors from wildfire degradation while funding women-led shea agroforestry collectives.';
+      default:
+        return 'Directly funds community climate adaptation infrastructure and sustainable West African farming jobs.';
+    }
+  };
 
   return (
     <View style={styles.outerWrapper}>
       {/* Primary Card Pressable Layer */}
-      <Pressable 
-        onPress={onPress} 
+      <Pressable
+        onPress={onPress}
         style={({ pressed }) => [styles.cardPressable, pressed && styles.pressedState]}
         accessible={true}
         accessibilityRole="button"
-        accessibilityLabel={`${asset.name}, ${asset.symbol}, Virtual Price GH₵${asset.price.toFixed(2)}, change ${asset.change24h >= 0 ? 'up' : 'down'} ${asset.change24h.toFixed(2)}%`}
-        accessibilityHint="Double tap to open detailed asset diagnostic"
+        accessibilityLabel={`${asset.name}, ${asset.symbol}, Price GH₵${asset.price.toFixed(2)}, change ${asset.change24h >= 0 ? 'up' : 'down'} ${asset.change24h.toFixed(2)}%`}
       >
         <GlassCard style={styles.cardInner}>
           {/* Header Row: Symbol, Region, and Research Badge */}
@@ -66,11 +82,16 @@ export const AssetCard: React.FC<AssetCardProps> = ({
           {/* Pricing & Change Row */}
           <View style={styles.priceRow}>
             <View>
-              <Text style={styles.priceLabel}>Virtual Price</Text>
+              <Text style={styles.priceLabel}>PRICE</Text>
               <Text style={styles.priceValue}>GH₵{asset.price.toFixed(2)}</Text>
             </View>
 
-            <View style={[styles.changePill, { backgroundColor: isPositive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)' }]}>
+            <View
+              style={[
+                styles.changePill,
+                { backgroundColor: isPositive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)' },
+              ]}
+            >
               {isPositive ? (
                 <TrendingUp size={14} color={COLORS.emeraldBright} />
               ) : (
@@ -83,7 +104,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({
             </View>
           </View>
 
-          {/* Metrics summary preview */}
+          {/* Metrics Summary Row */}
           <View style={styles.metricsRow}>
             {asset.environmentalMetrics.slice(0, 2).map((m, idx) => (
               <View key={idx} style={styles.metricPill}>
@@ -91,18 +112,52 @@ export const AssetCard: React.FC<AssetCardProps> = ({
                 <Text style={styles.metricVal}>{m.value}</Text>
               </View>
             ))}
+
+            {/* Expand / Collapse Details Button */}
+            <Pressable
+              onPress={(e) => {
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+              style={styles.expandToggleBtn}
+              hitSlop={12}
+            >
+              <Text style={styles.expandToggleText}>{isExpanded ? 'Hide Info' : 'Impact Info'}</Text>
+              {isExpanded ? <ChevronUp size={14} color="#059669" /> : <ChevronDown size={14} color="#059669" />}
+            </Pressable>
           </View>
+
+          {/* COLLAPSIBLE EDUCATIONAL COMMUNITY IMPACT DRAWER */}
+          {isExpanded && (
+            <View style={styles.expandedDrawer}>
+              <View style={styles.impactTitleRow}>
+                <Heart size={14} color="#10B981" />
+                <Text style={styles.impactTitle}>Community Impact & Purpose</Text>
+              </View>
+              <Text style={styles.impactDesc}>{getCommunityImpactText()}</Text>
+
+              {/* All Environmental Metrics Detail Grid */}
+              <View style={styles.metricsDetailGrid}>
+                {asset.environmentalMetrics.map((m, idx) => (
+                  <View key={idx} style={styles.detailMetricBox}>
+                    <Text style={styles.detailMetricLabel}>{m.label}</Text>
+                    <Text style={styles.detailMetricVal}>{m.value}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
         </GlassCard>
       </Pressable>
 
-      {/* Sibling Star Button Layer (Positioned independently on top right) */}
+      {/* Sibling Star Button Layer */}
       <Pressable
         onPress={onStarToggle}
         hitSlop={12}
         style={({ pressed }) => [styles.starButton, pressed && styles.starPressed]}
         accessibilityRole="button"
         accessibilityState={{ selected: isStarred }}
-        accessibilityLabel={isStarred ? "Remove from watchlist" : "Add to watchlist"}
+        accessibilityLabel={isStarred ? 'Remove from watchlist' : 'Add to watchlist'}
       >
         <Star
           size={18}
@@ -124,17 +179,18 @@ const styles = StyleSheet.create({
   },
   pressedState: {
     opacity: 0.94,
-    transform: [{ scale: 0.98 }],
+    transform: [{ scale: 0.985 }],
   },
   cardInner: {
-    padding: 14,
+    padding: 16,
+    borderRadius: 20,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 6,
-    paddingRight: 32, // space reserved for sibling star button
+    paddingRight: 32,
   },
   symbolContainer: {
     flexDirection: 'row',
@@ -209,7 +265,7 @@ const styles = StyleSheet.create({
   priceLabel: {
     fontSize: 10,
     color: COLORS.textMuted,
-    textTransform: 'uppercase',
+    fontWeight: '700',
   },
   priceValue: {
     fontSize: 22,
@@ -231,9 +287,10 @@ const styles = StyleSheet.create({
   },
   metricsRow: {
     flexDirection: 'row',
-    gap: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(228, 234, 226, 0.5)',
+    borderTopColor: 'rgba(228, 234, 226, 0.6)',
     paddingTop: 10,
   },
   metricPill: {
@@ -247,8 +304,70 @@ const styles = StyleSheet.create({
   },
   metricVal: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.textBright,
+  },
+  expandToggleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(16, 185, 129, 0.10)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  expandToggleText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#059669',
+  },
+  expandedDrawer: {
+    marginTop: 12,
+    backgroundColor: 'rgba(245, 248, 244, 0.95)',
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#D8E2D5',
+    gap: 8,
+  },
+  impactTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  impactTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#0D5C46',
+  },
+  impactDesc: {
+    fontSize: 11,
+    color: '#364B41',
+    lineHeight: 16,
+  },
+  metricsDetailGrid: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 4,
+  },
+  detailMetricBox: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E4EAE2',
+  },
+  detailMetricLabel: {
+    fontSize: 9,
+    color: COLORS.textMuted,
+    fontWeight: '600',
+  },
+  detailMetricVal: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: COLORS.textBright,
+    marginTop: 2,
   },
   starButton: {
     position: 'absolute',
