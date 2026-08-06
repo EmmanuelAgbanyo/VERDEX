@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({ portfolioValue, sessionTimeRemai
       {/* Top Bar: Executive Welcome Greeting & Location Tag */}
       <View style={styles.topRow}>
         <View style={styles.welcomeGroup}>
-          <Text style={styles.welcomeTitle}>Welcome, Team VERDEX 🌿</Text>
+          <Text style={styles.welcomeTitle}>Welcome, Team VERDEX</Text>
         </View>
 
         <View style={styles.topRightGroup}>
