@@ -166,7 +166,7 @@ export default function AssetDetailScreen() {
         {/* Header Bar */}
         <View style={styles.headerRow}>
           <Pressable
-            onPress={() => router.back()}
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)/markets')}
             style={styles.iconBtn}
             accessibilityLabel="Go back to markets list"
             accessibilityRole="button"

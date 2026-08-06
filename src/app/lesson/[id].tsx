@@ -52,7 +52,7 @@ export default function LessonScreen() {
         {/* Header */}
         <View style={styles.topRow}>
           <Pressable
-            onPress={() => router.back()}
+            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)/learn')}
             style={styles.iconBtn}
             accessibilityLabel="Go back to learn path"
             accessibilityRole="button"
