@@ -334,6 +334,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return {
           success: true,
           message: `Trade executed! ${side.toUpperCase()} ${quantity} ${asset.symbol} @ GH₵${result.order.price.toFixed(2)} (Fee: GH₵${result.order.fee.toFixed(2)})`,
+          order: result.order,
         };
       } catch (err: any) {
         return { success: false, message: err.message || 'Trade execution failed.' };

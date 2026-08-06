@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, Pressable, TextInput, Alert } from 'react-native';
-import { GreenAsset, OrderSide, OrderType } from '@/types';
+import { GreenAsset, OrderSide, OrderType, TradeOrder } from '@/types';
 import { COLORS, LAYOUT } from '@/constants/theme';
 import { X, ArrowRight, Wallet, ShieldAlert, CheckCircle, Info } from 'lucide-react-native';
 import { SIMULATED_TRANSACTION_FEE_RATE } from '@/services/tradingEngine';
@@ -15,7 +15,7 @@ interface TradeTicketModalProps {
     type: OrderType,
     quantity: number,
     limitPrice?: number
-  ) => { success: boolean; message: string };
+  ) => { success: boolean; message: string; order?: TradeOrder };
 }
 
 export const TradeTicketModal: React.FC<TradeTicketModalProps> = ({
@@ -58,7 +58,7 @@ export const TradeTicketModal: React.FC<TradeTicketModalProps> = ({
       setTimeout(() => {
         onClose();
         setTradeMessage(null);
-      }, 1500);
+      }, 500);
     }
   };
 

@@ -5,6 +5,8 @@ import Svg, { Path, Rect, Line, Circle, Defs, LinearGradient, Stop } from 'react
 import { useApp } from '@/context/AppContext';
 import { DiagnosticPanel } from '@/components/DiagnosticPanel';
 import { TradeTicketModal } from '@/components/TradeTicketModal';
+import { TradeConfirmationModal } from '@/components/TradeConfirmationModal';
+import { ThesisLockPromptModal } from '@/components/ThesisLockPromptModal';
 import { GlassCard } from '@/components/GlassCard';
 import { COLORS, LAYOUT } from '@/constants/theme';
 import {
@@ -52,6 +54,9 @@ export default function AssetDetailScreen() {
   const existingThesis = getThesisForAsset(asset.id);
   const [isUnlocked, setIsUnlocked] = useState<boolean>(hasUnlockedThesis(asset.id));
   const [tradeModalVisible, setTradeModalVisible] = useState<boolean>(false);
+  const [lockPromptVisible, setLockPromptVisible] = useState<boolean>(false);
+  const [tradeConfirmVisible, setTradeConfirmVisible] = useState<boolean>(false);
+  const [executedOrder, setExecutedOrder] = useState<any | null>(null);
   const [showStory, setShowStory] = useState<boolean>(true);
   const [showSellNotice, setShowSellNotice] = useState<boolean>(false);
   const [chartType, setChartType] = useState<'area' | 'candles'>('area');
@@ -62,6 +67,23 @@ export default function AssetDetailScreen() {
 
   const handleUnlockSuccess = (thesis: InvestmentThesis) => {
     setIsUnlocked(true);
+  };
+
+  const handleBuyPress = () => {
+    if (isUnlocked) {
+      setTradeModalVisible(true);
+    } else {
+      setLockPromptVisible(true);
+    }
+  };
+
+  const handleConfirmTrade = (side: any, type: any, quantity: number, limitPrice?: number) => {
+    const res = executeTrade(asset.id, side, type, quantity, limitPrice);
+    if (res.success && res.order) {
+      setExecutedOrder(res.order);
+      setTradeConfirmVisible(true);
+    }
+    return res;
   };
 
   // Generate simulated candlestick and volume data based on price history
@@ -517,23 +539,21 @@ export default function AssetDetailScreen() {
           <View style={styles.tradeBtnRow}>
             {/* BUY BUTTON */}
             <Pressable
-              onPress={() => setTradeModalVisible(true)}
+              onPress={handleBuyPress}
               style={({ pressed }) => [
                 styles.tradeBtnBuy,
-                !isUnlocked && styles.tradeBtnDisabled,
-                pressed && isUnlocked && { opacity: 0.85 },
+                pressed && { opacity: 0.85 },
               ]}
-              disabled={!isUnlocked}
-              accessibilityLabel="Open Buy Trade Ticket"
+              accessibilityLabel="Execute Buy Order for Asset"
               accessibilityRole="button"
             >
               {isUnlocked ? (
                 <Unlock size={16} color="#FFFFFF" />
               ) : (
-                <Lock size={16} color={COLORS.textMuted} />
+                <Lock size={16} color="#FFFFFF" />
               )}
-              <Text style={[styles.tradeBtnText, !isUnlocked && styles.tradeBtnTextDisabled]}>
-                {isUnlocked ? `BUY ${asset.symbol}` : 'BUY (LOCKED)'}
+              <Text style={styles.tradeBtnText}>
+                {isUnlocked ? `BUY ${asset.symbol}` : `BUY ${asset.symbol} 🔒`}
               </Text>
             </Pressable>
 
@@ -563,7 +583,29 @@ export default function AssetDetailScreen() {
         asset={asset}
         cash={cash}
         onClose={() => setTradeModalVisible(false)}
-        onConfirmTrade={(side, type, qty, limit) => executeTrade(asset.id, side, type, qty, limit)}
+        onConfirmTrade={handleConfirmTrade}
+      />
+
+      {/* Thesis Lock Prompt Dialog Modal */}
+      <ThesisLockPromptModal
+        visible={lockPromptVisible}
+        asset={asset}
+        onClose={() => setLockPromptVisible(false)}
+        onGoToThesis={() => {
+          setLockPromptVisible(false);
+        }}
+      />
+
+      {/* Trade Order Fill Confirmation Dialog Modal */}
+      <TradeConfirmationModal
+        visible={tradeConfirmVisible}
+        order={executedOrder}
+        asset={asset}
+        onClose={() => setTradeConfirmVisible(false)}
+        onViewPortfolio={() => {
+          setTradeConfirmVisible(false);
+          router.push('/(tabs)/portfolio');
+        }}
       />
     </View>
   );
