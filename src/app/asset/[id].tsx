@@ -265,161 +265,192 @@ export default function AssetDetailScreen() {
           </View>
         </View>
 
-        {/* HIGH-FIDELITY INTERACTIVE CHART PANEL */}
-        <GlassCard variant="dark" showGrid style={styles.chartPanel}>
-          {/* Chart Header Controls */}
-          <View style={styles.chartHeaderOptions}>
-            <View style={styles.timeframePillsRow}>
-              {timeframes.map((tf) => (
+        {/* 2G LOW-BANDWIDTH TEXT TABLE OR HIGH-FIDELITY SVG CHART */}
+        {isDataSaver ? (
+          <View style={styles.dataSaverChartCard}>
+            <View style={styles.dataSaverTableHeader}>
+              <Zap size={14} color="#10B981" />
+              <Text style={styles.dataSaverTableTitle}>2G TEXT DATA MODE: Valuation Summary</Text>
+            </View>
+            <View style={styles.dataSaverGrid}>
+              <View style={styles.dataSaverCell}>
+                <Text style={styles.dataSaverLabel}>Asset Symbol</Text>
+                <Text style={styles.dataSaverValText}>{asset.symbol}</Text>
+              </View>
+              <View style={styles.dataSaverCell}>
+                <Text style={styles.dataSaverLabel}>Current Price</Text>
+                <Text style={styles.dataSaverValText}>GH₵{asset.price.toFixed(2)}</Text>
+              </View>
+              <View style={styles.dataSaverCell}>
+                <Text style={styles.dataSaverLabel}>24h Change</Text>
+                <Text style={[styles.dataSaverValText, { color: isPositive ? '#10B981' : '#EF4444' }]}>
+                  {isPositive ? '+' : ''}{asset.change24h.toFixed(2)}%
+                </Text>
+              </View>
+              <View style={styles.dataSaverCell}>
+                <Text style={styles.dataSaverLabel}>Signal Score</Text>
+                <Text style={styles.dataSaverValText}>{asset.signalScore}/100</Text>
+              </View>
+            </View>
+            <Text style={styles.dataSaverFootnote}>
+              * SVG chart rendering disabled to minimize 2G network bandwidth outside Accra. All trading and thesis functionality active.
+            </Text>
+          </View>
+        ) : (
+          <GlassCard variant="dark" showGrid style={styles.chartPanel}>
+            {/* Chart Header Controls */}
+            <View style={styles.chartHeaderOptions}>
+              <View style={styles.timeframePillsRow}>
+                {timeframes.map((tf) => (
+                  <Pressable
+                    key={tf}
+                    onPress={() => setTimeframe(tf)}
+                    style={[styles.timeframePill, timeframe === tf && styles.timeframePillActive]}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Select timeframe ${tf}`}
+                  >
+                    <Text style={[styles.timeframeText, timeframe === tf && styles.timeframeTextActive]}>
+                      {tf}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              <View style={styles.chartToggleBtnRow}>
                 <Pressable
-                  key={tf}
-                  onPress={() => setTimeframe(tf)}
-                  style={[styles.timeframePill, timeframe === tf && styles.timeframePillActive]}
+                  onPress={() => setChartType('area')}
+                  style={[styles.chartToggleBtn, chartType === 'area' && styles.chartToggleBtnActive]}
                   accessibilityRole="button"
-                  accessibilityLabel={`Select timeframe ${tf}`}
+                  accessibilityLabel="Area Chart"
                 >
-                  <Text style={[styles.timeframeText, timeframe === tf && styles.timeframeTextActive]}>
-                    {tf}
+                  <Text style={[styles.chartToggleText, chartType === 'area' && styles.chartToggleTextActive]}>
+                    Area
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setChartType('candles')}
+                  style={[styles.chartToggleBtn, chartType === 'candles' && styles.chartToggleBtnActive]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Candlestick Chart"
+                >
+                  <Text style={[styles.chartToggleText, chartType === 'candles' && styles.chartToggleTextActive]}>
+                    Candles
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+
+            {/* SVG Vector Chart Drawing Canvas */}
+            <View style={styles.svgContainer}>
+              <Svg width="100%" height={chartHeight}>
+                <Defs>
+                  <LinearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                    <Stop offset="0%" stopColor="#10B981" stopOpacity={0.45} />
+                    <Stop offset="100%" stopColor="#10B981" stopOpacity={0.0} />
+                  </LinearGradient>
+                </Defs>
+
+                <Line x1="0" y1={chartHeight * 0.25} x2={chartWidth} y2={chartHeight * 0.25} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                <Line x1="0" y1={chartHeight * 0.5} x2={chartWidth} y2={chartHeight * 0.5} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                <Line x1="0" y1={chartHeight * 0.75} x2={chartWidth} y2={chartHeight * 0.75} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+
+                {chartType === 'area' ? (
+                  <>
+                    <Path d={areaPath} fill="url(#chartGradient)" />
+                    <Path d={linePath} fill="none" stroke="#10B981" strokeWidth="2.5" />
+                  </>
+                ) : (
+                  chartData.map((d, idx) => {
+                    const x = (idx / (chartData.length - 1)) * chartWidth;
+                    const candleWidth = 10;
+
+                    const yOpen = chartHeight - ((d.open - minVal) / valRange) * chartHeight;
+                    const yClose = chartHeight - ((d.close - minVal) / valRange) * chartHeight;
+                    const yHigh = chartHeight - ((d.high - minVal) / valRange) * chartHeight;
+                    const yLow = chartHeight - ((d.low - minVal) / valRange) * chartHeight;
+
+                    const isCandleGreen = d.close >= d.open;
+                    const candleColor = isCandleGreen ? '#10B981' : '#FF5A5F';
+
+                    return (
+                      <React.Fragment key={idx}>
+                        <Line x1={x} y1={yHigh} x2={x} y2={yLow} stroke={candleColor} strokeWidth="1.5" />
+                        <Rect
+                          x={x - candleWidth / 2}
+                          y={Math.min(yOpen, yClose)}
+                          width={candleWidth}
+                          height={Math.max(3, Math.abs(yOpen - yClose))}
+                          fill={candleColor}
+                          rx={1}
+                        />
+                      </React.Fragment>
+                    );
+                  })
+                )}
+
+                {selectedPointIndex !== null && points[selectedPointIndex] && (
+                  <Line
+                    x1={points[selectedPointIndex].x}
+                    y1={0}
+                    x2={points[selectedPointIndex].x}
+                    y2={chartHeight}
+                    stroke="rgba(255,255,255,0.25)"
+                    strokeDasharray="4,4"
+                    strokeWidth="1.2"
+                  />
+                )}
+              </Svg>
+            </View>
+
+            {/* Interactive touch selector ticks */}
+            <View style={styles.chartTimeTicksRow}>
+              {asset.historicalPrices.map((hp, idx) => (
+                <Pressable
+                  key={idx}
+                  onPress={() => setSelectedPointIndex(idx)}
+                  style={[
+                    styles.timeTickBtn,
+                    selectedPointIndex === idx && styles.timeTickBtnActive,
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Select time ${hp.time}`}
+                >
+                  <Text
+                    style={[
+                      styles.timeTickText,
+                      selectedPointIndex === idx && styles.timeTickTextActive,
+                    ]}
+                  >
+                    {hp.time}
                   </Text>
                 </Pressable>
               ))}
             </View>
 
-            <View style={styles.chartToggleBtnRow}>
-              <Pressable
-                onPress={() => setChartType('area')}
-                style={[styles.chartToggleBtn, chartType === 'area' && styles.chartToggleBtnActive]}
-                accessibilityRole="button"
-                accessibilityLabel="Area Chart"
-              >
-                <Text style={[styles.chartToggleText, chartType === 'area' && styles.chartToggleTextActive]}>
-                  Area
+            {/* Point Inspector details HUD */}
+            <View style={styles.chartInspectorHud}>
+              <View style={styles.hudMetaBox}>
+                <Text style={styles.hudMetaLabel}>SELECTED PRICE</Text>
+                <Text style={styles.hudMetaValue}>GH₵{activeDataPoint.close.toFixed(2)}</Text>
+              </View>
+
+              <View style={styles.hudMetaBox}>
+                <Text style={styles.hudMetaLabel}>VOLUME</Text>
+                <Text style={styles.hudMetaValue}>{activeDataPoint.volume.toLocaleString()} units</Text>
+              </View>
+
+              <View style={styles.hudMetaBox}>
+                <Text style={styles.hudMetaLabel}>VOLATILITY</Text>
+                <Text style={styles.hudMetaValue}>
+                  {(
+                    (Math.abs(activeDataPoint.close - activeDataPoint.open) / activeDataPoint.open) *
+                    100
+                  ).toFixed(2)}
+                  %
                 </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => setChartType('candles')}
-                style={[styles.chartToggleBtn, chartType === 'candles' && styles.chartToggleBtnActive]}
-                accessibilityRole="button"
-                accessibilityLabel="Candlestick Chart"
-              >
-                <Text style={[styles.chartToggleText, chartType === 'candles' && styles.chartToggleTextActive]}>
-                  Candles
-                </Text>
-              </Pressable>
+              </View>
             </View>
-          </View>
-
-          {/* SVG Vector Chart Drawing Canvas */}
-          <View style={styles.svgContainer}>
-            <Svg width="100%" height={chartHeight}>
-              <Defs>
-                <LinearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0%" stopColor="#10B981" stopOpacity={0.45} />
-                  <Stop offset="100%" stopColor="#10B981" stopOpacity={0.0} />
-                </LinearGradient>
-              </Defs>
-
-              <Line x1="0" y1={chartHeight * 0.25} x2={chartWidth} y2={chartHeight * 0.25} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-              <Line x1="0" y1={chartHeight * 0.5} x2={chartWidth} y2={chartHeight * 0.5} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-              <Line x1="0" y1={chartHeight * 0.75} x2={chartWidth} y2={chartHeight * 0.75} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-
-              {chartType === 'area' ? (
-                <>
-                  <Path d={areaPath} fill="url(#chartGradient)" />
-                  <Path d={linePath} fill="none" stroke="#10B981" strokeWidth="2.5" />
-                </>
-              ) : (
-                chartData.map((d, idx) => {
-                  const x = (idx / (chartData.length - 1)) * chartWidth;
-                  const candleWidth = 10;
-
-                  const yOpen = chartHeight - ((d.open - minVal) / valRange) * chartHeight;
-                  const yClose = chartHeight - ((d.close - minVal) / valRange) * chartHeight;
-                  const yHigh = chartHeight - ((d.high - minVal) / valRange) * chartHeight;
-                  const yLow = chartHeight - ((d.low - minVal) / valRange) * chartHeight;
-
-                  const isCandleGreen = d.close >= d.open;
-                  const candleColor = isCandleGreen ? '#10B981' : '#FF5A5F';
-
-                  return (
-                    <React.Fragment key={idx}>
-                      <Line x1={x} y1={yHigh} x2={x} y2={yLow} stroke={candleColor} strokeWidth="1.5" />
-                      <Rect
-                        x={x - candleWidth / 2}
-                        y={Math.min(yOpen, yClose)}
-                        width={candleWidth}
-                        height={Math.max(3, Math.abs(yOpen - yClose))}
-                        fill={candleColor}
-                        rx={1}
-                      />
-                    </React.Fragment>
-                  );
-                })
-              )}
-
-              {selectedPointIndex !== null && points[selectedPointIndex] && (
-                <Line
-                  x1={points[selectedPointIndex].x}
-                  y1={0}
-                  x2={points[selectedPointIndex].x}
-                  y2={chartHeight}
-                  stroke="rgba(255,255,255,0.25)"
-                  strokeDasharray="4,4"
-                  strokeWidth="1.2"
-                />
-              )}
-            </Svg>
-          </View>
-
-          {/* Interactive touch selector ticks */}
-          <View style={styles.chartTimeTicksRow}>
-            {asset.historicalPrices.map((hp, idx) => (
-              <Pressable
-                key={idx}
-                onPress={() => setSelectedPointIndex(idx)}
-                style={[
-                  styles.timeTickBtn,
-                  selectedPointIndex === idx && styles.timeTickBtnActive,
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel={`Select time ${hp.time}`}
-              >
-                <Text
-                  style={[
-                    styles.timeTickText,
-                    selectedPointIndex === idx && styles.timeTickTextActive,
-                  ]}
-                >
-                  {hp.time}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-
-          {/* Point Inspector details HUD */}
-          <View style={styles.chartInspectorHud}>
-            <View style={styles.hudMetaBox}>
-              <Text style={styles.hudMetaLabel}>SELECTED PRICE</Text>
-              <Text style={styles.hudMetaValue}>GH₵{activeDataPoint.close.toFixed(2)}</Text>
-            </View>
-
-            <View style={styles.hudMetaBox}>
-              <Text style={styles.hudMetaLabel}>VOLUME</Text>
-              <Text style={styles.hudMetaValue}>{activeDataPoint.volume.toLocaleString()} units</Text>
-            </View>
-
-            <View style={styles.hudMetaBox}>
-              <Text style={styles.hudMetaLabel}>VOLATILITY</Text>
-              <Text style={styles.hudMetaValue}>
-                {(
-                  (Math.abs(activeDataPoint.close - activeDataPoint.open) / activeDataPoint.open) *
-                  100
-                ).toFixed(2)}
-                %
-              </Text>
-            </View>
-          </View>
-        </GlassCard>
+          </GlassCard>
         )}
 
         {/* POINT 2: IMPACT BREAKDOWN CARD WITH 3 KEY METRICS */}
