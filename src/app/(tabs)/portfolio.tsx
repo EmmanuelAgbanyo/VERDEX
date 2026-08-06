@@ -56,17 +56,16 @@ export default function PortfolioScreen() {
 
         {/* PORTFOLIO PERFORMANCE SUMMARY */}
         <GlassCard variant="emerald" showGrid style={styles.perfCard}>
-          <View style={styles.perfHeader}>
-            <View>
+          <View style={styles.perfHeaderColumn}>
+            <View style={styles.perfTitleRow}>
               <Text style={styles.perfLabel}>TOTAL PORTFOLIO VALUE</Text>
-              <Text style={styles.perfVal}>GH₵{portfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
+              <View style={[styles.pnlPill, { backgroundColor: netPnl >= 0 ? 'rgba(52, 211, 153, 0.25)' : 'rgba(239, 68, 68, 0.25)' }]}>
+                <Text style={[styles.pnlPillText, { color: netPnl >= 0 ? '#34D399' : '#FCA5A5' }]}>
+                  {netPnl >= 0 ? '+' : ''}GH₵{netPnl.toFixed(2)} ({netPnlPercent.toFixed(2)}%)
+                </Text>
+              </View>
             </View>
-
-            <View style={[styles.pnlPill, { backgroundColor: netPnl >= 0 ? 'rgba(52, 211, 153, 0.25)' : 'rgba(239, 68, 68, 0.25)' }]}>
-              <Text style={[styles.pnlPillText, { color: netPnl >= 0 ? '#34D399' : '#FCA5A5' }]}>
-                {netPnl >= 0 ? '+' : ''}GH₵{netPnl.toFixed(2)} ({netPnlPercent.toFixed(2)}%)
-              </Text>
-            </View>
+            <Text style={styles.perfVal}>GH₵{portfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
           </View>
 
           <View style={styles.subGrid}>
@@ -295,10 +294,16 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     borderRadius: 20,
   },
-  perfHeader: {
+  perfHeaderColumn: {
+    gap: 4,
+    marginBottom: 12,
+  },
+  perfTitleRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    gap: 6,
   },
   perfLabel: {
     fontSize: 11,

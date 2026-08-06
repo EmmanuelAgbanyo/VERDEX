@@ -1,6 +1,6 @@
 import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
-import { COLORS } from '@/constants/theme';
 import { LayoutGrid, BarChart2, BookOpen, Briefcase } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 
@@ -17,19 +17,19 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           position: 'absolute',
-          bottom: 14,
-          left: 14,
-          right: 14,
+          bottom: 12,
+          left: 12,
+          right: 12,
           backgroundColor: '#FFFFFF',
           borderWidth: 1.5,
-          borderColor: '#C5D8B8',
+          borderColor: '#B0C9A0',
           borderRadius: 24,
-          height: 68,
-          paddingBottom: 6,
-          paddingTop: 6,
+          height: 66,
+          paddingBottom: 4,
+          paddingTop: 4,
           shadowColor: '#072017',
           shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.15,
+          shadowOpacity: 0.16,
           shadowRadius: 20,
           elevation: 10,
           zIndex: 1000,
@@ -40,13 +40,13 @@ export default function TabLayout() {
           alignItems: 'center',
         },
         tabBarActiveTintColor: '#0D5C46',
-        tabBarInactiveTintColor: '#374151',
+        tabBarInactiveTintColor: '#1E293B',
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '900',
           letterSpacing: 0.2,
-          marginTop: 2,
-          marginBottom: 2,
+          marginTop: 1,
+          marginBottom: 1,
         },
       }}
     >
@@ -54,8 +54,10 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ color, focused }) => (
-            <LayoutGrid size={focused ? 22 : 20} color={color} strokeWidth={focused ? 2.5 : 2} />
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
+              <LayoutGrid size={focused ? 20 : 19} color={focused ? '#0D5C46' : '#1E293B'} strokeWidth={focused ? 2.6 : 2.2} />
+            </View>
           ),
         }}
         listeners={{ tabPress: triggerHaptic }}
@@ -64,8 +66,10 @@ export default function TabLayout() {
         name="markets"
         options={{
           title: 'Markets',
-          tabBarIcon: ({ color, focused }) => (
-            <BarChart2 size={focused ? 22 : 20} color={color} strokeWidth={focused ? 2.5 : 2} />
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
+              <BarChart2 size={focused ? 20 : 19} color={focused ? '#0D5C46' : '#1E293B'} strokeWidth={focused ? 2.6 : 2.2} />
+            </View>
           ),
         }}
         listeners={{ tabPress: triggerHaptic }}
@@ -74,8 +78,10 @@ export default function TabLayout() {
         name="learn"
         options={{
           title: 'Learn',
-          tabBarIcon: ({ color, focused }) => (
-            <BookOpen size={focused ? 22 : 20} color={color} strokeWidth={focused ? 2.5 : 2} />
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
+              <BookOpen size={focused ? 20 : 19} color={focused ? '#0D5C46' : '#1E293B'} strokeWidth={focused ? 2.6 : 2.2} />
+            </View>
           ),
         }}
         listeners={{ tabPress: triggerHaptic }}
@@ -84,8 +90,10 @@ export default function TabLayout() {
         name="portfolio"
         options={{
           title: 'Portfolio',
-          tabBarIcon: ({ color, focused }) => (
-            <Briefcase size={focused ? 22 : 20} color={color} strokeWidth={focused ? 2.5 : 2} />
+          tabBarIcon: ({ focused }) => (
+            <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
+              <Briefcase size={focused ? 20 : 19} color={focused ? '#0D5C46' : '#1E293B'} strokeWidth={focused ? 2.6 : 2.2} />
+            </View>
           ),
         }}
         listeners={{ tabPress: triggerHaptic }}
@@ -93,3 +101,14 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  iconWrapper: {
+    paddingHorizontal: 12,
+    paddingVertical: 3,
+    borderRadius: 12,
+  },
+  iconWrapperActive: {
+    backgroundColor: 'rgba(13, 92, 70, 0.12)',
+  },
+});
