@@ -2,7 +2,20 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native';
 import { GreenAsset, InvestmentThesis } from '@/types';
 import { COLORS } from '@/constants/theme';
-import { Lock, Unlock, ShieldAlert, FileText, CheckCircle2, Sparkles, AlertCircle, Plus, Check, Heart } from 'lucide-react-native';
+import {
+  Lock,
+  Unlock,
+  ShieldAlert,
+  FileText,
+  CheckCircle2,
+  Sparkles,
+  AlertCircle,
+  Plus,
+  Check,
+  Heart,
+  BarChart2,
+  PenTool,
+} from 'lucide-react-native';
 import { evaluateThesisText } from '@/services/tradingEngine';
 
 interface DiagnosticPanelProps {
@@ -18,6 +31,7 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
   existingThesis,
   onSubmitThesis,
 }) => {
+  const [activeTab, setActiveTab] = useState<'sensors' | 'thesis'>('sensors');
   const [thesisText, setThesisText] = useState<string>(existingThesis ? existingThesis.text : '');
   const [communityPurpose, setCommunityPurpose] = useState<string>(
     existingThesis?.communityPurpose || `This trade supports ${asset.communityImpact.toLowerCase()}`
@@ -40,9 +54,9 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
   const handleAppendChip = (snippet: string) => {
     if (existingThesis) return;
     setThesisText((prev) => (prev ? `${prev} ${snippet}` : snippet));
+    setActiveTab('thesis');
   };
 
-  // Preset quick chips based on asset metrics
   const quickSnippets = [
     `1) ${asset.name} signal index is ${asset.signalScore}/100 based on ${asset.environmentalMetrics[0]?.label || 'sensor reading'}.`,
     `2) ${asset.riskFactors[0] || 'Ecological weather shifts'} presents a key risk factor.`,
@@ -51,357 +65,469 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Header status */}
+      {/* 5-STAR RESEARCH LOCK STATUS CARD */}
       <View
         style={[
-          styles.headerBox,
-          { borderColor: isAlreadyUnlocked ? COLORS.emeraldPrimary : 'rgba(245, 158, 11, 0.5)' },
+          styles.statusCard,
+          { borderColor: isAlreadyUnlocked ? 'rgba(16, 185, 129, 0.4)' : 'rgba(245, 158, 11, 0.4)' },
         ]}
       >
-        <View style={styles.headerTitleRow}>
-          {isAlreadyUnlocked ? (
-            <View style={styles.unlockedIconCircle}>
-              <Unlock size={18} color="#10B981" />
-            </View>
-          ) : (
-            <View style={styles.lockedIconCircle}>
-              <Lock size={18} color="#D97706" />
-            </View>
-          )}
+        <View style={styles.statusRow}>
+          <View
+            style={[
+              styles.statusIconCircle,
+              { backgroundColor: isAlreadyUnlocked ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)' },
+            ]}
+          >
+            {isAlreadyUnlocked ? (
+              <Unlock size={20} color="#10B981" />
+            ) : (
+              <Lock size={20} color="#D97706" />
+            )}
+          </View>
+
           <View style={{ flex: 1 }}>
-            <Text style={styles.headerTitle}>
-              {isAlreadyUnlocked ? 'Research Lock: UNLOCKED' : 'Research Lock: ACTIVE (1/3 Unlocked)'}
-            </Text>
-            <Text style={styles.headerSubtitle}>
-              {isAlreadyUnlocked
-                ? 'Your 3-sentence thesis and community purpose are validated. Trade execution ticket is enabled.'
-                : 'Review the environmental data below and enter a 3-sentence thesis to unlock trading.'}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Environmental Diagnostics Box */}
-      <View style={styles.sectionCard}>
-        <View style={styles.sectionHeader}>
-          <FileText size={16} color={COLORS.emeraldBright} />
-          <Text style={styles.sectionTitle}>Environmental Diagnostic Sensors ({asset.symbol})</Text>
-        </View>
-
-        <View style={styles.metricsGrid}>
-          {asset.environmentalMetrics.map((m, idx) => (
-            <View key={idx} style={styles.metricItem}>
-              <Text style={styles.metricItemLabel}>{m.label}</Text>
-              <Text style={styles.metricItemVal}>{m.value}</Text>
+            <View style={styles.statusTitleRow}>
+              <Text style={styles.statusTitle}>
+                {isAlreadyUnlocked ? 'Research Lock: UNLOCKED' : 'Research Lock: ACTIVE'}
+              </Text>
+              <View
+                style={[
+                  styles.statusPill,
+                  { backgroundColor: isAlreadyUnlocked ? '#10B981' : '#F59E0B' },
+                ]}
+              >
+                <Text style={styles.statusPillText}>
+                  {isAlreadyUnlocked ? 'Ready to Trade' : 'Thesis Required'}
+                </Text>
+              </View>
             </View>
-          ))}
-        </View>
-
-        {/* Risk factors */}
-        <Text style={styles.riskHeader}>Key Ecological Risk Factors:</Text>
-        {asset.riskFactors.map((rf, idx) => (
-          <View key={idx} style={styles.riskRow}>
-            <ShieldAlert size={14} color={COLORS.amberData} />
-            <Text style={styles.riskText}>{rf}</Text>
+            <Text style={styles.statusDesc}>
+              {isAlreadyUnlocked
+                ? 'Your thesis & community purpose are validated. Trade execution ticket is enabled.'
+                : 'Review sensor telemetry and submit a 3-sentence investment thesis to unlock trading.'}
+            </Text>
           </View>
-        ))}
+        </View>
       </View>
 
-      {/* Thesis Entry & Guidance */}
-      <View style={styles.sectionCard}>
-        <View style={styles.sectionHeader}>
-          <Sparkles size={16} color={COLORS.amberDataBright} />
-          <Text style={styles.sectionTitle}>Structured 3-Sentence Thesis</Text>
-        </View>
+      {/* SEGMENTED TAB CONTROLLER */}
+      <View style={styles.tabBar}>
+        <Pressable
+          onPress={() => setActiveTab('sensors')}
+          style={[styles.tabBtn, activeTab === 'sensors' && styles.tabBtnActive]}
+          accessibilityRole="tab"
+          accessibilityState={{ selected: activeTab === 'sensors' }}
+        >
+          <BarChart2 size={14} color={activeTab === 'sensors' ? '#0D5C46' : COLORS.textMuted} />
+          <Text style={[styles.tabBtnText, activeTab === 'sensors' && styles.tabBtnTextActive]}>
+            Ecosystem Signals
+          </Text>
+        </Pressable>
 
-        <View style={styles.guidanceBox}>
-          <Text style={styles.guidanceItem}>
-            1. <Text style={styles.guidanceBold}>Signal Observation:</Text> State the climate metric driving this asset.
+        <Pressable
+          onPress={() => setActiveTab('thesis')}
+          style={[styles.tabBtn, activeTab === 'thesis' && styles.tabBtnActive]}
+          accessibilityRole="tab"
+          accessibilityState={{ selected: activeTab === 'thesis' }}
+        >
+          <PenTool size={14} color={activeTab === 'thesis' ? '#0D5C46' : COLORS.textMuted} />
+          <Text style={[styles.tabBtnText, activeTab === 'thesis' && styles.tabBtnTextActive]}>
+            Research Thesis
           </Text>
-          <Text style={styles.guidanceItem}>
-            2. <Text style={styles.guidanceBold}>Risk Assessment:</Text> Identify a key risk that could impact performance.
-          </Text>
-          <Text style={styles.guidanceItem}>
-            3. <Text style={styles.guidanceBold}>Financial Rationale:</Text> Explain why capital should be allocated at GH₵{asset.price.toFixed(2)}.
-          </Text>
-        </View>
+        </Pressable>
+      </View>
 
-        {/* Quick Insert Template Chips */}
-        {!existingThesis && (
-          <View style={styles.chipRowContainer}>
-            <Text style={styles.chipHeaderLabel}>Tap to append template sentences:</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
-              {quickSnippets.map((snip, idx) => (
-                <Pressable
-                  key={idx}
-                  onPress={() => handleAppendChip(snip)}
-                  style={({ pressed }) => [styles.templateChip, pressed && { opacity: 0.8 }]}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Append sentence ${idx + 1}`}
-                >
-                  <Plus size={12} color="#10B981" />
-                  <Text style={styles.templateChipText}>Sentence {idx + 1} Template</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
+      {/* TAB 1: ECOSYSTEM SIGNALS & RISKS */}
+      {activeTab === 'sensors' && (
+        <View style={styles.panelBody}>
+          {/* Sensor Readouts Grid */}
+          <Text style={styles.subSectionTitle}>Live Environmental Sensors ({asset.symbol})</Text>
+          <View style={styles.sensorGrid}>
+            {asset.environmentalMetrics.map((m, idx) => (
+              <View key={idx} style={styles.sensorCard}>
+                <Text style={styles.sensorLabel}>{m.label}</Text>
+                <Text style={styles.sensorVal}>{m.value}</Text>
+              </View>
+            ))}
           </View>
-        )}
 
-        <TextInput
-          style={styles.textInput}
-          multiline
-          numberOfLines={4}
-          placeholder="e.g. 1) Suhum rainfall is up +12%, boosting cocoa canopy hydration. 2) Dry harmattan winds pose a late-season risk to bean pods. 3) Current price of GH₵148.50 offers strong upside given optimal soil moisture."
-          placeholderTextColor={COLORS.textMuted}
-          value={thesisText}
-          onChangeText={setThesisText}
-          editable={!existingThesis}
-        />
-
-        {/* POINT 3: COMMUNITY PURPOSE FIELD */}
-        <View style={styles.communityPurposeContainer}>
-          <View style={styles.communityPurposeHeader}>
-            <Heart size={14} color="#059669" />
-            <Text style={styles.communityPurposeTitle}>How does this trade support community resilience?</Text>
+          {/* Ecological Risk Factors */}
+          <Text style={styles.subSectionTitle}>Ecological Risk Factors</Text>
+          <View style={styles.riskList}>
+            {asset.riskFactors.map((rf, idx) => (
+              <View key={idx} style={styles.riskBadgeRow}>
+                <ShieldAlert size={14} color="#D97706" />
+                <Text style={styles.riskBadgeText}>{rf}</Text>
+              </View>
+            ))}
           </View>
-          <TextInput
-            style={styles.textInputShort}
-            multiline
-            numberOfLines={2}
-            placeholder="e.g. This investment helps cocoa farmers access disease management resources, protecting their livelihoods against climate-driven crop failure."
-            placeholderTextColor={COLORS.textMuted}
-            value={communityPurpose}
-            onChangeText={setCommunityPurpose}
-            editable={!existingThesis}
-          />
-        </View>
 
-        {/* Sentence Counter & Evaluator Progress Steps */}
-        <View style={styles.evalRow}>
-          <View style={styles.sentenceStepsGroup}>
-            {[1, 2, 3].map((stepNum) => {
-              const isFilled = evaluation.sentenceCount >= stepNum;
+          {/* Quick Action to Thesis */}
+          {!existingThesis && (
+            <Pressable
+              onPress={() => setActiveTab('thesis')}
+              style={styles.switchTabCta}
+            >
+              <Text style={styles.switchTabCtaText}>Proceed to Write Research Thesis →</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
+
+      {/* TAB 2: RESEARCH THESIS & COMMUNITY PURPOSE */}
+      {activeTab === 'thesis' && (
+        <View style={styles.panelBody}>
+          {/* Guidance Steps Bar */}
+          <View style={styles.stepsRow}>
+            {[
+              { num: 1, label: '1. Signal' },
+              { num: 2, label: '2. Risk' },
+              { num: 3, label: '3. Value' },
+            ].map((st) => {
+              const isDone = evaluation.sentenceCount >= st.num;
               return (
                 <View
-                  key={stepNum}
-                  style={[
-                    styles.stepBadge,
-                    isFilled ? styles.stepBadgeActive : styles.stepBadgeInactive,
-                  ]}
+                  key={st.num}
+                  style={[styles.stepPill, isDone ? styles.stepPillDone : styles.stepPillPending]}
                 >
-                  {isFilled ? (
-                    <Check size={10} color="#FFFFFF" />
-                  ) : (
-                    <Text style={styles.stepBadgeNum}>{stepNum}</Text>
-                  )}
-                  <Text style={[styles.stepBadgeText, isFilled && styles.stepBadgeTextActive]}>
-                    Sentence {stepNum}
-                  </Text>
+                  {isDone ? <Check size={12} color="#FFFFFF" /> : <Text style={styles.stepNumText}>{st.num}</Text>}
+                  <Text style={[styles.stepLabelText, isDone && styles.stepLabelTextDone]}>{st.label}</Text>
                 </View>
               );
             })}
+
+            {evaluation.valid && (
+              <View style={styles.ratingBadge}>
+                <CheckCircle2 size={12} color="#10B981" />
+                <Text style={styles.ratingText}>{evaluation.qualityRating}</Text>
+              </View>
+            )}
           </View>
 
-          {evaluation.valid && (
-            <View style={styles.validBadge}>
-              <CheckCircle2 size={12} color={COLORS.emeraldBright} />
-              <Text style={styles.validBadgeText}>{evaluation.qualityRating} Thesis</Text>
+          {/* Quick Template Sentences */}
+          {!existingThesis && (
+            <View style={styles.templateSection}>
+              <Text style={styles.templateHeaderLabel}>Tap to insert structured template sentence:</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
+                {quickSnippets.map((snip, idx) => (
+                  <Pressable
+                    key={idx}
+                    onPress={() => handleAppendChip(snip)}
+                    style={({ pressed }) => [styles.chipBtn, pressed && { opacity: 0.8 }]}
+                  >
+                    <Plus size={12} color="#0D5C46" />
+                    <Text style={styles.chipBtnText}>Sentence {idx + 1} Template</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
             </View>
           )}
-        </View>
 
-        {!!errorFeedback && (
-          <View style={styles.errorBox}>
-            <AlertCircle size={14} color={COLORS.redAlert} />
-            <Text style={styles.errorText}>{errorFeedback}</Text>
+          {/* 3-Sentence Thesis Field */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputFieldLabel}>3-Sentence Investment Thesis:</Text>
+            <TextInput
+              style={styles.textInputMain}
+              multiline
+              numberOfLines={4}
+              placeholder="e.g. 1) Suhum rainfall is up +12%, boosting cocoa canopy hydration. 2) Dry harmattan winds pose a late-season risk to bean pods. 3) Current price of GH₵148.50 offers strong upside given optimal soil moisture."
+              placeholderTextColor={COLORS.textMuted}
+              value={thesisText}
+              onChangeText={setThesisText}
+              editable={!existingThesis}
+            />
           </View>
-        )}
 
-        {/* Unlock / Submit Button */}
-        {!existingThesis && (
-          <Pressable
-            onPress={handleSubmit}
-            style={({ pressed }) => [
-              styles.submitButton,
-              !evaluation.valid && styles.submitButtonDisabled,
-              pressed && evaluation.valid && { opacity: 0.85 },
-            ]}
-            disabled={!evaluation.valid}
-            accessibilityRole="button"
-            accessibilityLabel="Validate and unlock trade ticket"
-          >
-            <Unlock size={16} color={evaluation.valid ? '#FFFFFF' : COLORS.textMuted} />
-            <Text style={[styles.submitButtonText, !evaluation.valid && styles.submitButtonTextDisabled]}>
-              Validate & Unlock Trade Ticket
-            </Text>
-          </Pressable>
-        )}
-      </View>
+          {/* Community Purpose Field */}
+          <View style={styles.inputGroup}>
+            <View style={styles.communityHeaderRow}>
+              <Heart size={14} color="#EC4899" />
+              <Text style={styles.communityHeaderTitle}>Community Purpose:</Text>
+            </View>
+            <TextInput
+              style={styles.textInputSub}
+              multiline
+              numberOfLines={2}
+              placeholder="e.g. This trade provides disease-resistant seedlings to 2,400 cocoa farmers in Asante Akim."
+              placeholderTextColor={COLORS.textMuted}
+              value={communityPurpose}
+              onChangeText={setCommunityPurpose}
+              editable={!existingThesis}
+            />
+          </View>
+
+          {!!errorFeedback && (
+            <View style={styles.errorBox}>
+              <AlertCircle size={14} color={COLORS.redAlert} />
+              <Text style={styles.errorText}>{errorFeedback}</Text>
+            </View>
+          )}
+
+          {/* Validate & Unlock Action Button */}
+          {!existingThesis && (
+            <Pressable
+              onPress={handleSubmit}
+              style={({ pressed }) => [
+                styles.submitBtn,
+                !evaluation.valid && styles.submitBtnDisabled,
+                pressed && evaluation.valid && { opacity: 0.88 },
+              ]}
+              disabled={!evaluation.valid}
+            >
+              <Unlock size={16} color={evaluation.valid ? '#FFFFFF' : COLORS.textMuted} />
+              <Text style={[styles.submitBtnText, !evaluation.valid && styles.submitBtnTextDisabled]}>
+                Validate & Unlock Trade Ticket
+              </Text>
+            </Pressable>
+          )}
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    gap: 12,
-  },
-  headerBox: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E4EAE2',
     padding: 16,
-    borderWidth: 1.5,
+    gap: 14,
     shadowColor: '#102A1F',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
-    shadowRadius: 6,
+    shadowRadius: 8,
     elevation: 2,
   },
-  headerTitleRow: {
+  statusCard: {
+    backgroundColor: '#F8FAF7',
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+  },
+  statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  unlockedIconCircle: {
+  statusIconCircle: {
     padding: 10,
-    borderRadius: 14,
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    borderRadius: 12,
   },
-  lockedIconCircle: {
-    padding: 10,
-    borderRadius: 14,
-    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+  statusTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  headerTitle: {
-    fontSize: 15,
+  statusTitle: {
+    fontSize: 14,
     fontWeight: '900',
     color: COLORS.textBright,
-    letterSpacing: -0.2,
   },
-  headerSubtitle: {
-    fontSize: 12,
+  statusPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  statusPillText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  statusDesc: {
+    fontSize: 11,
     color: COLORS.textSecondary,
     marginTop: 2,
-    lineHeight: 16,
+    lineHeight: 15,
   },
-  sectionCard: {
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#F1F5F0',
+    borderRadius: 12,
+    padding: 3,
+    gap: 4,
+  },
+  tabBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  tabBtnActive: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E4EAE2',
     shadowColor: '#102A1F',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.02,
+    shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 1,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
+  tabBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: COLORS.textMuted,
   },
-  sectionTitle: {
-    fontSize: 14,
+  tabBtnTextActive: {
+    color: '#0D5C46',
+    fontWeight: '800',
+  },
+  panelBody: {
+    gap: 12,
+    paddingTop: 4,
+  },
+  subSectionTitle: {
+    fontSize: 12,
     fontWeight: '800',
     color: COLORS.textBright,
   },
-  metricsGrid: {
+  sensorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 12,
   },
-  metricItem: {
+  sensorCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#F1F5F0',
+    backgroundColor: '#F8FAF7',
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#D8E2D5',
+    borderColor: '#E4EAE2',
   },
-  metricItemLabel: {
+  sensorLabel: {
     fontSize: 10,
     color: COLORS.textMuted,
     fontWeight: '600',
   },
-  metricItemVal: {
+  sensorVal: {
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: '900',
     color: COLORS.textBright,
     marginTop: 2,
   },
-  riskHeader: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.textSecondary,
-    marginBottom: 6,
+  riskList: {
+    gap: 6,
   },
-  riskRow: {
+  riskBadgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 6,
-    backgroundColor: 'rgba(245, 158, 11, 0.06)',
-    padding: 8,
-    borderRadius: 8,
-  },
-  riskText: {
-    fontSize: 11,
-    color: COLORS.textSecondary,
-    flex: 1,
-    lineHeight: 15,
-  },
-  guidanceBox: {
-    backgroundColor: '#F1F5F0',
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 10,
-    gap: 4,
+    backgroundColor: 'rgba(245, 158, 11, 0.08)',
+    padding: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#D8E2D5',
+    borderColor: 'rgba(245, 158, 11, 0.2)',
   },
-  guidanceItem: {
+  riskBadgeText: {
     fontSize: 11,
-    color: COLORS.textSecondary,
-    lineHeight: 16,
+    color: '#B45309',
+    fontWeight: '600',
+    flex: 1,
   },
-  guidanceBold: {
-    fontWeight: '700',
-    color: '#059669',
+  switchTabCta: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(16, 185, 129, 0.10)',
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginTop: 4,
   },
-  chipRowContainer: {
-    marginBottom: 10,
+  switchTabCtaText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#0D5C46',
   },
-  chipHeaderLabel: {
+  stepsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  stepPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  stepPillDone: {
+    backgroundColor: '#10B981',
+    borderColor: '#10B981',
+  },
+  stepPillPending: {
+    backgroundColor: '#F1F5F0',
+    borderColor: '#E4EAE2',
+  },
+  stepNumText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: COLORS.textMuted,
+  },
+  stepLabelText: {
     fontSize: 10,
     fontWeight: '700',
     color: COLORS.textMuted,
-    marginBottom: 4,
+  },
+  stepLabelTextDone: {
+    color: '#FFFFFF',
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginLeft: 'auto',
+  },
+  ratingText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#059669',
+  },
+  templateSection: {
+    gap: 4,
+  },
+  templateHeaderLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLORS.textMuted,
   },
   chipsScroll: {
     flexDirection: 'row',
   },
-  templateChip: {
+  chipBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(16, 185, 129, 0.10)',
+    backgroundColor: 'rgba(13, 92, 70, 0.08)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.25)',
     marginRight: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(13, 92, 70, 0.15)',
   },
-  templateChipText: {
+  chipBtnText: {
     fontSize: 10,
-    fontWeight: '700',
-    color: '#059669',
+    fontWeight: '800',
+    color: '#0D5C46',
   },
-  textInput: {
-    backgroundColor: '#F1F5F0',
+  inputGroup: {
+    gap: 4,
+  },
+  inputFieldLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: COLORS.textBright,
+  },
+  textInputMain: {
+    backgroundColor: '#F8FAF7',
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#D8E2D5',
@@ -411,22 +537,18 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     minHeight: 85,
   },
-  communityPurposeContainer: {
-    marginTop: 10,
-    gap: 6,
-  },
-  communityPurposeHeader: {
+  communityHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  communityPurposeTitle: {
+  communityHeaderTitle: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#059669',
+    color: '#BE185D',
   },
-  textInputShort: {
-    backgroundColor: '#F1F5F0',
+  textInputSub: {
+    backgroundColor: '#F8FAF7',
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#D8E2D5',
@@ -436,104 +558,47 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     minHeight: 50,
   },
-  evalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  sentenceStepsGroup: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  stepBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    borderWidth: 1,
-  },
-  stepBadgeActive: {
-    backgroundColor: '#10B981',
-    borderColor: '#10B981',
-  },
-  stepBadgeInactive: {
-    backgroundColor: '#F1F5F0',
-    borderColor: '#D8E2D5',
-  },
-  stepBadgeNum: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: COLORS.textMuted,
-  },
-  stepBadgeText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: COLORS.textMuted,
-  },
-  stepBadgeTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  validBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  validBadgeText: {
-    fontSize: 11,
-    color: COLORS.emeraldBright,
-    fontWeight: '800',
-  },
   errorBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    backgroundColor: 'rgba(239, 68, 68, 0.12)',
     padding: 10,
     borderRadius: 8,
-    marginBottom: 10,
   },
   errorText: {
     fontSize: 11,
     color: COLORS.redAlert,
     flex: 1,
   },
-  submitButton: {
+  submitBtn: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
     backgroundColor: '#0D5C46',
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     shadowColor: '#0D5C46',
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.18,
+    shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 3,
   },
-  submitButtonDisabled: {
+  submitBtnDisabled: {
     backgroundColor: '#F1F5F0',
     borderWidth: 1,
-    borderColor: '#D8E2D5',
+    borderColor: '#E4EAE2',
     shadowOpacity: 0,
     elevation: 0,
   },
-  submitButtonText: {
+  submitBtnText: {
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: 0.3,
   },
-  submitButtonTextDisabled: {
+  submitBtnTextDisabled: {
     color: COLORS.textMuted,
   },
 });
