@@ -20,27 +20,28 @@ export default function TabLayout() {
           bottom: 20,
           left: 20,
           right: 20,
-          backgroundColor: 'rgba(255, 255, 255, 0.94)',
+          backgroundColor: '#FFFFFF',
           borderWidth: 1.5,
-          borderColor: 'rgba(228, 234, 226, 0.75)',
+          borderColor: '#D2DEC9',
           borderTopWidth: 1.5,
-          borderTopColor: 'rgba(228, 234, 226, 0.75)',
-          borderRadius: 24,
-          height: 68,
+          borderTopColor: '#D2DEC9',
+          borderRadius: 26,
+          height: 72,
           paddingBottom: 10,
           paddingTop: 10,
-          shadowColor: '#0E2E21',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.12,
-          shadowRadius: 20,
-          elevation: 8,
+          shadowColor: '#072017',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.16,
+          shadowRadius: 24,
+          elevation: 10,
         },
-        tabBarActiveTintColor: COLORS.emeraldBright,
-        tabBarInactiveTintColor: COLORS.textMuted,
+        tabBarActiveTintColor: '#0D5C46',
+        tabBarInactiveTintColor: '#2C4035',
         tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '700',
-          letterSpacing: 0.3,
+          fontSize: 11,
+          fontWeight: '900',
+          letterSpacing: 0.2,
+          marginTop: 3,
         },
       }}
     >
@@ -48,7 +49,9 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ color, size }) => <LayoutGrid size={size} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <LayoutGrid size={focused ? 24 : 22} color={color} strokeWidth={focused ? 2.5 : 2} />
+          ),
         }}
         listeners={{ tabPress: triggerHaptic }}
       />
@@ -56,7 +59,9 @@ export default function TabLayout() {
         name="markets"
         options={{
           title: 'Markets',
-          tabBarIcon: ({ color, size }) => <BarChart2 size={size} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <BarChart2 size={focused ? 24 : 22} color={color} strokeWidth={focused ? 2.5 : 2} />
+          ),
         }}
         listeners={{ tabPress: triggerHaptic }}
       />
@@ -64,7 +69,9 @@ export default function TabLayout() {
         name="learn"
         options={{
           title: 'Learn',
-          tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <BookOpen size={focused ? 24 : 22} color={color} strokeWidth={focused ? 2.5 : 2} />
+          ),
         }}
         listeners={{ tabPress: triggerHaptic }}
       />
@@ -72,7 +79,9 @@ export default function TabLayout() {
         name="portfolio"
         options={{
           title: 'Portfolio',
-          tabBarIcon: ({ color, size }) => <Briefcase size={size} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Briefcase size={focused ? 24 : 22} color={color} strokeWidth={focused ? 2.5 : 2} />
+          ),
         }}
         listeners={{ tabPress: triggerHaptic }}
       />
