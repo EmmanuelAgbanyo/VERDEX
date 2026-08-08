@@ -23,6 +23,8 @@ import {
   Radio,
   ArrowRight,
   Sparkles,
+  Trees,
+  Waves,
 } from 'lucide-react-native';
 import { AssetCategory, GreenAsset } from '@/types';
 
@@ -174,8 +176,14 @@ export default function MarketsScreen() {
                 </Text>
 
                 <View style={styles.driverTagsGroup}>
-                  <Text style={styles.driverTag}>🌿 Restoration ↑</Text>
-                  <Text style={styles.driverTag}>🌊 Coastal resilience ↑</Text>
+                  <View style={styles.driverTagPill}>
+                    <Trees size={11} color="#A7F3D0" />
+                    <Text style={styles.driverTagText}>Restoration ↑</Text>
+                  </View>
+                  <View style={styles.driverTagPill}>
+                    <Waves size={11} color="#A7F3D0" />
+                    <Text style={styles.driverTagText}>Coastal resilience ↑</Text>
+                  </View>
                 </View>
               </View>
 
@@ -537,14 +545,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
-  driverTag: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#A7F3D0',
+  driverTagPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: 'rgba(52, 211, 153, 0.12)',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
+  },
+  driverTagText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#A7F3D0',
   },
   pulseCta: {
     flexDirection: 'row',

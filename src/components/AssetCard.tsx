@@ -14,6 +14,13 @@ import {
   ChevronDown,
   ChevronUp,
   Info,
+  CloudRain,
+  Sprout,
+  Sun,
+  Zap,
+  Trees,
+  Waves,
+  Flame,
 } from 'lucide-react-native';
 
 interface AssetCardProps {
@@ -47,33 +54,33 @@ const MiniSparkline: React.FC<{ isPositive: boolean }> = ({ isPositive }) => {
   );
 };
 
-// Map assets to specific environmental drivers ("Why it's moving")
-const getEnvironmentalDrivers = (asset: GreenAsset) => {
-  switch (asset.category) {
+// Map assets to specific environmental drivers using real SVG vector icons
+const getEnvironmentalDriverSpecs = (category: string) => {
+  switch (category) {
     case 'cocoa':
       return [
-        { label: '🌧 Rainfall', direction: '↑' },
-        { label: '🌱 Cocoa outlook', direction: '↑' },
+        { Icon: CloudRain, label: 'Rainfall', direction: '↑' },
+        { Icon: Sprout, label: 'Cocoa outlook', direction: '↑' },
       ];
     case 'solar':
       return [
-        { label: '☀ Solar irradiance', direction: '↑' },
-        { label: '⚡ Grid reliability', direction: '↑' },
+        { Icon: Sun, label: 'Solar irradiance', direction: '↑' },
+        { Icon: Zap, label: 'Grid reliability', direction: '↑' },
       ];
     case 'mangrove':
       return [
-        { label: '🌿 Mangrove restoration', direction: '↑' },
-        { label: '🌊 Coastal resilience', direction: '↑' },
+        { Icon: Trees, label: 'Mangrove restoration', direction: '↑' },
+        { Icon: Waves, label: 'Coastal resilience', direction: '↑' },
       ];
     case 'savannah':
       return [
-        { label: '🔥 Firebreak active', direction: '↑' },
-        { label: '🌳 Shea canopy', direction: '↑' },
+        { Icon: Flame, label: 'Firebreak active', direction: '↑' },
+        { Icon: Trees, label: 'Shea canopy', direction: '↑' },
       ];
     default:
       return [
-        { label: '🌱 Ecosystem signal', direction: '↑' },
-        { label: '📈 Market demand', direction: '↑' },
+        { Icon: Sprout, label: 'Ecosystem signal', direction: '↑' },
+        { Icon: TrendingUp, label: 'Market demand', direction: '↑' },
       ];
   }
 };
@@ -87,7 +94,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const isPositive = asset.change24h >= 0;
-  const drivers = getEnvironmentalDrivers(asset);
+  const drivers = getEnvironmentalDriverSpecs(asset.category);
 
   // Compute signal breakdown scores based on signalScore
   const climateResilienceScore = Math.min(98, Math.max(70, asset.signalScore + 2));
@@ -109,14 +116,14 @@ export const AssetCard: React.FC<AssetCardProps> = ({
           <View style={styles.symbolRegionGroup}>
             <Text style={styles.symbolText}>{asset.symbol}</Text>
             <View style={styles.regionBadge}>
-              <MapPin size={10} color="#0D5C46" />
-              <Text style={styles.regionText}>📍 {asset.regionLabel.split(',')[0]}</Text>
+              <MapPin size={11} color="#0D5C46" />
+              <Text style={styles.regionText}>{asset.regionLabel.split(',')[0]}</Text>
             </View>
           </View>
           <Text style={styles.assetName}>{asset.name}</Text>
         </Pressable>
 
-        {/* Independent Star Button (Sibling, NOT nested in another Pressable) */}
+        {/* Independent Star Button */}
         <Pressable
           onPress={onStarToggle}
           hitSlop={12}
@@ -165,7 +172,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({
 
       {/* ROW 3: Environmental Signal Container */}
       <View style={styles.signalContainer}>
-        {/* Independent Expand Toggle Header (Sibling) */}
+        {/* Independent Expand Toggle Header */}
         <Pressable
           onPress={() => setIsExpanded(!isExpanded)}
           style={({ pressed }) => [styles.signalHeader, pressed && styles.pressedState]}
@@ -183,17 +190,21 @@ export const AssetCard: React.FC<AssetCardProps> = ({
           </View>
         </Pressable>
 
-        {/* Environmental Drivers Chips */}
+        {/* Environmental Drivers Chips with Real SVG Vector Icons */}
         <View style={styles.driversRow}>
           <Text style={styles.driversHeading}>WHY IT'S MOVING</Text>
           <View style={styles.driversChipsGroup}>
-            {drivers.map((drv, idx) => (
-              <View key={idx} style={styles.driverChip}>
-                <Text style={styles.driverChipText}>
-                  {drv.label} <Text style={styles.driverDir}>{drv.direction}</Text>
-                </Text>
-              </View>
-            ))}
+            {drivers.map((drv, idx) => {
+              const DriverIcon = drv.Icon;
+              return (
+                <View key={idx} style={styles.driverChip}>
+                  <DriverIcon size={12} color="#0D5C46" />
+                  <Text style={styles.driverChipText}>
+                    {drv.label} <Text style={styles.driverDir}>{drv.direction}</Text>
+                  </Text>
+                </View>
+              );
+            })}
           </View>
         </View>
 
@@ -243,7 +254,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({
         )}
       </View>
 
-      {/* ROW 4: Thesis Governance Action Bar (Independent Pressable) */}
+      {/* ROW 4: Thesis Governance Action Bar */}
       <Pressable
         onPress={onPress}
         style={({ pressed }) => [styles.actionBarPressable, pressed && styles.pressedState]}
@@ -428,9 +439,12 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   driverChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: 6,
     borderWidth: 1,
     borderColor: '#CBD5E1',
