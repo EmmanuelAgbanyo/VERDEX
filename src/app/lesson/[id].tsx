@@ -48,7 +48,7 @@ export default function LessonScreen() {
       <View style={[styles.blurBlob, styles.blobGreen]} />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        <View style={{ maxWidth: 720, width: '100%', alignSelf: 'center', gap: 14 }}>
+        <View style={{ maxWidth: 720, width: '100%', alignSelf: 'center', gap: 24 }}>
         {/* Header */}
         <View style={styles.topRow}>
           <Pressable
@@ -83,7 +83,8 @@ export default function LessonScreen() {
 
         {/* Teaching Sections */}
         {targetLesson.sections.map((sec, idx) => (
-          <GlassCard key={idx} style={styles.sectionCard}>
+          <View key={idx} style={styles.sectionCard}>
+            <Text style={styles.sectionStepper}>SECTION {idx + 1} OF {targetLesson?.sections.length}</Text>
             <Text style={styles.sectionTitle}>{sec.title}</Text>
             <Text style={styles.sectionBody}>{sec.body}</Text>
             <View style={styles.takeawayBox}>
@@ -93,11 +94,13 @@ export default function LessonScreen() {
                 {sec.keyTakeaway}
               </Text>
             </View>
-          </GlassCard>
+          </View>
         ))}
 
         {/* END-OF-LESSON QUIZ (Glass Card with Highlight borders) */}
         <GlassCard variant="light" style={styles.quizCard}>
+          <View style={styles.quizAccentBar} />
+          
           <View style={styles.quizHeaderRow}>
             <Sparkles size={16} color="#10B981" />
             <Text style={styles.quizHeaderTitle}>End-of-Lesson Checkpoint</Text>
@@ -232,16 +235,16 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   blobAmber: {
-    width: 250,
-    height: 250,
-    backgroundColor: 'rgba(245, 158, 11, 0.04)',
+    width: 180,
+    height: 180,
+    backgroundColor: 'rgba(245, 158, 11, 0.025)',
     top: -50,
     right: -50,
   },
   blobGreen: {
-    width: 220,
-    height: 220,
-    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+    width: 160,
+    height: 160,
+    backgroundColor: 'rgba(16, 185, 129, 0.03)',
     top: 350,
     left: -60,
   },
@@ -250,7 +253,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    gap: 14,
+    gap: 20,
   },
   topRow: {
     flexDirection: 'row',
@@ -295,7 +298,7 @@ const styles = StyleSheet.create({
     color: '#B45309',
   },
   summaryCard: {
-    padding: 16,
+    padding: 20,
     gap: 6,
   },
   summaryRow: {
@@ -316,6 +319,14 @@ const styles = StyleSheet.create({
   sectionCard: {
     padding: 16,
     gap: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#10B981',
+  },
+  sectionStepper: {
+    fontSize: 9,
+    color: COLORS.textMuted,
+    letterSpacing: 1,
+    fontWeight: '800',
   },
   sectionTitle: {
     fontSize: 14,
@@ -331,11 +342,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 6,
-    backgroundColor: '#F7F9F6',
-    borderWidth: 1,
-    borderColor: '#E4EAE2',
-    padding: 10,
-    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#F59E0B',
+    paddingLeft: 12,
+    paddingVertical: 8,
     marginTop: 4,
   },
   takeawayText: {
@@ -345,8 +355,17 @@ const styles = StyleSheet.create({
     lineHeight: 15,
   },
   quizCard: {
-    padding: 16,
+    padding: 20,
     gap: 10,
+    overflow: 'hidden',
+  },
+  quizAccentBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+    backgroundColor: '#10B981',
   },
   quizHeaderRow: {
     flexDirection: 'row',
@@ -410,9 +429,14 @@ const styles = StyleSheet.create({
   },
   checkBtn: {
     backgroundColor: '#0D5C46',
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderRadius: 10,
     alignItems: 'center',
+    shadowColor: '#0D5C46',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   checkBtnDisabled: {
     opacity: 0.5,
@@ -438,16 +462,17 @@ const styles = StyleSheet.create({
   practiceCard: {
     padding: 16,
     gap: 10,
+    backgroundColor: '#0B3C2F',
   },
   practiceTag: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#B45309',
+    color: '#A7F3D0',
     letterSpacing: 1,
   },
   practiceText: {
     fontSize: 12,
-    color: COLORS.textSecondary,
+    color: '#D1FAE5',
     lineHeight: 16,
   },
   practiceBtn: {
@@ -455,7 +480,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: '#0D5C46',
+    backgroundColor: '#10B981',
     paddingVertical: 11,
     borderRadius: 10,
     marginTop: 4,

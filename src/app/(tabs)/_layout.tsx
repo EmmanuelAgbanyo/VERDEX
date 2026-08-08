@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { Tabs } from 'expo-router';
-import { LayoutGrid, BarChart2, BookOpen, Briefcase } from 'lucide-react-native';
+import { Home, BarChart2, BookOpen, Briefcase } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 
 export default function TabLayout() {
@@ -17,19 +17,19 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           position: 'absolute',
-          bottom: 12,
-          left: 12,
-          right: 12,
+          bottom: Platform.OS === 'ios' ? 24 : 16,
+          left: 20,
+          right: 20,
           backgroundColor: '#FFFFFF',
-          borderWidth: 1.5,
-          borderColor: '#B0C9A0',
-          borderRadius: 24,
-          height: 66,
-          paddingBottom: 4,
-          paddingTop: 4,
+          borderWidth: 1,
+          borderColor: 'rgba(210, 222, 205, 0.6)',
+          borderRadius: 32,
+          height: 64,
+          paddingBottom: 6,
+          paddingTop: 6,
           shadowColor: '#072017',
           shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.16,
+          shadowOpacity: 0.12,
           shadowRadius: 20,
           elevation: 10,
           zIndex: 1000,
@@ -39,24 +39,23 @@ export default function TabLayout() {
           justifyContent: 'center',
           alignItems: 'center',
         },
-        tabBarActiveTintColor: '#0D5C46',
-        tabBarInactiveTintColor: '#1E293B',
+        tabBarActiveTintColor: '#0B3C2F',
+        tabBarInactiveTintColor: '#6B8276',
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '900',
-          letterSpacing: 0.2,
-          marginTop: 1,
-          marginBottom: 1,
+          fontWeight: '700',
+          letterSpacing: 0.1,
+          marginTop: 2,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
+          title: 'Home',
           tabBarIcon: ({ focused }) => (
             <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
-              <LayoutGrid size={focused ? 20 : 19} color={focused ? '#0D5C46' : '#1E293B'} strokeWidth={focused ? 2.6 : 2.2} />
+              <Home size={20} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
             </View>
           ),
         }}
@@ -68,7 +67,7 @@ export default function TabLayout() {
           title: 'Markets',
           tabBarIcon: ({ focused }) => (
             <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
-              <BarChart2 size={focused ? 20 : 19} color={focused ? '#0D5C46' : '#1E293B'} strokeWidth={focused ? 2.6 : 2.2} />
+              <BarChart2 size={20} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
             </View>
           ),
         }}
@@ -80,7 +79,7 @@ export default function TabLayout() {
           title: 'Learn',
           tabBarIcon: ({ focused }) => (
             <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
-              <BookOpen size={focused ? 20 : 19} color={focused ? '#0D5C46' : '#1E293B'} strokeWidth={focused ? 2.6 : 2.2} />
+              <BookOpen size={20} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
             </View>
           ),
         }}
@@ -92,7 +91,7 @@ export default function TabLayout() {
           title: 'Portfolio',
           tabBarIcon: ({ focused }) => (
             <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
-              <Briefcase size={focused ? 20 : 19} color={focused ? '#0D5C46' : '#1E293B'} strokeWidth={focused ? 2.6 : 2.2} />
+              <Briefcase size={20} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
             </View>
           ),
         }}
@@ -104,11 +103,11 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   iconWrapper: {
-    paddingHorizontal: 12,
-    paddingVertical: 3,
-    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    borderRadius: 14,
   },
   iconWrapperActive: {
-    backgroundColor: 'rgba(13, 92, 70, 0.12)',
+    backgroundColor: 'rgba(11, 60, 47, 0.10)',
   },
 });

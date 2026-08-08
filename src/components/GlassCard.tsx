@@ -82,14 +82,14 @@ export const GlassCard: React.FC<GlassCardProps> = ({
 const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: LAYOUT.borderRadius,
-    borderWidth: 1.5,
+    borderWidth: 1,
     padding: 18,
-    marginVertical: 6,
+    marginVertical: 4,
     position: 'relative',
     overflow: 'hidden',
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 18,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 3,
   },
   glassSheenHighlight: {
     position: 'absolute',

@@ -20,8 +20,6 @@ import {
   Heart,
   Radio,
   Activity,
-  Cpu,
-  Compass,
   Zap,
   Users,
   TreePine,
@@ -29,7 +27,6 @@ import {
   BookOpen,
   ChevronDown,
   ChevronUp,
-  Info,
 } from 'lucide-react-native';
 import { DataSaverToggle, DataSaverBanner } from '@/components/DataSaverToggle';
 import { InvestmentThesis } from '@/types';
@@ -60,7 +57,7 @@ export default function AssetDetailScreen() {
   const [executedOrder, setExecutedOrder] = useState<any | null>(null);
   const [selectedDiagnosticTab, setSelectedDiagnosticTab] = useState<'sensors' | 'thesis'>('sensors');
   const [showStory, setShowStory] = useState<boolean>(true);
-  const [showSellNotice, setShowSellNotice] = useState<boolean>(false);
+  const [showImpact, setShowImpact] = useState<boolean>(false);
   const [chartType, setChartType] = useState<'area' | 'candles'>('area');
   const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '1Y' | 'ALL'>('1D');
   const [selectedPointIndex, setSelectedPointIndex] = useState<number>(asset.historicalPrices.length - 1);
@@ -260,23 +257,18 @@ export default function AssetDetailScreen() {
         </View>
 
         {/* SESSION METRICS BAR */}
-        <View style={[styles.sessionStatsBar, isDataSaver && { backgroundColor: '#111111', borderColor: '#333333' }]}>
-          <View style={styles.sessionStatItem}>
-            <Text style={[styles.sessionStatLabel, isDataSaver && { color: '#9CA3AF' }]}>SESSION HIGH</Text>
-            <Text style={[styles.sessionStatVal, isDataSaver && { color: '#FFFFFF' }]}>GH₵{(maxVal * 0.995).toFixed(2)}</Text>
-          </View>
-          <View style={styles.sessionStatDivider} />
-          <View style={styles.sessionStatItem}>
-            <Text style={[styles.sessionStatLabel, isDataSaver && { color: '#9CA3AF' }]}>SESSION LOW</Text>
-            <Text style={[styles.sessionStatVal, isDataSaver && { color: '#FFFFFF' }]}>GH₵{(minVal * 1.005).toFixed(2)}</Text>
-          </View>
-          <View style={styles.sessionStatDivider} />
-          <View style={styles.sessionStatItem}>
-            <Text style={styles.sessionStatLabel}>SIGNAL SCORE</Text>
-            <Text style={[styles.sessionStatVal, { color: COLORS.amberDataBright }]}>
-              {asset.signalScore}/100
-            </Text>
-          </View>
+        <View style={styles.sessionStatsBar}>
+          <Text style={[styles.sessionStatLabel, isDataSaver && { color: '#9CA3AF' }]}>
+            SESSION HIGH <Text style={[styles.sessionStatVal, isDataSaver && { color: '#FFFFFF' }]}>GH₵{(maxVal * 0.995).toFixed(2)}</Text>
+          </Text>
+          <Text style={styles.sessionStatDot}> · </Text>
+          <Text style={[styles.sessionStatLabel, isDataSaver && { color: '#9CA3AF' }]}>
+            SESSION LOW <Text style={[styles.sessionStatVal, isDataSaver && { color: '#FFFFFF' }]}>GH₵{(minVal * 1.005).toFixed(2)}</Text>
+          </Text>
+          <Text style={styles.sessionStatDot}> · </Text>
+          <Text style={[styles.sessionStatLabel, isDataSaver && { color: '#9CA3AF' }]}>
+            SIGNAL SCORE <Text style={[styles.sessionStatVal, { color: COLORS.amberDataBright }]}>{asset.signalScore}/100</Text>
+          </Text>
         </View>
 
         {/* 2G LOW-BANDWIDTH TEXT TABLE OR HIGH-FIDELITY SVG CHART */}
@@ -441,123 +433,89 @@ export default function AssetDetailScreen() {
               ))}
             </View>
 
-            {/* Point Inspector details HUD */}
-            <View style={styles.chartInspectorHud}>
-              <View style={styles.hudMetaBox}>
-                <Text style={styles.hudMetaLabel}>SELECTED PRICE</Text>
-                <Text style={styles.hudMetaValue}>GH₵{activeDataPoint.close.toFixed(2)}</Text>
-              </View>
 
-              <View style={styles.hudMetaBox}>
-                <Text style={styles.hudMetaLabel}>VOLUME</Text>
-                <Text style={styles.hudMetaValue}>{activeDataPoint.volume.toLocaleString()} units</Text>
-              </View>
-
-              <View style={styles.hudMetaBox}>
-                <Text style={styles.hudMetaLabel}>VOLATILITY</Text>
-                <Text style={styles.hudMetaValue}>
-                  {(
-                    (Math.abs(activeDataPoint.close - activeDataPoint.open) / activeDataPoint.open) *
-                    100
-                  ).toFixed(2)}
-                  %
-                </Text>
-              </View>
-            </View>
           </GlassCard>
         )}
 
         {/* POINT 2: IMPACT BREAKDOWN CARD WITH 3 KEY METRICS */}
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>Community Impact Breakdown</Text>
-        </View>
-
-        <GlassCard style={styles.impactBreakdownCard}>
-          <Text style={styles.impactIntroText}>
-            Every credit allocated directly builds tangible climate resilience in Ghanaian partner communities:
-          </Text>
-
-          <View style={styles.impactMetrics3Grid}>
-            <View style={styles.impactMetricCell}>
-              <Users size={18} color="#3B82F6" />
-              <Text style={styles.impactMetricVal}>
-                {asset.impactBreakdown?.peopleReached || '2,400 farmers'}
+        <Pressable
+          onPress={() => setShowImpact(!showImpact)}
+          style={styles.impactHeaderRow}
+        >
+          <View>
+            <Text style={styles.sectionTitle}>Community Impact Breakdown</Text>
+            {!showImpact && (
+              <Text style={styles.impactTeaser}>
+                {asset.impactBreakdown?.peopleReached || '2,400 farmers'} · {asset.impactBreakdown?.environmentalBenefit || '1,200 ha smart farming'} · {asset.impactBreakdown?.jobsSupported || '180 local jobs'}
               </Text>
-              <Text style={styles.impactMetricLabel}>People Reached</Text>
-            </View>
-
-            <View style={styles.impactMetricCell}>
-              <TreePine size={18} color="#10B981" />
-              <Text style={styles.impactMetricVal}>
-                {asset.impactBreakdown?.environmentalBenefit || '1,200 ha smart farming'}
-              </Text>
-              <Text style={styles.impactMetricLabel}>Environmental Benefit</Text>
-            </View>
-
-            <View style={styles.impactMetricCell}>
-              <Briefcase size={18} color="#F59E0B" />
-              <Text style={styles.impactMetricVal}>
-                {asset.impactBreakdown?.jobsSupported || '180 local jobs'}
-              </Text>
-              <Text style={styles.impactMetricLabel}>Local Jobs Supported</Text>
-            </View>
+            )}
           </View>
+          {showImpact ? <ChevronUp size={20} color={COLORS.textMuted} /> : <ChevronDown size={20} color={COLORS.textMuted} />}
+        </Pressable>
 
-          {/* READ THE COMMUNITY STORY TOGGLE */}
-          {asset.communityStory && (
-            <View style={styles.storyContainer}>
-              <Pressable
-                onPress={() => setShowStory(!showStory)}
-                style={styles.storyToggleHeader}
-              >
-                <View style={styles.storyTitleRow}>
-                  <BookOpen size={14} color="#0D5C46" />
-                  <Text style={styles.storyTitleText}>Read the Community Story</Text>
-                </View>
-                {showStory ? <ChevronUp size={16} color="#0D5C46" /> : <ChevronDown size={16} color="#0D5C46" />}
-              </Pressable>
+        {showImpact && (
+          <GlassCard style={styles.impactBreakdownCard}>
+            <Text style={styles.impactIntroText}>
+              Every credit allocated directly builds tangible climate resilience in Ghanaian partner communities:
+            </Text>
 
-              {showStory && (
-                <View style={styles.storyCardBody}>
-                  <View style={styles.storyPersonHeader}>
-                    <Text style={styles.storyPersonName}>{asset.communityStory.personName}</Text>
-                    <Text style={styles.storyPersonRole}>
-                      {asset.communityStory.role} • {asset.communityStory.location}
-                    </Text>
+            <View style={styles.impactMetrics3Grid}>
+              <View style={styles.impactMetricCell}>
+                <Users size={18} color="#3B82F6" />
+                <Text style={styles.impactMetricVal}>
+                  {asset.impactBreakdown?.peopleReached || '2,400 farmers'}
+                </Text>
+                <Text style={styles.impactMetricLabel}>People Reached</Text>
+              </View>
+
+              <View style={styles.impactMetricCell}>
+                <TreePine size={18} color="#10B981" />
+                <Text style={styles.impactMetricVal}>
+                  {asset.impactBreakdown?.environmentalBenefit || '1,200 ha smart farming'}
+                </Text>
+                <Text style={styles.impactMetricLabel}>Environmental Benefit</Text>
+              </View>
+
+              <View style={styles.impactMetricCell}>
+                <Briefcase size={18} color="#F59E0B" />
+                <Text style={styles.impactMetricVal}>
+                  {asset.impactBreakdown?.jobsSupported || '180 local jobs'}
+                </Text>
+                <Text style={styles.impactMetricLabel}>Local Jobs Supported</Text>
+              </View>
+            </View>
+
+            {/* READ THE COMMUNITY STORY TOGGLE */}
+            {asset.communityStory && (
+              <View style={styles.storyContainer}>
+                <Pressable
+                  onPress={() => setShowStory(!showStory)}
+                  style={styles.storyToggleHeader}
+                >
+                  <View style={styles.storyTitleRow}>
+                    <BookOpen size={14} color="#0D5C46" />
+                    <Text style={styles.storyTitleText}>Read the Community Story</Text>
                   </View>
-                  <Text style={styles.storyNarrativeText}>"{asset.communityStory.storyText}"</Text>
-                </View>
-              )}
-            </View>
-          )}
-        </GlassCard>
+                  {showStory ? <ChevronUp size={16} color="#0D5C46" /> : <ChevronDown size={16} color="#0D5C46" />}
+                </Pressable>
 
-        {/* TELEMETRY & LIVE SENSOR STATUS */}
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>Ecosystem Telemetry Feed</Text>
-        </View>
-
-        <View style={styles.telemetryGrid}>
-          {/* Station Coordinates */}
-          <GlassCard style={styles.telemetryMiniCard}>
-            <View style={styles.telemetryCardTitleRow}>
-              <Compass size={14} color="#10B981" />
-              <Text style={styles.telemetryCardTitle}>Sensor Coordinates</Text>
-            </View>
-            <Text style={styles.telemetryValueText}>{telemetry.coords}</Text>
-            <Text style={styles.telemetrySubText}>Accra MET Server Sync</Text>
+                {showStory && (
+                  <View style={styles.storyCardBody}>
+                    <View style={styles.storyPersonHeader}>
+                      <Text style={styles.storyPersonName}>{asset.communityStory.personName}</Text>
+                      <Text style={styles.storyPersonRole}>
+                        {asset.communityStory.role} • {asset.communityStory.location}
+                      </Text>
+                    </View>
+                    <Text style={styles.storyNarrativeText}>"{asset.communityStory.storyText}"</Text>
+                  </View>
+                )}
+              </View>
+            )}
           </GlassCard>
+        )}
 
-          {/* Device Telemetry status */}
-          <GlassCard style={styles.telemetryMiniCard}>
-            <View style={styles.telemetryCardTitleRow}>
-              <Cpu size={14} color="#F59E0B" />
-              <Text style={styles.telemetryCardTitle}>Station Core ID</Text>
-            </View>
-            <Text style={styles.telemetryValueText}>{telemetry.stationId}</Text>
-            <Text style={styles.telemetrySubText}>Latency: {telemetry.ping} • Active 🟢</Text>
-          </GlassCard>
-        </View>
+
 
         {/* DIAGNOSTIC PANEL & RESEARCH LOCK */}
         <DiagnosticPanel
@@ -569,60 +527,34 @@ export default function AssetDetailScreen() {
           onTabChange={setSelectedDiagnosticTab}
         />
 
-        {/* EXECUTE TRADE BUTTONS: BUY & SELL */}
-        <View style={styles.tradeActionContainer}>
-          {showSellNotice && (
-            <View style={styles.sellNoticeBanner}>
-              <Info size={14} color="#D97706" />
-              <Text style={styles.sellNoticeText}>
-                Sell functionality coming soon — full version will support asset divestments.
-              </Text>
-              <Pressable onPress={() => setShowSellNotice(false)} hitSlop={10}>
-                <Text style={styles.sellNoticeClose}>✕</Text>
-              </Pressable>
-            </View>
-          )}
-
-          <View style={styles.tradeBtnRow}>
-            {/* BUY BUTTON */}
-            <Pressable
-              onPress={handleBuyPress}
-              style={({ pressed }) => [
-                styles.tradeBtnBuy,
-                pressed && { opacity: 0.85 },
-              ]}
-              accessibilityLabel="Execute Buy Order for Asset"
-              accessibilityRole="button"
-            >
-              {isUnlocked ? (
-                <Unlock size={16} color="#FFFFFF" />
-              ) : (
-                <Lock size={16} color="#FFFFFF" />
-              )}
-              <Text style={styles.tradeBtnText}>
-                {isUnlocked ? `BUY ${asset.symbol}` : `BUY ${asset.symbol} 🔒`}
-              </Text>
-            </Pressable>
-
-            {/* SELL BUTTON */}
-            <Pressable
-              onPress={() => setShowSellNotice((prev) => !prev)}
-              style={({ pressed }) => [
-                styles.tradeBtnSell,
-                pressed && { opacity: 0.85 },
-              ]}
-              accessibilityLabel="Sell Asset Notice"
-              accessibilityRole="button"
-            >
-              <Lock size={14} color="#D97706" />
-              <Text style={styles.tradeBtnSellText}>SELL {asset.symbol}</Text>
-              <View style={styles.comingSoonBadge}>
-                <Text style={styles.comingSoonText}>Full Release</Text>
-              </View>
-            </Pressable>
-          </View>
-        </View>
       </ScrollView>
+
+      {/* EXECUTE TRADE BUTTONS: BUY & SELL */}
+      <View
+        style={[
+          styles.floatingTradeBar,
+          isDataSaver && { backgroundColor: '#111111', borderTopColor: '#333333' }
+        ]}
+      >
+        <Pressable
+          onPress={handleBuyPress}
+          style={({ pressed }) => [
+            styles.tradeBtnBuy,
+            pressed && { opacity: 0.85 },
+          ]}
+          accessibilityLabel="Execute Buy Order for Asset"
+          accessibilityRole="button"
+        >
+          {isUnlocked ? (
+            <Unlock size={16} color="#FFFFFF" />
+          ) : (
+            <Lock size={16} color="#FFFFFF" />
+          )}
+          <Text style={styles.tradeBtnText}>
+            {isUnlocked ? `BUY ${asset.symbol}` : `BUY ${asset.symbol} 🔒`}
+          </Text>
+        </Pressable>
+      </View>
 
       {/* Trade Ticket Modal */}
       <TradeTicketModal
@@ -666,10 +598,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    gap: 14,
+    gap: 20,
     maxWidth: 840,
     width: '100%',
     alignSelf: 'center',
+    paddingBottom: 80,
   },
   headerRow: {
     flexDirection: 'row',
@@ -730,39 +663,24 @@ const styles = StyleSheet.create({
   },
   sessionStatsBar: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#E4EAE2',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
     alignItems: 'center',
-    justifyContent: 'space-around',
-    shadowColor: '#102A1F',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  sessionStatItem: {
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 2,
+    marginBottom: 8,
   },
   sessionStatLabel: {
-    fontSize: 9,
-    fontWeight: '700',
+    fontSize: 10,
     color: COLORS.textMuted,
-    letterSpacing: 0.5,
   },
   sessionStatVal: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#1A2E26',
-    marginTop: 1,
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLORS.textDark,
   },
-  sessionStatDivider: {
-    width: 1,
-    height: 20,
-    backgroundColor: '#E4EAE2',
+  sessionStatDot: {
+    fontSize: 10,
+    color: COLORS.textMuted,
+    marginHorizontal: 4,
   },
   chartPanel: {
     padding: 16,
@@ -844,37 +762,24 @@ const styles = StyleSheet.create({
   timeTickTextActive: {
     color: '#FFFFFF',
   },
-  chartInspectorHud: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 12,
-    padding: 10,
-    gap: 8,
-    marginTop: 4,
-  },
-  hudMetaBox: {
-    flex: 1,
-  },
-  hudMetaLabel: {
-    fontSize: 8,
-    color: '#A7F3D0',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-  hudMetaValue: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginTop: 2,
-  },
-  sectionHeaderRow: {
-    marginTop: 12,
-    marginBottom: 4,
-  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '800',
     color: COLORS.textBright,
+  },
+  impactHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    marginTop: 24,
+    marginBottom: 4,
+  },
+  impactTeaser: {
+    fontSize: 12,
+    color: COLORS.textMuted,
+    marginTop: 4,
   },
   impactBreakdownCard: {
     padding: 16,
@@ -959,46 +864,19 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontStyle: 'italic',
   },
-  telemetryGrid: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  telemetryMiniCard: {
-    flex: 1,
-    padding: 14,
-    gap: 4,
-    borderRadius: 16,
-  },
-  telemetryCardTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  telemetryCardTitle: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.textBright,
-  },
-  telemetryValueText: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: COLORS.textBright,
-    marginTop: 2,
-  },
-  telemetrySubText: {
-    fontSize: 10,
-    color: COLORS.textMuted,
-  },
-  tradeActionContainer: {
-    marginTop: 10,
-    marginBottom: 24,
-  },
-  tradeBtnRow: {
-    flexDirection: 'row',
-    gap: 12,
+  floatingTradeBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingBottom: 24,
+    backgroundColor: 'rgba(245, 248, 244, 0.95)',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(228, 234, 226, 0.6)',
   },
   tradeBtnBuy: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1011,60 +889,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 8,
     elevation: 4,
-  },
-  tradeBtnSell: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#F8FAF7',
-    paddingVertical: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#E8EDE6',
-  },
-  tradeBtnSellText: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: COLORS.textBright,
-  },
-  comingSoonBadge: {
-    backgroundColor: 'rgba(245, 158, 11, 0.12)',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.2)',
-  },
-  comingSoonText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#D97706',
-  },
-  sellNoticeBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.25)',
-    marginBottom: 10,
-  },
-  sellNoticeText: {
-    fontSize: 11,
-    color: '#B45309',
-    fontWeight: '600',
-    flex: 1,
-  },
-  sellNoticeClose: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#B45309',
-    paddingHorizontal: 4,
   },
   tradeBtnDisabled: {
     backgroundColor: '#F1F5F0',

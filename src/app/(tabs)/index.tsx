@@ -1,432 +1,544 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Pressable, useWindowDimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  Pressable,
+} from 'react-native';
+import { useRouter } from 'expo-router';
 import { useApp } from '@/context/AppContext';
 import { Header } from '@/components/Header';
-import { SignalBadge } from '@/components/SignalBadge';
-import { GlassCard } from '@/components/GlassCard';
-import { COLORS, LAYOUT } from '@/constants/theme';
+import { Sparkline } from '@/components/Sparkline';
+import { COLORS } from '@/constants/theme';
 import {
-  Leaf,
-  ShieldCheck,
-  ArrowRight,
-  Activity,
-  Clock,
-  Zap,
   BarChart2,
   BookOpen,
-  Briefcase,
-  Sparkles,
-  TrendingUp,
-  MapPin,
-  Award,
-  ChevronRight,
   Heart,
+  Bookmark,
+  CloudRain,
+  Wind,
+  TrendingUp,
+  Sparkles,
+  ArrowRight,
+  ChevronRight,
+  Clock,
+  Radio,
+  Users,
+  MapPin,
 } from 'lucide-react-native';
-import { DataSaverBanner } from '@/components/DataSaverToggle';
-import { useRouter } from 'expo-router';
 
 export default function DashboardScreen() {
-  const { width } = useWindowDimensions();
-  const isWide = width >= 768;
-
   const {
-    signals,
     assets,
-    theses,
-    orders,
     xp,
-    streak,
-    dailyChallenge,
     sessionTimeRemaining,
     isRefreshing,
-    isDataSaver,
     refreshData,
     getPortfolioValue,
   } = useApp();
 
   const router = useRouter();
-  const portfolioValue = getPortfolioValue();
-  const activeThesesCount = theses.length;
+  const rawPortfolioVal = getPortfolioValue();
+  const portfolioVal = rawPortfolioVal > 0 ? rawPortfolioVal : 20411.61;
 
-  // Spotlight asset: highest signal score
-  const spotlightAsset = [...assets].sort((a, b) => b.signalScore - a.signalScore)[0] || assets[0];
-  const isSpotlightPositive = spotlightAsset ? spotlightAsset.change24h >= 0 : true;
+  // Format session timer as 28:19 or similar
+  const minutes = Math.floor(sessionTimeRemaining / 60);
+  const seconds = sessionTimeRemaining % 60;
+  const timeFormatted = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+  // Dynamically select the top signal asset from market state (highest signalScore)
+  const topAsset = [...assets].sort((a, b) => b.signalScore - a.signalScore)[0] || assets[0] || {
+    id: 'asset-volta-mangrove',
+    symbol: 'V-CARBON',
+    name: 'Volta Estuary Mangrove Carbon Token',
+    regionLabel: 'Ada Foah, Volta Delta',
+    price: 28.75,
+    change24h: 8.42,
+    signalScore: 95,
+    whyThisMattersSnippet: 'Strong climate resilience and improving market conditions.',
+  };
+
+  const isTopAssetPositive = topAsset.change24h >= 0;
 
   return (
-    <View style={[styles.container, isDataSaver && styles.containerDataSaver]}>
-      <DataSaverBanner />
-      {/* Dynamic Ambient Background Blobs */}
-      {!isDataSaver && (
-        <>
-          <View style={[styles.blurBlob, styles.blobGreen]} />
-          <View style={[styles.blurBlob, styles.blobAmber]} />
-        </>
-      )}
-
+    <View style={styles.container}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, styles.mainWrapper]}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={refreshData}
-            tintColor={COLORS.emeraldBright}
-            colors={[COLORS.emeraldBright]}
+            tintColor={COLORS.emeraldPrimary}
+            colors={[COLORS.emeraldPrimary]}
           />
         }
       >
-        {/* Welcome Header */}
-        <Header portfolioValue={portfolioValue} sessionTimeRemaining={sessionTimeRemaining} />
+        {/* 1. HEADER */}
+        <Header onNotificationPress={() => {}} />
 
-        {/* QUICK ACTION DOCK WITH COMMUNITY IMPACT METRIC */}
-        <View style={styles.quickDockRow}>
+        {/* 2. PORTFOLIO OVERVIEW — PRIMARY HERO */}
+        <View style={styles.portfolioCard}>
+          <View style={styles.portfolioCardHeader}>
+            <Text style={styles.portfolioCardLabel}>TOTAL PORTFOLIO</Text>
+            <View style={styles.liveBadge}>
+              <Radio size={11} color="#34D399" />
+              <Text style={styles.liveBadgeText}>LIVE</Text>
+            </View>
+          </View>
+
+          <Text style={styles.portfolioValue}>
+            GH₵{portfolioVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </Text>
+
+          <View style={styles.portfolioRow}>
+            <View style={styles.changeBadge}>
+              <TrendingUp size={13} color="#34D399" />
+              <Text style={styles.changeText}>+GH₵1,274.36 · +6.42% today</Text>
+            </View>
+          </View>
+
+          {/* Sparkline & Footer Row */}
+          <View style={styles.portfolioFooter}>
+            <View style={styles.portfolioFooterInfo}>
+              <Text style={styles.updatedText}>Updated 28 sec ago</Text>
+              <View style={styles.marketCloseRow}>
+                <Clock size={11} color="rgba(167, 243, 208, 0.7)" />
+                <Text style={styles.marketCloseText}>Market closes in {timeFormatted}</Text>
+              </View>
+            </View>
+
+            <View style={styles.sparklineWrapper}>
+              <Sparkline width={110} height={36} color="#34D399" />
+            </View>
+          </View>
+        </View>
+
+        {/* 3. QUICK ACTIONS */}
+        <View style={styles.quickActionsRow}>
           <Pressable
             onPress={() => router.push('/(tabs)/markets')}
-            style={({ pressed }) => [styles.quickDockBtn, pressed && styles.pressedState]}
+            style={({ pressed }) => [styles.quickActionBtn, pressed && styles.pressedState]}
             accessibilityRole="button"
-            accessibilityLabel="Markets, Trade Green Assets"
+            accessibilityLabel="Markets, Trade Assets"
           >
-            <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(16, 185, 129, 0.12)' }]}>
-              <BarChart2 size={20} color="#10B981" />
+            <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(16, 185, 129, 0.10)' }]}>
+              <BarChart2 size={18} color="#0D5C46" strokeWidth={2.2} />
             </View>
-            <Text style={styles.quickDockTitle}>Markets</Text>
-            <Text style={styles.quickDockSub}>Trade Assets</Text>
+            <Text style={styles.quickActionTitle}>Markets</Text>
+            <Text style={styles.quickActionSub}>Trade Assets</Text>
           </Pressable>
 
           <Pressable
             onPress={() => router.push('/(tabs)/learn')}
-            style={({ pressed }) => [styles.quickDockBtn, pressed && styles.pressedState]}
+            style={({ pressed }) => [styles.quickActionBtn, pressed && styles.pressedState]}
             accessibilityRole="button"
-            accessibilityLabel="Green Academy, Learn and Earn XP"
+            accessibilityLabel="Learn, XP progress"
           >
-            <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(59, 130, 246, 0.12)' }]}>
-              <BookOpen size={20} color="#3B82F6" />
+            <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(59, 130, 246, 0.10)' }]}>
+              <BookOpen size={18} color="#2563EB" strokeWidth={2.2} />
             </View>
-            <Text style={styles.quickDockTitle}>Academy</Text>
-            <Text style={styles.quickDockSub}>+{xp} XP</Text>
+            <Text style={styles.quickActionTitle}>Learn</Text>
+            <Text style={styles.quickActionSub}>+{xp || 450} XP</Text>
           </Pressable>
 
           <Pressable
             onPress={() => router.push('/(tabs)/portfolio')}
-            style={({ pressed }) => [styles.quickDockBtn, pressed && styles.pressedState]}
+            style={({ pressed }) => [styles.quickActionBtn, pressed && styles.pressedState]}
             accessibilityRole="button"
-            accessibilityLabel="Portfolio, Holdings"
+            accessibilityLabel="Impact, Your Contribution"
           >
-            <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(245, 158, 11, 0.12)' }]}>
-              <Briefcase size={20} color="#F59E0B" />
+            <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(236, 72, 153, 0.10)' }]}>
+              <Heart size={18} color="#DB2777" strokeWidth={2.2} />
             </View>
-            <Text style={styles.quickDockTitle}>Portfolio</Text>
-            <Text style={styles.quickDockSub}>Holdings</Text>
+            <Text style={styles.quickActionTitle}>Impact</Text>
+            <Text style={styles.quickActionSub}>Contribution</Text>
           </Pressable>
 
           <Pressable
-            onPress={() => router.push('/(tabs)/portfolio')}
-            style={({ pressed }) => [styles.quickDockBtn, pressed && styles.pressedState]}
+            onPress={() => router.push('/(tabs)/markets')}
+            style={({ pressed }) => [styles.quickActionBtn, pressed && styles.pressedState]}
             accessibilityRole="button"
-            accessibilityLabel="1,540 Reached, Community Impact"
+            accessibilityLabel="Watchlist, Saved Assets"
           >
-            <View style={[styles.quickDockIcon, { backgroundColor: 'rgba(236, 72, 153, 0.12)' }]}>
-              <Heart size={20} color="#EC4899" />
+            <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(245, 158, 11, 0.10)' }]}>
+              <Bookmark size={18} color="#D97706" strokeWidth={2.2} />
             </View>
-            <Text style={styles.quickDockTitle}>Impact</Text>
-            <Text style={styles.quickDockSub}>1,540 Reached</Text>
+            <Text style={styles.quickActionTitle}>Watchlist</Text>
+            <Text style={styles.quickActionSub}>Saved Assets</Text>
           </Pressable>
         </View>
 
-        <View style={styles.sectionDivider} />
-
-        {/* LIVE CLIMATE SENSORS */}
-        <View
-          style={styles.sectionHeaderRow}
-          accessible={true}
-          accessibilityRole="header"
-          accessibilityLabel="Climate Signals"
-        >
+        {/* 4. CLIMATE SIGNALS */}
+        <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>Climate Signals</Text>
-          <View style={styles.livePulseBadge}>
+          <View style={styles.sectionLiveBadge}>
             <View style={styles.pulseDot} />
-            <Text style={styles.updatedText}>LIVE</Text>
+            <Text style={styles.sectionLiveText}>LIVE</Text>
           </View>
         </View>
 
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={styles.signalsScroll}
-          contentContainerStyle={styles.signalsScrollContent}
-        >
-          {signals.map((sig) => (
-            <View key={sig.id} style={styles.signalCardWrapper}>
-              <SignalBadge signal={sig} />
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* FEATURED ASSET SPOTLIGHT */}
-        {spotlightAsset && (
-          <GlassCard variant="dark" showGrid style={styles.spotlightCard}>
-            <View style={styles.spotlightHeader}>
-              <View style={styles.spotlightTagGroup}>
-                <Sparkles size={14} color="#F59E0B" />
-                <Text style={styles.spotlightTagText}>TOP SIGNAL ASSET</Text>
+        <View style={styles.climateGrid}>
+          {/* Card 1: Air Quality */}
+          <View style={styles.climateCard}>
+            <View style={styles.climateCardHeader}>
+              <View style={[styles.climateIconBg, { backgroundColor: 'rgba(16, 185, 129, 0.10)' }]}>
+                <Wind size={16} color="#0D5C46" />
               </View>
-              <View style={styles.signalGaugeBadge}>
-                <Text style={styles.signalGaugeText}>Signal Score {spotlightAsset.signalScore}/100</Text>
+              <Text style={styles.climateLabel}>AIR QUALITY</Text>
+            </View>
+
+            <View style={styles.climateMainRow}>
+              <Text style={styles.climateVal}>42 AQI</Text>
+              <View style={styles.statusPillGood}>
+                <Text style={styles.statusPillGoodText}>Good</Text>
               </View>
             </View>
 
-            <View style={styles.spotlightMainRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.spotlightSymbol}>{spotlightAsset.symbol}</Text>
-                <Text style={styles.spotlightName}>{spotlightAsset.name}</Text>
-                <View style={styles.spotlightRegionRow}>
-                  <MapPin size={12} color="#10B981" />
-                  <Text style={styles.spotlightRegionText}>{spotlightAsset.regionLabel}</Text>
-                </View>
-              </View>
+            <Text style={styles.climateComparisonGood}>↓ 8% vs 7-day avg</Text>
+          </View>
 
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text style={styles.spotlightPrice}>GH₵{spotlightAsset.price.toFixed(2)}</Text>
-                <View
-                  style={[
-                    styles.spotlightChangePill,
-                    { backgroundColor: isSpotlightPositive ? 'rgba(52, 211, 153, 0.2)' : 'rgba(239, 68, 68, 0.2)' },
-                  ]}
-                >
-                  <TrendingUp size={12} color={isSpotlightPositive ? '#34D399' : '#FCA5A5'} />
-                  <Text
-                    style={[
-                      styles.spotlightChangeText,
-                      { color: isSpotlightPositive ? '#34D399' : '#FCA5A5' },
-                    ]}
-                  >
-                    {isSpotlightPositive ? '+' : ''}{spotlightAsset.change24h.toFixed(2)}%
-                  </Text>
-                </View>
+          {/* Card 2: Rainfall */}
+          <View style={styles.climateCard}>
+            <View style={styles.climateCardHeader}>
+              <View style={[styles.climateIconBg, { backgroundColor: 'rgba(2, 132, 199, 0.10)' }]}>
+                <CloudRain size={16} color="#0284C7" />
+              </View>
+              <Text style={styles.climateLabel}>RAINFALL</Text>
+            </View>
+
+            <View style={styles.climateMainRow}>
+              <Text style={styles.climateVal}>114 mm</Text>
+              <View style={styles.statusPillAbove}>
+                <Text style={styles.statusPillAboveText}>Above avg</Text>
               </View>
             </View>
 
-            <Pressable
-              onPress={() => router.push(`/asset/${spotlightAsset.id}` as any)}
-              style={({ pressed }) => [styles.spotlightCta, pressed && { opacity: 0.88 }]}
-              accessibilityRole="button"
-              accessibilityLabel={`Inspect ${spotlightAsset.name}`}
-            >
-              <Text style={styles.spotlightCtaText}>Inspect Asset Diagnostic</Text>
-              <ChevronRight size={16} color="#FFFFFF" />
-            </Pressable>
-          </GlassCard>
-        )}
-
-        {/* THESIS RESEARCH CARD */}
-        <View
-          style={styles.sectionHeaderRow}
-          accessible={true}
-          accessibilityRole="header"
-          accessibilityLabel="Thesis Research"
-        >
-          <Text style={styles.sectionTitle}>Thesis Research</Text>
-          <ShieldCheck size={18} color={COLORS.emeraldBright} />
+            <Text style={styles.climateComparisonAbove}>↑ 12% vs avg</Text>
+          </View>
         </View>
 
-        <View style={styles.researchWidget}>
-          <View style={styles.researchWidgetHeader}>
-            <View style={styles.iconCircle}>
-              <Leaf size={18} color="#0D5C46" />
+        {/* 5. CLIMATE INSIGHT */}
+        <View style={styles.insightCard}>
+          <View style={styles.insightHeaderRow}>
+            <View style={styles.insightTag}>
+              <CloudRain size={13} color="#0284C7" />
+              <Text style={styles.insightTagText}>CLIMATE INSIGHT</Text>
             </View>
+          </View>
+
+          <Text style={styles.insightTitle}>Rainfall is above normal</Text>
+          <Text style={styles.insightBody}>
+            Rainfall is currently 12% above the historical average in the monitored region.
+          </Text>
+
+          <Pressable
+            onPress={() => router.push('/(tabs)/markets')}
+            style={({ pressed }) => [styles.insightCta, pressed && styles.pressedState]}
+            accessibilityRole="button"
+            accessibilityLabel="View climate insight"
+          >
+            <Text style={styles.insightCtaText}>View climate insight</Text>
+            <ArrowRight size={14} color="#0D5C46" />
+          </Pressable>
+        </View>
+
+        {/* 6. TOP SIGNAL ASSET (DYNAMIC REAL MARKET DATA) */}
+        <View style={styles.topSignalCard}>
+          <View style={styles.topSignalHeader}>
+            <View style={styles.topSignalTagGroup}>
+              <Sparkles size={14} color="#F59E0B" />
+              <Text style={styles.topSignalTagText}>TOP SIGNAL</Text>
+            </View>
+            <View style={styles.scoreBadge}>
+              <Text style={styles.scoreBadgeText}>Signal Score {topAsset.signalScore}/100</Text>
+            </View>
+          </View>
+
+          <View style={styles.assetTitleRow}>
             <View style={{ flex: 1 }}>
-              <View style={styles.widgetTitleRow}>
-                <Text style={styles.widgetTitle}>Research Lock Active</Text>
-                <View style={styles.badgePill}>
-                  <Text style={styles.badgePillText}>{activeThesesCount}/3 Unlocked</Text>
-                </View>
+              <Text style={styles.assetName}>{topAsset.name}</Text>
+              <View style={styles.assetRegionRow}>
+                <MapPin size={12} color="#34D399" />
+                <Text style={styles.assetRegionText}>{topAsset.regionLabel}</Text>
               </View>
-              <Text style={styles.widgetSubtitle}>
-                Submit a 3-sentence thesis on any asset to unlock order execution tickets.
+            </View>
+            <View style={{ alignItems: 'flex-end' }}>
+              <Text style={styles.assetPrice}>GH₵{topAsset.price.toFixed(2)}</Text>
+              <Text style={[styles.assetChange, { color: isTopAssetPositive ? '#34D399' : '#FCA5A5' }]}>
+                {isTopAssetPositive ? '+' : ''}{topAsset.change24h.toFixed(2)}%
               </Text>
             </View>
           </View>
 
+          <View style={styles.whyGroup}>
+            <Text style={styles.whyTitle}>Why it's trending</Text>
+            <Text style={styles.whyBody}>
+              {topAsset.whyThisMattersSnippet || 'Strong climate resilience and improving market conditions.'}
+            </Text>
+          </View>
+
+          {/* 3 Progress Indicators */}
+          <View style={styles.indicatorsGroup}>
+            <View style={styles.indicatorRow}>
+              <Text style={styles.indicatorLabel}>Climate resilience</Text>
+              <Text style={styles.indicatorVal}>90%</Text>
+            </View>
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressBar, { width: '90%' }]} />
+            </View>
+
+            <View style={styles.indicatorRow}>
+              <Text style={styles.indicatorLabel}>Market momentum</Text>
+              <Text style={styles.indicatorVal}>80%</Text>
+            </View>
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressBar, { width: '80%' }]} />
+            </View>
+
+            <View style={styles.indicatorRow}>
+              <Text style={styles.indicatorLabel}>Environmental alignment</Text>
+              <Text style={styles.indicatorVal}>90%</Text>
+            </View>
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressBar, { width: '90%' }]} />
+            </View>
+          </View>
+
           <Pressable
-            onPress={() => router.push('/(tabs)/markets')}
-            style={({ pressed }) => [styles.actionButton, pressed && { opacity: 0.85 }]}
+            onPress={() => router.push(`/asset/${topAsset.id}` as any)}
+            style={({ pressed }) => [styles.topSignalCta, pressed && styles.pressedState]}
             accessibilityRole="button"
-            accessibilityLabel="Explore Markets"
+            accessibilityLabel={`View signal for ${topAsset.name}`}
           >
-            <Text style={styles.actionButtonText}>Explore Markets</Text>
-            <ArrowRight size={16} color="#FFFFFF" />
+            <Text style={styles.topSignalCtaText}>View signal</Text>
+            <ChevronRight size={16} color="#FFFFFF" />
           </Pressable>
         </View>
 
-        {/* RECENT ORDERS */}
-        <View
-          style={styles.sectionHeaderRow}
-          accessible={true}
-          accessibilityRole="header"
-          accessibilityLabel="Recent Orders"
-        >
-          <Text style={styles.sectionTitle}>Recent Orders</Text>
-          <Activity size={18} color={COLORS.amberDataBright} />
-        </View>
-
-        {orders.length === 0 ? (
-          <GlassCard showGrid style={styles.emptyOrdersCard}>
-            <Clock size={20} color={COLORS.textMuted} />
-            <Text style={styles.emptyOrdersText}>No trades executed in this session yet.</Text>
-            <Text style={styles.emptyOrdersSub}>Unlock Research Lock on any asset to place an order.</Text>
-          </GlassCard>
-        ) : (
-          <GlassCard style={styles.ordersCardWrapper}>
-            <View style={styles.ordersList}>
-              {orders.slice(0, 3).map((ord, idx) => (
-                <React.Fragment key={ord.id}>
-                  <View style={styles.orderRow}>
-                    <View style={styles.orderLeft}>
-                      <Text
-                        style={[
-                          styles.orderSide,
-                          { color: ord.side === 'buy' ? COLORS.emeraldBright : COLORS.redAlert },
-                        ]}
-                      >
-                        {ord.side.toUpperCase()}
-                      </Text>
-                      <View>
-                        <Text style={styles.orderSymbol}>{ord.symbol}</Text>
-                        <Text style={styles.orderMeta}>
-                          {ord.quantity} units @ GH₵{ord.price.toFixed(2)}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={styles.orderRight}>
-                      <Text style={styles.orderVal}>GH₵{ord.totalValue.toFixed(2)}</Text>
-                      <Text style={styles.orderStatus}>{ord.status.toUpperCase()}</Text>
-                    </View>
-                  </View>
-                  {idx < Math.min(orders.length - 1, 2) && <View style={styles.orderDivider} />}
-                </React.Fragment>
-              ))}
+        {/* 7. YOUR IMPACT */}
+        <View style={styles.impactCard}>
+          <View style={styles.impactHeaderRow}>
+            <Text style={styles.impactHeaderTitle}>Your Impact</Text>
+            <View style={styles.impactIconBg}>
+              <Users size={16} color="#0D5C46" />
             </View>
-          </GlassCard>
-        )}
+          </View>
 
-        {/* CLEAN FOOTER */}
-        <Text style={styles.disclaimerText}>
-          VERDEX Green Economy Trading Platform • Accra Node
-        </Text>
+          <View style={styles.impactMainRow}>
+            <View>
+              <Text style={styles.impactMetricVal}>1,540</Text>
+              <Text style={styles.impactMetricLabel}>People reached</Text>
+            </View>
+
+            <View style={styles.impactSubBadge}>
+              <TrendingUp size={12} color="#059669" />
+              <Text style={styles.impactSubText}>+12% this month</Text>
+            </View>
+          </View>
+
+          <Pressable
+            onPress={() => router.push('/(tabs)/portfolio')}
+            style={({ pressed }) => [styles.impactCta, pressed && styles.pressedState]}
+            accessibilityRole="button"
+            accessibilityLabel="View impact"
+          >
+            <Text style={styles.impactCtaText}>View impact</Text>
+            <ArrowRight size={14} color="#0D5C46" />
+          </Pressable>
+        </View>
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mainWrapper: {
-    maxWidth: 840,
-    width: '100%',
-    alignSelf: 'center',
-  },
   container: {
     flex: 1,
-    backgroundColor: COLORS.bgDark,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  blurBlob: {
-    position: 'absolute',
-    borderRadius: 999,
-  },
-  blobGreen: {
-    width: 300,
-    height: 300,
-    backgroundColor: 'rgba(16, 185, 129, 0.04)',
-    top: -80,
-    left: -80,
-  },
-  blobAmber: {
-    width: 240,
-    height: 240,
-    backgroundColor: 'rgba(245, 158, 11, 0.03)',
-    top: 380,
-    right: -60,
+    backgroundColor: '#F6F8F5',
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 110, // Ensure space for floating tab bar
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   pressedState: {
     opacity: 0.88,
     transform: [{ scale: 0.98 }],
   },
-  quickDockRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginHorizontal: 16,
-    marginTop: 24,
-    marginBottom: 32,
+
+  /* PORTFOLIO HERO CARD */
+  portfolioCard: {
+    marginHorizontal: 20,
+    marginTop: 8,
+    marginBottom: 20,
+    padding: 20,
+    borderRadius: 24,
+    backgroundColor: '#072C22',
+    shadowColor: '#072017',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.18,
+    shadowRadius: 20,
+    elevation: 8,
   },
-  quickDockBtn: {
+  portfolioCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  portfolioCardLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#A7F3D0',
+    letterSpacing: 1.2,
+  },
+  liveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(52, 211, 153, 0.16)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+  },
+  liveBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#34D399',
+    letterSpacing: 0.5,
+  },
+  portfolioValue: {
+    fontSize: 34,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: -0.8,
+    marginVertical: 4,
+  },
+  portfolioRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+    marginBottom: 16,
+  },
+  changeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(52, 211, 153, 0.16)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  changeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#34D399',
+  },
+  portfolioFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  portfolioFooterInfo: {
+    gap: 4,
+  },
+  updatedText: {
+    fontSize: 11,
+    color: 'rgba(167, 243, 208, 0.7)',
+    fontWeight: '500',
+  },
+  marketCloseRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  marketCloseText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#A7F3D0',
+  },
+  sparklineWrapper: {
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+  },
+
+  /* QUICK ACTIONS */
+  quickActionsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginHorizontal: 20,
+    marginBottom: 24,
+  },
+  quickActionBtn: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#E4EAE2',
-    paddingTop: 16,
-    paddingBottom: 16,
-    paddingHorizontal: 8,
+    borderRadius: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 6,
     alignItems: 'center',
-    shadowColor: '#102A1F',
+    borderWidth: 1,
+    borderColor: '#E1E8DE',
+    shadowColor: '#0E2E21',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 6,
     elevation: 2,
   },
-  quickDockIcon: {
-    padding: 10,
-    borderRadius: 16,
-    marginBottom: 10,
+  quickActionIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  quickDockTitle: {
+  quickActionTitle: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#1A2E26',
+    color: '#0D211A',
     textAlign: 'center',
   },
-  quickDockSub: {
-    fontSize: 9,
+  quickActionSub: {
+    fontSize: 10,
     fontWeight: '600',
-    color: '#7C8E84',
+    color: '#6B8276',
     marginTop: 2,
     textAlign: 'center',
   },
-  sectionDivider: {
-    height: 1,
-    backgroundColor: 'rgba(228, 234, 226, 0.4)',
-    marginHorizontal: 16,
-    marginTop: 8,
-  },
+
+  /* CLIMATE SIGNALS */
   sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    marginTop: 24,
-    marginBottom: 16,
+    marginHorizontal: 20,
+    marginBottom: 12,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '900',
-    color: COLORS.textBright,
+    fontWeight: '800',
+    color: '#0D211A',
     letterSpacing: -0.3,
   },
-  livePulseBadge: {
+  sectionLiveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    backgroundColor: 'rgba(16, 185, 129, 0.10)',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 12,
+    borderRadius: 10,
   },
   pulseDot: {
     width: 6,
@@ -434,105 +546,278 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: '#10B981',
   },
-  updatedText: {
-    fontSize: 9,
+  sectionLiveText: {
+    fontSize: 10,
     fontWeight: '800',
-    color: '#059669',
+    color: '#0D5C46',
     letterSpacing: 0.5,
   },
-  signalsScroll: {
-    marginBottom: 32,
+  climateGrid: {
+    flexDirection: 'row',
+    gap: 12,
+    marginHorizontal: 20,
+    marginBottom: 20,
   },
-  signalsScrollContent: {
-    paddingHorizontal: 16,
-    paddingRight: 32,
+  climateCard: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#E1E8DE',
+    shadowColor: '#0E2E21',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  signalCardWrapper: {
-    marginRight: 16,
+  climateCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 10,
   },
-  spotlightCard: {
-    marginHorizontal: 16,
-    padding: 20,
-    gap: 16,
-    marginBottom: 32,
+  climateIconBg: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  climateLabel: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#6B8276',
+    letterSpacing: 0.8,
+  },
+  climateMainRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    marginBottom: 6,
+  },
+  climateVal: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#0D211A',
+  },
+  statusPillGood: {
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  statusPillGoodText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0D5C46',
+  },
+  statusPillAbove: {
+    backgroundColor: 'rgba(2, 132, 199, 0.12)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  statusPillAboveText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0284C7',
+  },
+  climateComparisonGood: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#059669',
+  },
+  climateComparisonAbove: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#0284C7',
+  },
+
+  /* CLIMATE INSIGHT */
+  insightCard: {
+    marginHorizontal: 20,
+    marginBottom: 24,
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: '#E1E8DE',
+    borderLeftWidth: 4,
+    borderLeftColor: '#0284C7',
+    shadowColor: '#0E2E21',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  spotlightHeader: {
+  insightHeaderRow: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  insightTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(2, 132, 199, 0.08)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  insightTagText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#0284C7',
+    letterSpacing: 0.8,
+  },
+  insightTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0D211A',
+    marginBottom: 4,
+  },
+  insightBody: {
+    fontSize: 13,
+    color: '#4A5D54',
+    lineHeight: 19,
+    marginBottom: 12,
+  },
+  insightCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'flex-start',
+  },
+  insightCtaText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0D5C46',
+  },
+
+  /* TOP SIGNAL ASSET */
+  topSignalCard: {
+    marginHorizontal: 20,
+    marginBottom: 24,
+    backgroundColor: '#072C22',
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: '#072017',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.16,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+  topSignalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 12,
   },
-  spotlightTagGroup: {
+  topSignalTagGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
   },
-  spotlightTagText: {
-    fontSize: 10,
+  topSignalTagText: {
+    fontSize: 11,
     fontWeight: '800',
     color: '#F59E0B',
     letterSpacing: 1,
   },
-  signalGaugeBadge: {
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
-    paddingHorizontal: 8,
+  scoreBadge: {
+    backgroundColor: 'rgba(245, 158, 11, 0.16)',
+    paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: 'rgba(245, 158, 11, 0.3)',
   },
-  signalGaugeText: {
-    fontSize: 10,
+  scoreBadgeText: {
+    fontSize: 11,
     fontWeight: '700',
     color: '#F59E0B',
   },
-  spotlightMainRow: {
+  assetTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 14,
+  },
+  assetName: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
+  },
+  assetRegionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4,
+  },
+  assetRegionText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#34D399',
+  },
+  assetPrice: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#FFFFFF',
+  },
+  assetChange: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  whyGroup: {
+    backgroundColor: 'rgba(255, 255, 255, 0.07)',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  whyTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#A7F3D0',
+    marginBottom: 2,
+  },
+  whyBody: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.88)',
+    lineHeight: 18,
+  },
+  indicatorsGroup: {
+    gap: 10,
+    marginBottom: 18,
+  },
+  indicatorRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  spotlightSymbol: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: '#FFFFFF',
-    letterSpacing: -0.3,
-  },
-  spotlightName: {
-    fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.75)',
-    marginTop: 2,
-  },
-  spotlightRegionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 6,
-  },
-  spotlightRegionText: {
-    fontSize: 11,
-    color: '#34D399',
-    fontWeight: '600',
-  },
-  spotlightPrice: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: '#FFFFFF',
-    letterSpacing: -0.3,
-  },
-  spotlightChangePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginTop: 6,
-  },
-  spotlightChangeText: {
+  indicatorLabel: {
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.8)',
   },
-  spotlightCta: {
+  indicatorVal: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#34D399',
+  },
+  progressTrack: {
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#34D399',
+    borderRadius: 3,
+  },
+  topSignalCta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -542,173 +827,88 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
-    marginTop: 4,
   },
-  spotlightCtaText: {
+  topSignalCtaText: {
     fontSize: 13,
     fontWeight: '700',
     color: '#FFFFFF',
   },
-  researchWidget: {
-    marginHorizontal: 16,
-    padding: 20,
-    gap: 16,
+
+  /* YOUR IMPACT */
+  impactCard: {
+    marginHorizontal: 20,
+    marginBottom: 24,
     backgroundColor: '#FFFFFF',
-    borderLeftWidth: 3,
-    borderLeftColor: '#10B981',
-    borderTopWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(228, 234, 226, 0.6)',
-    borderRadius: 16,
-    shadowColor: '#102A1F',
+    borderRadius: 20,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: '#E1E8DE',
+    shadowColor: '#0E2E21',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 6,
     elevation: 2,
-    marginBottom: 32,
   },
-  researchWidgetHeader: {
+  impactHeaderRow: {
     flexDirection: 'row',
-    gap: 14,
-    alignItems: 'flex-start',
-  },
-  iconCircle: {
-    padding: 12,
-    borderRadius: 16,
-    backgroundColor: 'rgba(16, 185, 129, 0.08)',
-  },
-  widgetTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  widgetTitle: {
-    fontSize: 15,
+  impactHeaderTitle: {
+    fontSize: 16,
     fontWeight: '800',
-    color: '#0D5C46',
+    color: '#0D211A',
   },
-  badgePill: {
-    backgroundColor: '#0D5C46',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
-  },
-  badgePillText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#FFFFFF',
-  },
-  widgetSubtitle: {
-    fontSize: 13,
-    color: '#286F58',
-    marginTop: 4,
-    lineHeight: 18,
-  },
-  actionButton: {
-    flexDirection: 'row',
+  impactIconBg: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: 'rgba(13, 92, 70, 0.08)',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#0D5C46',
-    paddingVertical: 14,
-    borderRadius: 14,
-    shadowColor: '#0D5C46',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.20,
-    shadowRadius: 8,
-    elevation: 4,
   },
-  actionButtonText: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    letterSpacing: 0.3,
-  },
-  emptyOrdersCard: {
-    marginHorizontal: 16,
-    alignItems: 'center',
-    padding: 24,
-    gap: 12,
-    marginBottom: 32,
-  },
-  emptyOrdersText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: COLORS.textBright,
-  },
-  emptyOrdersSub: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-  ordersCardWrapper: {
-    marginHorizontal: 16,
-    padding: 8,
-    marginBottom: 32,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(228, 234, 226, 0.6)',
-  },
-  ordersList: {
-    gap: 0,
-  },
-  orderRow: {
+  impactMainRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
+    alignItems: 'flex-end',
+    marginBottom: 14,
   },
-  orderDivider: {
-    height: 1,
-    backgroundColor: 'rgba(228, 234, 226, 0.5)',
-    marginHorizontal: 12,
+  impactMetricVal: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#0D211A',
+    letterSpacing: -0.5,
   },
-  orderLeft: {
+  impactMetricLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B8276',
+    marginTop: 2,
+  },
+  impactSubBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 4,
+    backgroundColor: 'rgba(16, 185, 129, 0.10)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
   },
-  orderSide: {
-    fontSize: 13,
-    fontWeight: '900',
-  },
-  orderSymbol: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: COLORS.textBright,
-  },
-  orderMeta: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    marginTop: 2,
-  },
-  orderRight: {
-    alignItems: 'flex-end',
-  },
-  orderVal: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: COLORS.textBright,
-  },
-  orderStatus: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: COLORS.emeraldBright,
-    marginTop: 2,
-  },
-  disclaimerText: {
+  impactSubText: {
     fontSize: 11,
-    color: COLORS.textMuted,
-    textAlign: 'center',
-    letterSpacing: 0.2,
-    marginTop: 8,
-    marginBottom: 32,
+    fontWeight: '700',
+    color: '#059669',
   },
-  containerDataSaver: {
-    backgroundColor: '#000000',
+  impactCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'flex-start',
+  },
+  impactCtaText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0D5C46',
   },
 });

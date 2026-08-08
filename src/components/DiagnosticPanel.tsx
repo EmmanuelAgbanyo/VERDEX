@@ -20,6 +20,8 @@ import {
   TrendingUp,
   Loader,
   Zap,
+  Compass,
+  Cpu,
 } from 'lucide-react-native';
 import { evaluateThesisText } from '@/services/tradingEngine';
 
@@ -146,6 +148,21 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
 
   const evaluation = evaluateThesisText(thesisText);
   const isAlreadyUnlocked = !!existingThesis || (aiResult?.verdict === 'Approved');
+
+  const getTelemetryData = (category: string) => {
+    switch (category?.toLowerCase()) {
+      case 'cocoa':
+        return { coords: '6.0354° N, 0.4522° W', station: 'SUHUM-COCOA-MET-12' };
+      case 'solar':
+        return { coords: '9.4008° N, 0.8393° W', station: 'TAMALE-SOLAR-PV-08' };
+      case 'mangrove':
+        return { coords: '5.7831° N, 0.7303° E', station: 'VOLTA-DELTA-WET-04' };
+      default:
+        return { coords: '9.3175° N, 1.8492° W', station: 'MOLE-SAVANNAH-S-01' };
+    }
+  };
+
+  const telemetry = getTelemetryData(asset.category);
 
   // Pulse animation for AI analyzing state
   useEffect(() => {
@@ -311,10 +328,27 @@ export const DiagnosticPanel: React.FC<DiagnosticPanelProps> = ({
       {/* TAB 1: ECOSYSTEM SIGNALS */}
       {activeTab === 'sensors' && (
         <View style={styles.panelBody}>
+          <Text style={styles.telemetryHeader}>LIVE SENSOR FEED</Text>
+          <View style={styles.telemetryRow}>
+            <Compass size={14} color="#10B981" />
+            <Text style={styles.telemetryText}>{telemetry.coords}</Text>
+          </View>
+          <View style={styles.telemetryRow}>
+            <Cpu size={14} color="#10B981" />
+            <Text style={styles.telemetryText}>{telemetry.station}</Text>
+          </View>
+          <View style={styles.telemetrySeparator} />
+
           <Text style={styles.subSectionTitle}>Live Environmental Sensors ({asset.symbol})</Text>
           <View style={styles.sensorGrid}>
             {asset.environmentalMetrics.map((m, idx) => (
-              <View key={idx} style={styles.sensorCard}>
+              <View
+                key={idx}
+                style={[
+                  styles.sensorCard,
+                  idx === asset.environmentalMetrics.length - 1 && { borderBottomWidth: 0 },
+                ]}
+              >
                 <Text style={styles.sensorLabel}>{m.label}</Text>
                 <Text style={styles.sensorVal}>{m.value}</Text>
               </View>
@@ -597,8 +631,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#E8EDE6',
-    padding: 16,
-    gap: 14,
+    padding: 20,
+    gap: 16,
     shadowColor: '#102A1F',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
@@ -648,9 +682,7 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#F1F5F0',
-    borderRadius: 12,
-    padding: 3,
+    backgroundColor: 'transparent',
     gap: 4,
   },
   tabBtn: {
@@ -659,16 +691,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    paddingVertical: 8,
-    borderRadius: 10,
+    paddingVertical: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
   },
   tabBtnActive: {
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#102A1F',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 1,
+    borderBottomColor: '#10B981',
   },
   tabBtnText: {
     fontSize: 12,
@@ -683,27 +711,48 @@ const styles = StyleSheet.create({
     gap: 14,
     paddingTop: 4,
   },
+  telemetryHeader: {
+    fontSize: 10,
+    letterSpacing: 1,
+    color: COLORS.textMuted,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+  telemetryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 6,
+  },
+  telemetryText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+  },
+  telemetrySeparator: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(228,234,226,0.5)',
+    marginBottom: 12,
+    marginTop: 6,
+  },
   subSectionTitle: {
     fontSize: 12,
     fontWeight: '800',
     color: COLORS.textBright,
   },
   sensorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
+    gap: 0,
   },
   sensorCard: {
-    flex: 1,
-    minWidth: '45%',
-    backgroundColor: '#F8FAF7',
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E8EDE6',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(228, 234, 226, 0.5)',
   },
   sensorLabel: {
-    fontSize: 10,
+    fontSize: 11,
     color: COLORS.textMuted,
     fontWeight: '600',
   },
@@ -711,7 +760,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '900',
     color: COLORS.textBright,
-    marginTop: 2,
   },
   riskList: {
     gap: 6,
