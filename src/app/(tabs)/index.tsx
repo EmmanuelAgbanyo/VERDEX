@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,9 @@ import {
   Bookmark,
   CloudRain,
   Wind,
+  Sun,
+  Leaf,
+  Droplets,
   TrendingUp,
   Sparkles,
   ArrowRight,
@@ -28,6 +31,74 @@ import {
   Users,
   MapPin,
 } from 'lucide-react-native';
+
+const CLIMATE_SIGNALS_DATA = [
+  {
+    id: 'air-quality',
+    icon: Wind,
+    iconColor: '#0D5C46',
+    iconBg: 'rgba(16, 185, 129, 0.10)',
+    label: 'AIR QUALITY',
+    val: '42 AQI',
+    status: 'Good',
+    statusBg: 'rgba(16, 185, 129, 0.12)',
+    statusColor: '#0D5C46',
+    comparison: '↓ 8% vs 7d avg',
+    comparisonColor: '#059669',
+  },
+  {
+    id: 'rainfall',
+    icon: CloudRain,
+    iconColor: '#0284C7',
+    iconBg: 'rgba(2, 132, 199, 0.10)',
+    label: 'RAINFALL',
+    val: '114 mm',
+    status: 'Above avg',
+    statusBg: 'rgba(2, 132, 199, 0.12)',
+    statusColor: '#0284C7',
+    comparison: '↑ 12% vs avg',
+    comparisonColor: '#0284C7',
+  },
+  {
+    id: 'solar',
+    icon: Sun,
+    iconColor: '#D97706',
+    iconBg: 'rgba(245, 158, 11, 0.10)',
+    label: 'SOLAR POWER',
+    val: '6.8 kWh',
+    status: 'Peak',
+    statusBg: 'rgba(245, 158, 11, 0.12)',
+    statusColor: '#D97706',
+    comparison: '↑ 14% yield',
+    comparisonColor: '#D97706',
+  },
+  {
+    id: 'carbon',
+    icon: Leaf,
+    iconColor: '#059669',
+    iconBg: 'rgba(5, 150, 105, 0.10)',
+    label: 'CARBON SINK',
+    val: '84 tCO₂e',
+    status: 'High',
+    statusBg: 'rgba(5, 150, 105, 0.12)',
+    statusColor: '#059669',
+    comparison: '↑ 4.5% rate',
+    comparisonColor: '#059669',
+  },
+  {
+    id: 'moisture',
+    icon: Droplets,
+    iconColor: '#2563EB',
+    iconBg: 'rgba(37, 99, 235, 0.10)',
+    label: 'SOIL MOISTURE',
+    val: '64%',
+    status: 'Optimal',
+    statusBg: 'rgba(37, 99, 235, 0.12)',
+    statusColor: '#2563EB',
+    comparison: '↑ 6% root zone',
+    comparisonColor: '#2563EB',
+  },
+];
 
 export default function DashboardScreen() {
   const {
@@ -42,6 +113,26 @@ export default function DashboardScreen() {
   const router = useRouter();
   const rawPortfolioVal = getPortfolioValue();
   const portfolioVal = rawPortfolioVal > 0 ? rawPortfolioVal : 20411.61;
+
+  const signalsScrollRef = useRef<ScrollView>(null);
+  const [scrollIndex, setScrollIndex] = useState(0);
+
+  // Auto-flow timer for swipable climate signals
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setScrollIndex((prev) => {
+        const nextIndex = (prev + 1) % CLIMATE_SIGNALS_DATA.length;
+        const itemWidth = 172; // Card width 160 + gap 12
+        signalsScrollRef.current?.scrollTo({
+          x: nextIndex * itemWidth,
+          animated: true,
+        });
+        return nextIndex;
+      });
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, []);
 
   // Format session timer as 28:19 or similar
   const minutes = Math.floor(sessionTimeRemaining / 60);
@@ -172,7 +263,7 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
 
-        {/* 4. CLIMATE SIGNALS */}
+        {/* 4. CLIMATE SIGNALS (SWIPABLE / AUTO FLOW CAROUSEL) */}
         <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>Climate Signals</Text>
           <View style={styles.sectionLiveBadge}>
@@ -181,45 +272,41 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        <View style={styles.climateGrid}>
-          {/* Card 1: Air Quality */}
-          <View style={styles.climateCard}>
-            <View style={styles.climateCardHeader}>
-              <View style={[styles.climateIconBg, { backgroundColor: 'rgba(16, 185, 129, 0.10)' }]}>
-                <Wind size={16} color="#0D5C46" />
+        <ScrollView
+          ref={signalsScrollRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.signalsScrollContent}
+          decelerationRate="fast"
+          snapToInterval={172}
+        >
+          {CLIMATE_SIGNALS_DATA.map((sig) => {
+            const IconComp = sig.icon;
+            return (
+              <View key={sig.id} style={styles.climateCardSwipable}>
+                <View style={styles.climateCardHeader}>
+                  <View style={[styles.climateIconBg, { backgroundColor: sig.iconBg }]}>
+                    <IconComp size={15} color={sig.iconColor} />
+                  </View>
+                  <Text style={styles.climateLabel}>{sig.label}</Text>
+                </View>
+
+                <View style={styles.climateMainRow}>
+                  <Text style={styles.climateVal}>{sig.val}</Text>
+                  <View style={[styles.statusPillGeneric, { backgroundColor: sig.statusBg }]}>
+                    <Text style={[styles.statusPillText, { color: sig.statusColor }]}>
+                      {sig.status}
+                    </Text>
+                  </View>
+                </View>
+
+                <Text style={[styles.climateComparisonText, { color: sig.comparisonColor }]}>
+                  {sig.comparison}
+                </Text>
               </View>
-              <Text style={styles.climateLabel}>AIR QUALITY</Text>
-            </View>
-
-            <View style={styles.climateMainRow}>
-              <Text style={styles.climateVal}>42 AQI</Text>
-              <View style={styles.statusPillGood}>
-                <Text style={styles.statusPillGoodText}>Good</Text>
-              </View>
-            </View>
-
-            <Text style={styles.climateComparisonGood}>↓ 8% vs 7-day avg</Text>
-          </View>
-
-          {/* Card 2: Rainfall */}
-          <View style={styles.climateCard}>
-            <View style={styles.climateCardHeader}>
-              <View style={[styles.climateIconBg, { backgroundColor: 'rgba(2, 132, 199, 0.10)' }]}>
-                <CloudRain size={16} color="#0284C7" />
-              </View>
-              <Text style={styles.climateLabel}>RAINFALL</Text>
-            </View>
-
-            <View style={styles.climateMainRow}>
-              <Text style={styles.climateVal}>114 mm</Text>
-              <View style={styles.statusPillAbove}>
-                <Text style={styles.statusPillAboveText}>Above avg</Text>
-              </View>
-            </View>
-
-            <Text style={styles.climateComparisonAbove}>↑ 12% vs avg</Text>
-          </View>
-        </View>
+            );
+          })}
+        </ScrollView>
 
         {/* 5. CLIMATE INSIGHT */}
         <View style={styles.insightCard}>
@@ -246,7 +333,7 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
 
-        {/* 6. TOP SIGNAL ASSET (CLEAN NON-OVERLAPPING LAYOUT) */}
+        {/* 6. TOP SIGNAL ASSET */}
         <View style={styles.topSignalCard}>
           <View style={styles.topSignalHeader}>
             <View style={styles.topSignalTagGroup}>
@@ -258,7 +345,7 @@ export default function DashboardScreen() {
             </View>
           </View>
 
-          {/* Full-width Asset Name to prevent wrap overlap */}
+          {/* Full-width Asset Name */}
           <Text style={styles.assetName}>{topAsset.name}</Text>
 
           {/* Region (Left) & Price / Change (Right) */}
@@ -519,7 +606,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  /* CLIMATE SIGNALS */
+  /* CLIMATE SIGNALS (SWIPABLE / AUTO FLOW) */
   sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -554,17 +641,17 @@ const styles = StyleSheet.create({
     color: '#0D5C46',
     letterSpacing: 0.5,
   },
-  climateGrid: {
-    flexDirection: 'row',
-    gap: 12,
-    marginHorizontal: 20,
+  signalsScrollContent: {
+    paddingHorizontal: 20,
+    paddingRight: 28,
     marginBottom: 20,
+    gap: 12,
   },
-  climateCard: {
-    flex: 1,
+  climateCardSwipable: {
+    width: 160,
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#E1E8DE',
     shadowColor: '#0E2E21',
@@ -576,12 +663,12 @@ const styles = StyleSheet.create({
   climateCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
     marginBottom: 10,
   },
   climateIconBg: {
-    width: 28,
-    height: 28,
+    width: 26,
+    height: 26,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -590,7 +677,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '800',
     color: '#6B8276',
-    letterSpacing: 0.8,
+    letterSpacing: 0.6,
   },
   climateMainRow: {
     flexDirection: 'row',
@@ -599,41 +686,22 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   climateVal: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: '#0D211A',
   },
-  statusPillGood: {
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
-    paddingHorizontal: 8,
+  statusPillGeneric: {
+    paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
   },
-  statusPillGoodText: {
-    fontSize: 11,
+  statusPillText: {
+    fontSize: 10,
     fontWeight: '700',
-    color: '#0D5C46',
   },
-  statusPillAbove: {
-    backgroundColor: 'rgba(2, 132, 199, 0.12)',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  statusPillAboveText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#0284C7',
-  },
-  climateComparisonGood: {
+  climateComparisonText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#059669',
-  },
-  climateComparisonAbove: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#0284C7',
   },
 
   /* CLIMATE INSIGHT */

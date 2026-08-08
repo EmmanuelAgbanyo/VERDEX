@@ -10,7 +10,7 @@ export const Header: React.FC<HeaderProps> = ({ onNotificationPress }) => {
   return (
     <View style={styles.container}>
       <View style={styles.textGroup}>
-        <Text style={styles.greetingTitle}>Good morning, Team VERDEX</Text>
+        <Text style={styles.greetingTitle}>Good morning, VERDEX</Text>
         <Text style={styles.subtitleText}>Your daily climate & market snapshot</Text>
       </View>
 
