@@ -98,15 +98,14 @@ export const AssetCard: React.FC<AssetCardProps> = ({
 
   return (
     <View style={styles.cardContainer}>
-      {/* CARD MAIN SECTION */}
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [styles.cardPressable, pressed && styles.pressedState]}
-        accessibilityRole="button"
-        accessibilityLabel={`${asset.name}, ${asset.symbol}, Price GH₵${asset.price.toFixed(2)}, ${isPositive ? 'up' : 'down'} ${asset.change24h.toFixed(2)}%`}
-      >
-        {/* ROW 1: Symbol, Region Tag, Star Toggle */}
-        <View style={styles.headerRow}>
+      {/* ROW 1: Symbol, Region Tag, & Independent Star Toggle */}
+      <View style={styles.topHeaderBar}>
+        <Pressable
+          onPress={onPress}
+          style={({ pressed }) => [styles.headerTapArea, pressed && styles.pressedState]}
+          accessibilityRole="button"
+          accessibilityLabel={`${asset.name}, ${asset.symbol}`}
+        >
           <View style={styles.symbolRegionGroup}>
             <Text style={styles.symbolText}>{asset.symbol}</Text>
             <View style={styles.regionBadge}>
@@ -114,27 +113,31 @@ export const AssetCard: React.FC<AssetCardProps> = ({
               <Text style={styles.regionText}>📍 {asset.regionLabel.split(',')[0]}</Text>
             </View>
           </View>
+          <Text style={styles.assetName}>{asset.name}</Text>
+        </Pressable>
 
-          <Pressable
-            onPress={onStarToggle}
-            hitSlop={12}
-            style={({ pressed }) => [styles.starBtn, pressed && styles.pressedState]}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isStarred }}
-            accessibilityLabel={isStarred ? 'Remove from watchlist' : 'Add to watchlist'}
-          >
-            <Star
-              size={18}
-              color={isStarred ? COLORS.amberData : '#94A3B8'}
-              fill={isStarred ? COLORS.amberData : 'transparent'}
-            />
-          </Pressable>
-        </View>
+        {/* Independent Star Button (Sibling, NOT nested in another Pressable) */}
+        <Pressable
+          onPress={onStarToggle}
+          hitSlop={12}
+          style={({ pressed }) => [styles.starBtn, pressed && styles.pressedState]}
+          accessibilityRole="button"
+          accessibilityState={{ selected: isStarred }}
+          accessibilityLabel={isStarred ? 'Remove from watchlist' : 'Add to watchlist'}
+        >
+          <Star
+            size={18}
+            color={isStarred ? COLORS.amberData : '#94A3B8'}
+            fill={isStarred ? COLORS.amberData : 'transparent'}
+          />
+        </Pressable>
+      </View>
 
-        {/* ROW 2: Full Asset Name */}
-        <Text style={styles.assetName}>{asset.name}</Text>
-
-        {/* ROW 3: Price + Movement + Mini Sparkline */}
+      {/* ROW 2: Price + Movement + Mini Sparkline */}
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [styles.priceRowPressable, pressed && styles.pressedState]}
+      >
         <View style={styles.priceRow}>
           <View style={styles.priceGroup}>
             <Text style={styles.priceValue}>GH₵{asset.price.toFixed(2)}</Text>
@@ -158,87 +161,95 @@ export const AssetCard: React.FC<AssetCardProps> = ({
 
           <MiniSparkline isPositive={isPositive} />
         </View>
+      </Pressable>
 
-        {/* ROW 4: Environmental Signal & Drivers ("Why it's moving") */}
-        <View style={styles.signalContainer}>
-          <Pressable
-            onPress={() => setIsExpanded(!isExpanded)}
-            style={styles.signalHeader}
-            accessibilityRole="button"
-            accessibilityLabel={`Signal Score ${asset.signalScore}, tap to ${isExpanded ? 'collapse' : 'expand'} breakdown`}
-          >
-            <View style={styles.signalBadgeGroup}>
-              <View style={styles.signalDot} />
-              <Text style={styles.signalScoreText}>● {asset.signalScore} / 100</Text>
-              <Text style={styles.signalLabelText}>{signalLabel}</Text>
-            </View>
-
-            <View style={styles.expandToggle}>
-              {isExpanded ? <ChevronUp size={14} color="#64748B" /> : <ChevronDown size={14} color="#64748B" />}
-            </View>
-          </Pressable>
-
-          {/* Environmental Drivers Chips */}
-          <View style={styles.driversRow}>
-            <Text style={styles.driversHeading}>WHY IT'S MOVING</Text>
-            <View style={styles.driversChipsGroup}>
-              {drivers.map((drv, idx) => (
-                <View key={idx} style={styles.driverChip}>
-                  <Text style={styles.driverChipText}>
-                    {drv.label} <Text style={styles.driverDir}>{drv.direction}</Text>
-                  </Text>
-                </View>
-              ))}
-            </View>
+      {/* ROW 3: Environmental Signal Container */}
+      <View style={styles.signalContainer}>
+        {/* Independent Expand Toggle Header (Sibling) */}
+        <Pressable
+          onPress={() => setIsExpanded(!isExpanded)}
+          style={({ pressed }) => [styles.signalHeader, pressed && styles.pressedState]}
+          accessibilityRole="button"
+          accessibilityLabel={`Signal Score ${asset.signalScore}, tap to ${isExpanded ? 'collapse' : 'expand'} breakdown`}
+        >
+          <View style={styles.signalBadgeGroup}>
+            <View style={styles.signalDot} />
+            <Text style={styles.signalScoreText}>● {asset.signalScore} / 100</Text>
+            <Text style={styles.signalLabelText}>{signalLabel}</Text>
           </View>
 
-          {/* Expandable Breakdown Drawer */}
-          {isExpanded && (
-            <View style={styles.expandedDrawer}>
-              <View style={styles.drawerTitleRow}>
-                <Info size={12} color="#0D5C46" />
-                <Text style={styles.drawerTitle}>SIGNAL BREAKDOWN</Text>
-              </View>
+          <View style={styles.expandToggle}>
+            {isExpanded ? <ChevronUp size={14} color="#64748B" /> : <ChevronDown size={14} color="#64748B" />}
+          </View>
+        </Pressable>
 
-              <View style={styles.breakdownItem}>
-                <View style={styles.breakdownLabelRow}>
-                  <Text style={styles.breakdownLabel}>Climate resilience</Text>
-                  <Text style={styles.breakdownScore}>{climateResilienceScore}</Text>
-                </View>
-                <View style={styles.breakdownTrack}>
-                  <View style={[styles.breakdownBar, { width: `${climateResilienceScore}%` }]} />
-                </View>
+        {/* Environmental Drivers Chips */}
+        <View style={styles.driversRow}>
+          <Text style={styles.driversHeading}>WHY IT'S MOVING</Text>
+          <View style={styles.driversChipsGroup}>
+            {drivers.map((drv, idx) => (
+              <View key={idx} style={styles.driverChip}>
+                <Text style={styles.driverChipText}>
+                  {drv.label} <Text style={styles.driverDir}>{drv.direction}</Text>
+                </Text>
               </View>
-
-              <View style={styles.breakdownItem}>
-                <View style={styles.breakdownLabelRow}>
-                  <Text style={styles.breakdownLabel}>Market momentum</Text>
-                  <Text style={styles.breakdownScore}>{marketMomentumScore}</Text>
-                </View>
-                <View style={styles.breakdownTrack}>
-                  <View style={[styles.breakdownBar, { width: `${marketMomentumScore}%` }]} />
-                </View>
-              </View>
-
-              <View style={styles.breakdownItem}>
-                <View style={styles.breakdownLabelRow}>
-                  <Text style={styles.breakdownLabel}>Environmental alignment</Text>
-                  <Text style={styles.breakdownScore}>{envAlignmentScore}</Text>
-                </View>
-                <View style={styles.breakdownTrack}>
-                  <View style={[styles.breakdownBar, { width: `${envAlignmentScore}%` }]} />
-                </View>
-              </View>
-
-              <Text style={styles.breakdownWhyText}>
-                {asset.whyThisMattersSnippet ||
-                  'High satellite telemetry signals and cooperative restoration activity support this climate valuation score.'}
-              </Text>
-            </View>
-          )}
+            ))}
+          </View>
         </View>
 
-        {/* ROW 5: Thesis Governance Action Bar */}
+        {/* Expandable Breakdown Drawer */}
+        {isExpanded && (
+          <View style={styles.expandedDrawer}>
+            <View style={styles.drawerTitleRow}>
+              <Info size={12} color="#0D5C46" />
+              <Text style={styles.drawerTitle}>SIGNAL BREAKDOWN</Text>
+            </View>
+
+            <View style={styles.breakdownItem}>
+              <View style={styles.breakdownLabelRow}>
+                <Text style={styles.breakdownLabel}>Climate resilience</Text>
+                <Text style={styles.breakdownScore}>{climateResilienceScore}</Text>
+              </View>
+              <View style={styles.breakdownTrack}>
+                <View style={[styles.breakdownBar, { width: `${climateResilienceScore}%` }]} />
+              </View>
+            </View>
+
+            <View style={styles.breakdownItem}>
+              <View style={styles.breakdownLabelRow}>
+                <Text style={styles.breakdownLabel}>Market momentum</Text>
+                <Text style={styles.breakdownScore}>{marketMomentumScore}</Text>
+              </View>
+              <View style={styles.breakdownTrack}>
+                <View style={[styles.breakdownBar, { width: `${marketMomentumScore}%` }]} />
+              </View>
+            </View>
+
+            <View style={styles.breakdownItem}>
+              <View style={styles.breakdownLabelRow}>
+                <Text style={styles.breakdownLabel}>Environmental alignment</Text>
+                <Text style={styles.breakdownScore}>{envAlignmentScore}</Text>
+              </View>
+              <View style={styles.breakdownTrack}>
+                <View style={[styles.breakdownBar, { width: `${envAlignmentScore}%` }]} />
+              </View>
+            </View>
+
+            <Text style={styles.breakdownWhyText}>
+              {asset.whyThisMattersSnippet ||
+                'High satellite telemetry signals and cooperative restoration activity support this climate valuation score.'}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {/* ROW 4: Thesis Governance Action Bar (Independent Pressable) */}
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [styles.actionBarPressable, pressed && styles.pressedState]}
+        accessibilityRole="button"
+        accessibilityLabel={hasUnlockedThesis ? 'Trade asset' : 'Build thesis'}
+      >
         <View style={styles.actionBar}>
           {hasUnlockedThesis ? (
             <View style={styles.thesisUnlockedBadge}>
@@ -277,24 +288,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.04,
     shadowRadius: 8,
     elevation: 2,
-  },
-  cardPressable: {
-    padding: 18,
+    padding: 16,
   },
   pressedState: {
-    opacity: 0.95,
+    opacity: 0.92,
     transform: [{ scale: 0.99 }],
   },
-  headerRow: {
+  topHeaderBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  headerTapArea: {
+    flex: 1,
+    paddingRight: 10,
   },
   symbolRegionGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    marginBottom: 4,
   },
   symbolText: {
     fontSize: 16,
@@ -317,19 +331,22 @@ const styles = StyleSheet.create({
     color: '#0D5C46',
   },
   starBtn: {
-    padding: 4,
+    padding: 6,
+    borderRadius: 12,
+    backgroundColor: '#F8FAFC',
   },
   assetName: {
     fontSize: 14,
     fontWeight: '700',
     color: '#334155',
-    marginBottom: 14,
+  },
+  priceRowPressable: {
+    marginBottom: 12,
   },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
   },
   priceGroup: {
     flexDirection: 'row',
@@ -363,7 +380,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    marginBottom: 14,
+    marginBottom: 12,
   },
   signalHeader: {
     flexDirection: 'row',
@@ -396,7 +413,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   driversRow: {
-    marginTop: 10,
+    marginTop: 8,
   },
   driversHeading: {
     fontSize: 9,
@@ -480,6 +497,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginTop: 4,
     lineHeight: 16,
+  },
+  actionBarPressable: {
+    paddingTop: 4,
   },
   actionBar: {
     flexDirection: 'row',
