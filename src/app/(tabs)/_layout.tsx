@@ -18,15 +18,15 @@ export default function TabLayout() {
         tabBarStyle: {
           position: 'absolute',
           bottom: Platform.OS === 'ios' ? 24 : 16,
-          left: 20,
-          right: 20,
+          left: 16,
+          right: 16,
           backgroundColor: '#FFFFFF',
           borderWidth: 1,
-          borderColor: 'rgba(210, 222, 205, 0.6)',
+          borderColor: 'rgba(210, 222, 205, 0.7)',
           borderRadius: 32,
-          height: 64,
-          paddingBottom: 6,
-          paddingTop: 6,
+          height: 72,
+          paddingBottom: 8,
+          paddingTop: 8,
           shadowColor: '#072017',
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.12,
@@ -35,7 +35,6 @@ export default function TabLayout() {
           zIndex: 1000,
         },
         tabBarItemStyle: {
-          paddingVertical: 2,
           justifyContent: 'center',
           alignItems: 'center',
         },
@@ -46,6 +45,7 @@ export default function TabLayout() {
           fontWeight: '700',
           letterSpacing: 0.1,
           marginTop: 2,
+          marginBottom: 2,
         },
       }}
     >
@@ -55,7 +55,7 @@ export default function TabLayout() {
           title: 'Home',
           tabBarIcon: ({ focused }) => (
             <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
-              <Home size={20} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
+              <Home size={19} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
             </View>
           ),
         }}
@@ -67,7 +67,7 @@ export default function TabLayout() {
           title: 'Markets',
           tabBarIcon: ({ focused }) => (
             <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
-              <BarChart2 size={20} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
+              <BarChart2 size={19} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
             </View>
           ),
         }}
@@ -79,7 +79,7 @@ export default function TabLayout() {
           title: 'Learn',
           tabBarIcon: ({ focused }) => (
             <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
-              <BookOpen size={20} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
+              <BookOpen size={19} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
             </View>
           ),
         }}
@@ -91,7 +91,7 @@ export default function TabLayout() {
           title: 'Portfolio',
           tabBarIcon: ({ focused }) => (
             <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
-              <Briefcase size={20} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
+              <Briefcase size={19} color={focused ? '#0B3C2F' : '#6B8276'} strokeWidth={focused ? 2.4 : 2.0} />
             </View>
           ),
         }}
@@ -103,9 +103,9 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   iconWrapper: {
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 3,
+    borderRadius: 12,
   },
   iconWrapperActive: {
     backgroundColor: 'rgba(11, 60, 47, 0.10)',

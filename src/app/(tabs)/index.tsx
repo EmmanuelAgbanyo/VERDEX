@@ -54,10 +54,10 @@ export default function DashboardScreen() {
     symbol: 'V-CARBON',
     name: 'Volta Estuary Mangrove Carbon Token',
     regionLabel: 'Ada Foah, Volta Delta',
-    price: 28.75,
-    change24h: 8.42,
+    price: 30.05,
+    change24h: 8.68,
     signalScore: 95,
-    whyThisMattersSnippet: 'Strong climate resilience and improving market conditions.',
+    whyThisMattersSnippet: 'Restoring mangroves in Keta & Ada protects coastal villages from storm surges, provides fish breeding grounds, and sequesters carbon.',
   };
 
   const isTopAssetPositive = topAsset.change24h >= 0;
@@ -246,7 +246,7 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
 
-        {/* 6. TOP SIGNAL ASSET (DYNAMIC REAL MARKET DATA) */}
+        {/* 6. TOP SIGNAL ASSET (CLEAN NON-OVERLAPPING LAYOUT) */}
         <View style={styles.topSignalCard}>
           <View style={styles.topSignalHeader}>
             <View style={styles.topSignalTagGroup}>
@@ -258,17 +258,19 @@ export default function DashboardScreen() {
             </View>
           </View>
 
-          <View style={styles.assetTitleRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.assetName}>{topAsset.name}</Text>
-              <View style={styles.assetRegionRow}>
-                <MapPin size={12} color="#34D399" />
-                <Text style={styles.assetRegionText}>{topAsset.regionLabel}</Text>
-              </View>
+          {/* Full-width Asset Name to prevent wrap overlap */}
+          <Text style={styles.assetName}>{topAsset.name}</Text>
+
+          {/* Region (Left) & Price / Change (Right) */}
+          <View style={styles.assetMetaRow}>
+            <View style={styles.assetRegionRow}>
+              <MapPin size={13} color="#34D399" />
+              <Text style={styles.assetRegionText}>{topAsset.regionLabel}</Text>
             </View>
-            <View style={{ alignItems: 'flex-end' }}>
+
+            <View style={styles.assetPriceGroup}>
               <Text style={styles.assetPrice}>GH₵{topAsset.price.toFixed(2)}</Text>
-              <Text style={[styles.assetChange, { color: isTopAssetPositive ? '#34D399' : '#FCA5A5' }]}>
+              <Text style={[styles.assetChangeText, { color: isTopAssetPositive ? '#34D399' : '#FCA5A5' }]}>
                 {isTopAssetPositive ? '+' : ''}{topAsset.change24h.toFixed(2)}%
               </Text>
             </View>
@@ -277,7 +279,7 @@ export default function DashboardScreen() {
           <View style={styles.whyGroup}>
             <Text style={styles.whyTitle}>Why it's trending</Text>
             <Text style={styles.whyBody}>
-              {topAsset.whyThisMattersSnippet || 'Strong climate resilience and improving market conditions.'}
+              {topAsset.whyThisMattersSnippet || 'Restoring mangroves in Keta & Ada protects coastal villages from storm surges, provides fish breeding grounds, and sequesters carbon.'}
             </Text>
           </View>
 
@@ -364,7 +366,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 110, // Ensure space for floating tab bar
+    paddingBottom: 110,
     maxWidth: 500,
     width: '100%',
     alignSelf: 'center',
@@ -711,7 +713,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 14,
   },
   topSignalTagGroup: {
     flexDirection: 'row',
@@ -737,38 +739,42 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#F59E0B',
   },
-  assetTitleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 14,
-  },
   assetName: {
     fontSize: 20,
     fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: -0.3,
+    marginBottom: 8,
+  },
+  assetMetaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 14,
   },
   assetRegionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 4,
   },
   assetRegionText: {
     fontSize: 12,
     fontWeight: '600',
     color: '#34D399',
   },
+  assetPriceGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   assetPrice: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: '#FFFFFF',
   },
-  assetChange: {
+  assetChangeText: {
     fontSize: 12,
-    fontWeight: '700',
-    marginTop: 2,
+    fontWeight: '800',
   },
   whyGroup: {
     backgroundColor: 'rgba(255, 255, 255, 0.07)',
